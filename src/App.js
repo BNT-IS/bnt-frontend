@@ -84,7 +84,7 @@ class App extends React.Component {
           <Route exact path="/">
             <ul>
               <li><Link to="/guest">Gast</Link></li>
-              <li><Link to="/entrancemgmt">Einlass-Management</Link></li>
+              <li><Link to="/entrance">Einlass-Management</Link></li>
               <li><Link to="/eventmgmt">Event-Management</Link></li>
             </ul>
           </Route>
