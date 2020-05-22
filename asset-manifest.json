@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/bnt-frontend/static/css/main.69b147b9.chunk.css",
-    "main.js": "/bnt-frontend/static/js/main.39531e05.chunk.js",
-    "main.js.map": "/bnt-frontend/static/js/main.39531e05.chunk.js.map",
+    "main.js": "/bnt-frontend/static/js/main.e28866fa.chunk.js",
+    "main.js.map": "/bnt-frontend/static/js/main.e28866fa.chunk.js.map",
     "runtime-main.js": "/bnt-frontend/static/js/runtime-main.6bdd408e.js",
     "runtime-main.js.map": "/bnt-frontend/static/js/runtime-main.6bdd408e.js.map",
     "static/js/2.ab9f024a.chunk.js": "/bnt-frontend/static/js/2.ab9f024a.chunk.js",
     "static/js/2.ab9f024a.chunk.js.map": "/bnt-frontend/static/js/2.ab9f024a.chunk.js.map",
     "index.html": "/bnt-frontend/index.html",
-    "precache-manifest.5990f57357fae7daf670749c245beb3f.js": "/bnt-frontend/precache-manifest.5990f57357fae7daf670749c245beb3f.js",
+    "precache-manifest.54503a41de5a158e42d35fa5752b13d5.js": "/bnt-frontend/precache-manifest.54503a41de5a158e42d35fa5752b13d5.js",
     "service-worker.js": "/bnt-frontend/service-worker.js",
     "static/css/main.69b147b9.chunk.css.map": "/bnt-frontend/static/css/main.69b147b9.chunk.css.map",
     "static/js/2.ab9f024a.chunk.js.LICENSE.txt": "/bnt-frontend/static/js/2.ab9f024a.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.6bdd408e.js",
     "static/js/2.ab9f024a.chunk.js",
     "static/css/main.69b147b9.chunk.css",
-    "static/js/main.39531e05.chunk.js"
+    "static/js/main.e28866fa.chunk.js"
   ]
 }
