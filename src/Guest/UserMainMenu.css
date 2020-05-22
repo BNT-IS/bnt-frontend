@@ -1,0 +1,14 @@
+.UserMainMenu {
+    width: 100vw;
+}
+
+.UserMainMenu .MenuLink {
+    width: 100%;
+    background-color: rgb(164, 216, 20);
+    justify-content: center;
+    text-align: center;
+    padding-top: 10vh;
+    padding-bottom: 10vh;
+    text-decoration: none;
+    color: #000000;
+}
