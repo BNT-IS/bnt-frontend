@@ -9,7 +9,7 @@ In the project directory, you can run:
 Baut ein neues optimiertes package und publiziert es im Github-Branch gh-pages.
 Dieser Branch wird von Github-Pages als Quelle verwendet. Aus diesem Grund muss das Repository public sein. Github-Pages ist aktiviert, damit die Web-App gleich nach dem deploy unter einer SSL-gesicherten Adresse getestet werden kann. Dies ist beispielsweise für die Kamera-Funktion (QR-Scannen) nötig!
 
-Die Github-Page des Repositorys kann unter (https://bnt-is.github.io/bnt-frontend/)[https://bnt-is.github.io/bnt-frontend/] aufgerufen werden.
+Die Github-Page des Repositorys kann unter [https://bnt-is.github.io/bnt-frontend/](https://bnt-is.github.io/bnt-frontend/) aufgerufen werden.
 
 ### `npm start`
 
