@@ -18,11 +18,11 @@ class EntranceManagement extends React.Component {
     }
 
     connectTicketReader() {
-        const ticketReader = <TicketReader
+        this.ticketReader = <TicketReader
             onAbort={this._abortHandler}
             onReady={this._readyHandler}
             onClosed={this._closedHandler}></TicketReader>;
-        this.setState({ connectTR: ticketReader });
+        this.setState({ connectTR: this.ticketReader });
     }
 
     _abortHandler() {
@@ -35,7 +35,6 @@ class EntranceManagement extends React.Component {
 
     _readyHandler() {
         this.setState({ connectTR: null, connected: true });
-        this.ticketReader = ticketReader;
     }
 
     render() {
