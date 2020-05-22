@@ -2,6 +2,11 @@
   "name": "example-client",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://bnt-is.github.io/bnt-frontend/",
+  "devDependencies": {
+    "gh-pages": "^1.0.0",
+    "react-scripts": "3.4.1"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -14,13 +19,13 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.1",
     "styled-components": "^5.1.0",
     "walletlink": "^2.0.2",
     "web3": "^1.2.7",
     "webrtc-adapter": "^7.6.0"
   },
   "scripts": {
+    "deploy": "npm run build && gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
