@@ -164,6 +164,7 @@ export class TicketReader extends React.Component {
         this._generateAnswerCode = this._generateAnswerCode.bind(this);
         this._abortHandler = this._abortHandler.bind(this);
         this._scanDoneHandler = this._scanDoneHandler.bind(this);
+        this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
         this._initConnection();
     }
 
@@ -199,6 +200,7 @@ export class TicketReader extends React.Component {
 
     _dataChannelClosedHandler(event) {
         console.log(event);
+        this.props.onClosed();
     }
 
     _messageHandler(event) {
@@ -209,7 +211,7 @@ export class TicketReader extends React.Component {
         this.dataChannel = event.channel;
         this.dataChannel.addEventListener('message', this._messageHandler);
         this.dataChannel.addEventListener('open', this._dataChannelOpenHandler);
-        this.dataChannel.addEventListener('close', this._connectionChangeHandler);
+        this.dataChannel.addEventListener('close', this._dataChannelClosedHandler);
     }
 
     _readTicketRemote() {
