@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/bnt-frontend/static/css/main.69b147b9.chunk.css",
+    "main.js": "/bnt-frontend/static/js/main.90831bf6.chunk.js",
+    "main.js.map": "/bnt-frontend/static/js/main.90831bf6.chunk.js.map",
+    "runtime-main.js": "/bnt-frontend/static/js/runtime-main.6bdd408e.js",
+    "runtime-main.js.map": "/bnt-frontend/static/js/runtime-main.6bdd408e.js.map",
+    "static/js/2.506cbafe.chunk.js": "/bnt-frontend/static/js/2.506cbafe.chunk.js",
+    "static/js/2.506cbafe.chunk.js.map": "/bnt-frontend/static/js/2.506cbafe.chunk.js.map",
+    "index.html": "/bnt-frontend/index.html",
+    "precache-manifest.ee75ebb9635f34f9e1fa437549bac8ca.js": "/bnt-frontend/precache-manifest.ee75ebb9635f34f9e1fa437549bac8ca.js",
+    "service-worker.js": "/bnt-frontend/service-worker.js",
+    "static/css/main.69b147b9.chunk.css.map": "/bnt-frontend/static/css/main.69b147b9.chunk.css.map",
+    "static/js/2.506cbafe.chunk.js.LICENSE.txt": "/bnt-frontend/static/js/2.506cbafe.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.6bdd408e.js",
+    "static/js/2.506cbafe.chunk.js",
+    "static/css/main.69b147b9.chunk.css",
+    "static/js/main.90831bf6.chunk.js"
+  ]
+}
