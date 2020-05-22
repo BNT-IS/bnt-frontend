@@ -307,7 +307,11 @@ export class TicketReaderManager extends React.Component {
     connectRemoteTicketReader() {
         let remoteTicketReader = <RemoteTicketReader
             onAbort={() => { this.setState({ connect: null }); }}
-            onReady={() => { this.setState({ connect: null }); this.setState({remoteTicketReader: this.state.remoteTicketReader.push(remoteTicketReader)}); }}></RemoteTicketReader>;
+            onReady={() => { 
+                this.setState({ connect: null });
+                const rTR = this.state.remoteTicketReader;
+                rTR.push(remoteTicketReader);
+                this.setState({remoteTicketReader: rTR}); }}></RemoteTicketReader>;
         this.setState({ connect: remoteTicketReader });
     }
 
