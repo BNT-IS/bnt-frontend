@@ -182,7 +182,7 @@ export class TicketReader extends React.Component {
         if (this.icecandidates.length <= 1) { // Constrain the candidates to max. 2
             this.icecandidates.push(event.candidate);
         }
-        if (this.offer && !this.qrcode) {
+        if (this.answer && !this.qrcode) {
             setTimeout(this._generateAnswerCode, 100); // Set a delay to collect some more icecandidates
         }
     }
@@ -207,9 +207,9 @@ export class TicketReader extends React.Component {
 
     _receiveChannelHandler(event) {
         this.dataChannel = event.channel;
-        this.dataChannel.addEventListener('message', this.onMessage);
-        this.dataChannel.addEventListener('open', this.onDataChannelOpen);
-        this.dataChannel.addEventListener('close', this.onDataChannelClosed);
+        this.dataChannel.addEventListener('message', this._messageHandler);
+        this.dataChannel.addEventListener('open', this._dataChannelOpenHandler);
+        this.dataChannel.addEventListener('close', this._connectionChangeHandler);
     }
 
     _readTicketRemote() {
