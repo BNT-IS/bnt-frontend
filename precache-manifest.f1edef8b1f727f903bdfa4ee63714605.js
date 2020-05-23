@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "5ce8cf816d6108dad4bcabdae88a84fc",
+    "revision": "1e7cce0049f180c42b0b0048317b22db",
     "url": "/bnt-frontend/index.html"
   },
   {
-    "revision": "f3388d3898b1c8076253",
+    "revision": "da109b65cf224edc930b",
     "url": "/bnt-frontend/static/css/main.69b147b9.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/bnt-frontend/static/js/2.ab9f024a.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "f3388d3898b1c8076253",
-    "url": "/bnt-frontend/static/js/main.e28866fa.chunk.js"
+    "revision": "da109b65cf224edc930b",
+    "url": "/bnt-frontend/static/js/main.d6f6fa4e.chunk.js"
   },
   {
     "revision": "0e5402bf4c445b695f4e",
