@@ -21,6 +21,8 @@ class RemoteTicketReader extends React.Component {
         this._generateOfferCode = this._generateOfferCode.bind(this);
         this._abortHandler = this._abortHandler.bind(this);
         this._scanDoneHandler = this._scanDoneHandler.bind(this);
+        this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
+        this._connectionChangeHandler = this._connectionChangeHandler.bind(this);
         this._initConnection();
     }
 
@@ -53,6 +55,9 @@ class RemoteTicketReader extends React.Component {
 
     _connectionChangeHandler(event) {
         console.log(event);
+        if(event.target.connectionState === "disconnected"){
+            this.props.onClosed();
+        }
     }
 
     _dataChannelOpenHandler(event) {
@@ -62,7 +67,7 @@ class RemoteTicketReader extends React.Component {
     }
 
     _dataChannelClosedHandler(event) {
-        console.log(event);
+        console.log('Data Channel Closed', event);
     }
 
     _messageHandler(event) {
@@ -165,6 +170,7 @@ export class TicketReader extends React.Component {
         this._abortHandler = this._abortHandler.bind(this);
         this._scanDoneHandler = this._scanDoneHandler.bind(this);
         this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
+        this._connectionChangeHandler = this._connectionChangeHandler.bind(this);
         this._initConnection();
     }
 
@@ -190,6 +196,9 @@ export class TicketReader extends React.Component {
 
     _connectionChangeHandler(event) {
         console.log(event);
+        if(event.target.connectionState === "disconnected"){
+            this.props.onClosed();
+        }
     }
 
     _dataChannelOpenHandler(event) {
@@ -200,7 +209,6 @@ export class TicketReader extends React.Component {
 
     _dataChannelClosedHandler(event) {
         console.log(event);
-        this.props.onClosed();
     }
 
     _messageHandler(event) {
@@ -313,7 +321,18 @@ export class TicketReaderManager extends React.Component {
                 this.setState({ connect: null });
                 const rTR = this.state.remoteTicketReader;
                 rTR.push(remoteTicketReader);
-                this.setState({remoteTicketReader: rTR}); }}></RemoteTicketReader>;
+                this.setState({remoteTicketReader: rTR}); 
+                }}
+            onClosed={() => {
+                console.log("Attempting to remove closed ticketreader");
+                const rTR = this.state.remoteTicketReader;
+                console.log(rTR);
+                let id = rTR.indexOf(remoteTicketReader);
+                rTR.splice(id, 1);
+                console.log(rTR);
+                this.setState({remoteTicketReader: rTR});
+            }}
+            ></RemoteTicketReader>;
         this.setState({ connect: remoteTicketReader });
     }
 

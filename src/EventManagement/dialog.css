@@ -93,8 +93,8 @@
 }
 
 .ticket-reader-dialog-box {
-    width: 70vw;
-    max-width: 300px;
+    width: 320px;
+    justify-content: center;
     padding: 15px;
     border-radius: 10px;
     background-color: #ffffff;
