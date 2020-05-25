@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button } from 'grommet';
 import { Switch, Route } from "react-router-dom";
 import QRScanner from '../Utilities/QRScanner';
-import ObliteratePanel from './ObliteratePanel';
+import Dialog from '../Utilities/Dialog';
 
 import { TicketReader } from '../EventManagement/TicketReaderManager';
 
@@ -10,31 +10,24 @@ class EntranceManagement extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { connected: false };
         this.connectTicketReader = this.connectTicketReader.bind(this);
-        this._closedHandler = this._closedHandler.bind(this);
-        this._readyHandler = this._readyHandler.bind(this);
-        this._abortHandler = this._abortHandler.bind(this);
     }
 
     connectTicketReader() {
-        this.ticketReader = <TicketReader
-            onAbort={this._abortHandler}
-            onReady={this._readyHandler}
-            onClosed={this._closedHandler}></TicketReader>;
-        this.setState({ connectTR: this.ticketReader });
-    }
-
-    _abortHandler() {
-        this.setState({ connectTR: null });
-    }
-
-    _closedHandler() {
-        this.setState({ connected: false });
-    }
-
-    _readyHandler() {
-        this.setState({ connectTR: null, connected: true });
+        let ticketReader = new TicketReader();
+        ticketReader.onReady = () => {
+            this.ticketReader = this.state.connectTR;
+            this.setState({ connectTR: null, connected: true });
+        };
+        ticketReader.onDisconnected = () => {
+            this.ticketReader = null;
+            this.setState({ connected: false });
+        };
+        ticketReader.onAnswerCode = (url) => {
+            this.setState({ TRQRCode: url, connectTRStep: 1 });
+        };
+        this.setState({ connectTR: ticketReader, connectTRStep: 0 });
     }
 
     render() {
@@ -45,24 +38,40 @@ class EntranceManagement extends React.Component {
                         <p>Wenn Sie dieses Gerät als Ticket Leser verwenden möchten, müssen Sie es erst mit dem Event-Manager verbinden.</p>
                         <p>Bitte stellen Sie sicher, dass dieses Gerät mit dem selben lokalen Netzwerk, wie der Event-Manager verbunden ist.</p>
                         <Button onClick={this.connectTicketReader} label="Ticket Reader Aktivieren"></Button>
-                        {this.state.connectTR}
+                        {this.state.connectTR &&
+                            <Dialog title="Als Ticket Reader verbinden" onAbort={() => { this.setState({ connectTR: null }); }}>
+                                {this.state.connectTRStep === 0 &&
+                                    <div>
+                                        <div className="scanner">
+                                            <QRScanner onDone={this.state.connectTR.setMasterConfig} label="Scanvorgang starten"></QRScanner>
+                                        </div>
+                                        <div className="description">
+                                            <p>Bitte den Code des Initiators scannen</p>
+                                        </div>
+                                    </div>
+                                }
+                                {this.state.connectTRStep === 1 &&
+                                    <div>
+                                        <div className="qrcode">
+                                            {!this.state.TRQRCode && <div className="loader">Loading...</div>}
+                                            {this.state.TRQRCode && <img src={this.state.TRQRCode} width="100%" alt="Ein QR-Code sollte hier angezeigt werden." />}
+                                        </div>
+                                        <div className="description">
+                                            <p>Bitte nun mit dem Initiator Gerät scannen</p>
+                                        </div>
+                                    </div>
+                                }
+                            </Dialog>
+                        }
                     </Box>
                 }
                 {this.state.connected &&
                     <Switch>
-                        <Route path="/entrance/test">
-                            {!this.state.account && <QRScanner contentType="ETHEREUM_ADDRESS" onDone={this.scanDoneHandler}></QRScanner>}
-                            {this.state.account &&
-                                <ObliteratePanel
-                                    account={this.state.account}
-                                    onStartObliterate={this.obliterateTokens}>
-                                </ObliteratePanel>}
-                        </Route>
                         <Route path="/entrance/">
                             <p>Wunderbar, Sie sind verbunden...</p>
                             <p>In Zukunft sollten hier Funktionen zum Ticket-Scan stehen...</p>
-                            <Button label="Beispiel Funktion 1"></Button>
-                            <Button label="Beispiel Funktion 2"></Button>
+                            <Button label="Lese Ticket" onClick={() => { this.ticketReader.readTicketRemote(123) }}></Button>
+                            <Button label="Entwerte Ticket" onClick={() => { this.ticketReader.obliterateTicketRemote(123, "signature") }}></Button>
                             <Button label="Beispiel Funktion 3"></Button>
                         </Route>
                     </Switch>

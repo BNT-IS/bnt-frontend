@@ -20,6 +20,7 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
     "styled-components": "^5.1.0",
+    "typescript": "^3.9.3",
     "walletlink": "^2.0.2",
     "web3": "^1.2.7",
     "webrtc-adapter": "^7.6.0"

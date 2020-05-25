@@ -1,28 +1,24 @@
 import React from 'react';
 import { Box, Button } from 'grommet';
 import QRScanner from '../Utilities/QRScanner';
+import Dialog from '../Utilities/Dialog';
 
 // eslint-disable-next-line
 import adapter from 'webrtc-adapter';
 import QRCode from 'qrcode';
 
-import './dialog.css';
-
 /**
  * Represents an object holder for diverse connectio objects to the ticket reader.
  */
-class RemoteTicketReader extends React.Component {
+class RemoteTicketReader {
 
-    constructor(props) {
-        super(props);
-        this.state = { step: 0 };
+    constructor() {
         this._iceCandidatesHandler = this._iceCandidatesHandler.bind(this);
         this._dataChannelOpenHandler = this._dataChannelOpenHandler.bind(this);
         this._generateOfferCode = this._generateOfferCode.bind(this);
-        this._abortHandler = this._abortHandler.bind(this);
-        this._scanDoneHandler = this._scanDoneHandler.bind(this);
         this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
         this._connectionChangeHandler = this._connectionChangeHandler.bind(this);
+        this.setTicketReaderConfig = this.setTicketReaderConfig.bind(this);
         this._initConnection();
     }
 
@@ -54,32 +50,24 @@ class RemoteTicketReader extends React.Component {
     }
 
     _connectionChangeHandler(event) {
-        console.log(event);
-        if(event.target.connectionState === "disconnected"){
-            this.props.onClosed();
+        console.debug(event);
+        if (event.target.iceConnectionState === "disconnected") {
+            this.onDisconnected();
         }
     }
 
     _dataChannelOpenHandler(event) {
-        console.log(event);
-        this.props.onReady();
+        console.debug(event);
+        this.onReady();
         this.dataChannel.send('Hallo Client!');
     }
 
     _dataChannelClosedHandler(event) {
-        console.log('Data Channel Closed', event);
+        console.debug('Data Channel Closed', event);
     }
 
     _messageHandler(event) {
         alert(event.data);
-    }
-
-    _readTicketRemote() {
-
-    }
-
-    _obliterateTicketRemote() {
-
     }
 
     async _createOffer() {
@@ -92,11 +80,11 @@ class RemoteTicketReader extends React.Component {
 
         // Create QR Code
         let url = await QRCode.toDataURL(JSON.stringify(data)).catch(console.error);
-        this.setState({ qrcode: url });
+        this.onOfferCode(url);
     }
 
-    async _scanDoneHandler(data) {
-        let obj = JSON.parse(data);
+    async setTicketReaderConfig(config) {
+        let obj = JSON.parse(config);
 
         // Setting remote description
         await this.localPeerConnection.setRemoteDescription(new RTCSessionDescription(obj.answer)).catch(this.handleError);
@@ -107,50 +95,6 @@ class RemoteTicketReader extends React.Component {
         });
     }
 
-    _abortHandler() {
-        this.props.onAbort();
-    }
-
-    render() {
-        return (
-            <div className="ticket-reader-dialog">
-                <div className="ticket-reader-background-box"></div>
-                <div className="ticket-reader-dialog-center">
-                    <div className="ticket-reader-dialog-box">
-                        <div className="ticket-reader-db-header">
-                            <h1>Remote Ticket Reader Hinzufügen</h1>
-                            <Button className="abort" onClick={this._abortHandler}>X</Button>
-                        </div>
-                        {this.state.step === 0 &&
-                            <div>
-                                <div className="ticket-reader-qrcode">
-                                    {!this.state.qrcode && <div className="loader">Loading...</div>}
-                                    {this.state.qrcode && <img src={this.state.qrcode} alt="Ein QR-Code sollte hier angezeigt werden." />}
-                                </div>
-                                <div className="ticket-reader-description">
-                                    <p>Bitte mit dem Zielgerät scannen</p>
-                                </div>
-                                <div className="ticket-reader-action">
-                                    <Button onClick={() => { this.setState({ step: 1 }); }} label="Weiter"></Button>
-                                </div>
-                            </div>
-                        }
-                        {this.state.step === 1 &&
-                            <div>
-                                <div className="ticket-reader-scanner">
-                                    <QRScanner onDone={this._scanDoneHandler} label="Scanvorgang starten"></QRScanner>
-                                </div>
-                                <div className="ticket-reader-description">
-                                    <p>Bitte nun den Code des Zielgeräts scannen</p>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
 }
 
 /**
@@ -158,17 +102,15 @@ class RemoteTicketReader extends React.Component {
  * Use this class to connect to a TicketReaderManager.
  */
 // eslint-disable-next-line
-export class TicketReader extends React.Component {
+export class TicketReader {
 
-    constructor(props) {
-        super(props);
-        this.state = { step: 0 };
+    constructor() {
+        this.requestMap = new Map();
         this._iceCandidatesHandler = this._iceCandidatesHandler.bind(this);
         this._dataChannelOpenHandler = this._dataChannelOpenHandler.bind(this);
         this._receiveChannelHandler = this._receiveChannelHandler.bind(this);
         this._generateAnswerCode = this._generateAnswerCode.bind(this);
-        this._abortHandler = this._abortHandler.bind(this);
-        this._scanDoneHandler = this._scanDoneHandler.bind(this);
+        this.setMasterConfig = this.setMasterConfig.bind(this);
         this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
         this._connectionChangeHandler = this._connectionChangeHandler.bind(this);
         this._initConnection();
@@ -195,24 +137,24 @@ export class TicketReader extends React.Component {
     }
 
     _connectionChangeHandler(event) {
-        console.log(event);
-        if(event.target.connectionState === "disconnected"){
-            this.props.onClosed();
+        console.debug(event);
+        if (event.target.iceConnectionState === "disconnected") {
+            this.onDisconnected();
         }
     }
 
     _dataChannelOpenHandler(event) {
-        console.log(event);
-        this.props.onReady();
+        console.debug(event);
+        this.onReady();
         this.dataChannel.send('Hallo Master!');
     }
 
     _dataChannelClosedHandler(event) {
-        console.log(event);
+        console.debug(event);
     }
 
     _messageHandler(event) {
-        alert(event.data);
+        console.debug(event.data);
     }
 
     _receiveChannelHandler(event) {
@@ -222,12 +164,48 @@ export class TicketReader extends React.Component {
         this.dataChannel.addEventListener('close', this._dataChannelClosedHandler);
     }
 
-    _readTicketRemote() {
-
+    _createUUID() {
+        var dt = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (dt + Math.random() * 16) % 16 | 0;
+            dt = Math.floor(dt / 16);
+            return (c === 'x' ? r : (r & 0x3 & 0x8)).toString(16);
+        });
+        return uuid;
     }
 
-    _obliterateTicketRemote() {
+    readTicketRemote(identifier) {
+        return new Promise((resolve, reject) => {
+            let reqId = this._createUUID();
+            this.requestMap.set(reqId, { resolve: resolve, reject: reject });
+            const msg = {
+                reqId: reqId,
+                method: "getTicket",
+                params: [identifier]
+            }
+            try{
+                this.dataChannel.send(JSON.stringify(msg));
+            }catch(e){
+                reject(e);
+            }
+        });
+    }
 
+    obliterateTicketRemote(identifier, signature) {
+        return new Promise((resolve, reject) => {
+            let reqId = this._createUUID();
+            this.requestMap.set(reqId, { resolve: resolve, reject: reject });
+            const msg = {
+                reqId: reqId,
+                method: "obliterateTicket",
+                params: [identifier, signature]
+            }
+            try{
+                this.dataChannel.send(JSON.stringify(msg));
+            }catch(e){
+                reject(e);
+            }
+        });
     }
 
     async _generateAnswerCode() {
@@ -235,11 +213,11 @@ export class TicketReader extends React.Component {
 
         // Create QR Code
         let url = await QRCode.toDataURL(JSON.stringify(data)).catch(console.error);
-        this.setState({ qrcode: url });
+        this.onAnswerCode(url);
     }
 
-    async _scanDoneHandler(data) {
-        let obj = JSON.parse(data);
+    async setMasterConfig(config) {
+        let obj = JSON.parse(config);
 
         // Setting remote description
         await this.localPeerConnection.setRemoteDescription(new RTCSessionDescription(obj.offer)).catch(console.error);
@@ -253,49 +231,6 @@ export class TicketReader extends React.Component {
         this.answer = await this.localPeerConnection.createAnswer().catch(console.error);
 
         await this.localPeerConnection.setLocalDescription(this.answer).catch(console.error);
-
-        this.setState({ step: 1 });
-    }
-
-    _abortHandler() {
-        this.props.onAbort();
-    }
-
-    render() {
-        return (
-            <div className="ticket-reader-dialog">
-                <div className="ticket-reader-background-box"></div>
-                <div className="ticket-reader-dialog-center">
-                    <div className="ticket-reader-dialog-box">
-                        <div className="ticket-reader-db-header">
-                            <h1>Als Ticket Reader verbinden</h1>
-                            <Button className="abort" onClick={this._abortHandler}>X</Button>
-                        </div>
-                        {this.state.step === 0 &&
-                            <div>
-                                <div className="ticket-reader-scanner">
-                                    <QRScanner onDone={this._scanDoneHandler} label="Scanvorgang starten"></QRScanner>
-                                </div>
-                                <div className="ticket-reader-description">
-                                    <p>Bitte den Code des Initiators scannen</p>
-                                </div>
-                            </div>
-                        }
-                        {this.state.step === 1 &&
-                            <div>
-                                <div className="ticket-reader-qrcode">
-                                    {!this.state.qrcode && <div className="loader">Loading...</div>}
-                                    {this.state.qrcode && <img src={this.state.qrcode} alt="Ein QR-Code sollte hier angezeigt werden." />}
-                                </div>
-                                <div className="ticket-reader-description">
-                                    <p>Bitte nun mit dem Initiator Gerät scannen</p>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        );
     }
 
 }
@@ -307,7 +242,7 @@ export class TicketReaderManager extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { remoteTicketReader: [] };
+        this.state = { RTRList: [] };
         this.connectRemoteTicketReader = this.connectRemoteTicketReader.bind(this);
     }
 
@@ -315,25 +250,24 @@ export class TicketReaderManager extends React.Component {
      * Initiates the RTC Peer connection to an instance of TicketReader on another device.
      */
     connectRemoteTicketReader() {
-        let remoteTicketReader = <RemoteTicketReader
-            onAbort={() => { this.setState({ connect: null }); }}
-            onReady={() => { 
-                this.setState({ connect: null });
-                const rTR = this.state.remoteTicketReader;
-                rTR.push(remoteTicketReader);
-                this.setState({remoteTicketReader: rTR}); 
-                }}
-            onClosed={() => {
-                console.log("Attempting to remove closed ticketreader");
-                const rTR = this.state.remoteTicketReader;
-                console.log(rTR);
-                let id = rTR.indexOf(remoteTicketReader);
-                rTR.splice(id, 1);
-                console.log(rTR);
-                this.setState({remoteTicketReader: rTR});
-            }}
-            ></RemoteTicketReader>;
-        this.setState({ connect: remoteTicketReader });
+        let remoteTicketReader = new RemoteTicketReader();
+        remoteTicketReader.onReady = () => {
+            this.setState({ connectRTR: null });
+            let rTR = this.state.RTRList;
+            rTR.push(remoteTicketReader);
+            this.setState({ RTRList: rTR });
+        };
+        remoteTicketReader.onDisconnected = () => {
+            console.debug("Attempting to remove closed ticketreader");
+            let rTR = this.state.RTRList;
+            let idx = rTR.indexOf(remoteTicketReader);
+            rTR.splice(idx, 1);
+            this.setState({ RTRList: rTR });
+        }
+        remoteTicketReader.onOfferCode = (url) => {
+            this.setState({ RTRQRCode: url });
+        }
+        this.setState({ connectRTR: remoteTicketReader, addRTRStep: 0 });
     }
 
     disconnectRemoteTicketReader(remoteTicketReader) {
@@ -348,10 +282,37 @@ export class TicketReaderManager extends React.Component {
         return (
             <Box className="TicketReaderManager" pad="medium">
                 <p>
-                    Derzeit sind {this.state.remoteTicketReader.length} Ticket Leser verbunden.
+                    Derzeit sind {this.state.RTRList.length} Ticket Leser verbunden.
                 </p>
                 <Button onClick={this.connectRemoteTicketReader} label="Ticket Leser Hinzufügen"></Button>
-                {this.state.connect}
+                {this.state.connectRTR &&
+                    <Dialog title="Remote Ticket Reader Hinzufügen" onAbort={() => { this.setState({ connectRTR: null }); }}>
+                        {this.state.addRTRStep === 0 &&
+                            <div>
+                                <div className="ticket-reader-qrcode">
+                                    {!this.state.RTRQRCode && <div className="loader">Loading...</div>}
+                                    {this.state.RTRQRCode && <img src={this.state.RTRQRCode} width="100%" alt="Ein QR-Code sollte hier angezeigt werden." />}
+                                </div>
+                                <div className="ticket-reader-description">
+                                    <p>Bitte mit dem Zielgerät scannen</p>
+                                </div>
+                                <div className="ticket-reader-action">
+                                    <Button onClick={() => { this.setState({ addRTRStep: 1 }); }} label="Weiter"></Button>
+                                </div>
+                            </div>
+                        }
+                        {this.state.addRTRStep === 1 &&
+                            <div>
+                                <div className="ticket-reader-scanner">
+                                    <QRScanner onDone={this.state.connectRTR.setTicketReaderConfig} label="Scanvorgang starten"></QRScanner>
+                                </div>
+                                <div className="ticket-reader-description">
+                                    <p>Bitte nun den Code des Zielgeräts scannen</p>
+                                </div>
+                            </div>
+                        }
+                    </Dialog>
+                }
             </Box>
         );
     }
