@@ -15,15 +15,19 @@ class EventManagement extends React.Component {
         return (
             <Box className="EventManagement">
                 <ul>
-                    <li><Link to="/eventmgmt/trm">Manage Remote Ticket Readers</Link></li>
-                    <li><Link to="/eventmgmt">Show Entrance Dashboard</Link></li>
+                    <li><Link to="/eventmgmt/rtrm">Manage Remote Ticket Readers</Link></li>
+                    <li><Link to="/eventmgmt/entrancedb">Show Entrance Dashboard</Link></li>
+                    <li><Link to="/eventmgmt/ticketshop">Manage Ticketshop</Link></li>
                 </ul>
                 <Switch>
-                    <Route path="/eventmgmt/trm">
+                    <Route path="/eventmgmt/rtrm">
                         <TicketReaderManager></TicketReaderManager>
                     </Route>
-                    <Route path="/eventmgmt">
+                    <Route path="/eventmgmt/entrancedb">
                         <IndexedDBExample></IndexedDBExample>
+                    </Route>
+                    <Route path="/eventmgmt/ticketshop">
+                        <Box pad="medium">Hier müsste dann sowas wie ein Ticketshop Management Dashboard hin...</Box>
                     </Route>
                 </Switch>
             </Box>
