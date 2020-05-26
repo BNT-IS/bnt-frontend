@@ -17,11 +17,36 @@ class RemoteTicketReader {
         this.setTicketReaderConfig = this.setTicketReaderConfig.bind(this);
 
         // Initializing empty event listeners to prevent "undefined" errors
+
+        /**
+         * @type {Function} - This eventlistener is called when the 
+         * ticket reader is disconnected. Please implement externally.
+         */
         this.onDisconnected = function () { };
+
+        /**
+         * @type {Function} - This eventlistener is called when the 
+         * ticket reader datachannel is ready to use. Please implement externally.
+         */
         this.onReady = function () { };
-        this.onGetTicket = function () { };
-        this.onObliterateTicket = function () { };
+
+        /**
+         * @type {Function} - This eventlistener is called when the QR-Code 
+         * for the connection offer is generated and accessible via url. Please implement externally.
+         */
         this.onOfferCode = function () { };
+
+        /**
+         * @type {Function} - This eventlistener should return the ticket as JS Object.
+         * Please implement externally.
+         */
+        this.onGetTicket = function () { };
+
+        /**
+         * @type {Function} - This eventlistener should return true or false 
+         * depending if successfully obliterated or not. Please implement externally.
+         */
+        this.onObliterateTicket = function () { };
 
         // Initializing the RTC connection
         this._initConnection();
