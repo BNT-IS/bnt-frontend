@@ -1,9 +1,9 @@
 import React from 'react';
 import { Menu, Header, Box } from 'grommet';
 import { Switch, Route, Link } from "react-router-dom";
-import WalletSetup from './WalletSetup';
-import UserMainMenu from './UserMainMenu';
-import TicketOverview from './TicketOverview';
+import WalletSetup from './Components/WalletSetup';
+import UserMainMenu from './Components/UserMainMenu';
+import TicketOverview from './Components/TicketOverview';
 
 class Guest extends React.Component {
 

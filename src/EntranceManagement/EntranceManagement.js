@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Button } from 'grommet';
 import { Switch, Route } from "react-router-dom";
-import QRScanner from '../Utilities/QRScanner';
-import Dialog from '../Utilities/Dialog';
+import QRScanner from '../Utilities/Components/QRScanner';
+import Dialog from '../Utilities/Components/Dialog';
 
-import { TicketReader } from '../EventManagement/TicketReaderManager';
+import TicketReader from '../EventManagement/Classes/TicketReader';
 
 class EntranceManagement extends React.Component {
 
