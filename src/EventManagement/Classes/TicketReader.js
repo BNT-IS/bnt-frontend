@@ -101,6 +101,7 @@ class TicketReader {
             this.requestMap.set(reqId, { resolve: resolve, reject: reject });
             const msg = {
                 reqId: reqId,
+                context: "ticketMirror",
                 method: "obliterateTicket",
                 params: [identifier, signature]
             }
