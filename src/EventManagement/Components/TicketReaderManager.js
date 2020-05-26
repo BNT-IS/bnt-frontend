@@ -37,6 +37,12 @@ class TicketReaderManager extends React.Component {
         remoteTicketReader.onOfferCode = (url) => {
             this.setState({ RTRQRCode: url });
         }
+        remoteTicketReader.onGetTicket = (params) => {
+            // TODO: Request localmirror 
+        }
+        remoteTicketReader.onObliterateTicket = (params) => {
+             // TODO: Request localmirror 
+        }
         this.setState({ connectRTR: remoteTicketReader, addRTRStep: 0 });
     }
 
