@@ -8,12 +8,22 @@ import QRCode from 'qrcode';
 class RemoteTicketReader {
 
     constructor() {
+        // Binding "this" to the event handlers
         this._iceCandidatesHandler = this._iceCandidatesHandler.bind(this);
         this._dataChannelOpenHandler = this._dataChannelOpenHandler.bind(this);
         this._generateOfferCode = this._generateOfferCode.bind(this);
         this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
         this._connectionChangeHandler = this._connectionChangeHandler.bind(this);
         this.setTicketReaderConfig = this.setTicketReaderConfig.bind(this);
+
+        // Initializing empty event listeners to prevent "undefined" errors
+        this.onDisconnected = function () { };
+        this.onReady = function () { };
+        this.onGetTicket = function () { };
+        this.onObliterateTicket = function () { };
+        this.onOfferCode = function () { };
+
+        // Initializing the RTC connection
         this._initConnection();
     }
 
@@ -63,6 +73,35 @@ class RemoteTicketReader {
 
     _messageHandler(event) {
         alert(event.data);
+        var msg;
+        try {
+            msg = JSON.parse(event.data);
+        } catch (e) {
+            console.error(e);
+            console.debug("Message was:", event.data);
+            return;
+        }
+
+        /** Messages look like this...
+         * msg = {
+                reqId: Unique String,
+                context: String,
+                method: String,
+                params: [Any]
+            }
+         */
+
+        switch (msg.context) {
+            case "ticketMirror":
+                if (msg.method === "getTicket") {
+                    this.onGetTicket(msg.params);
+                } else if (msg.method === "obliterateTicket") {
+                    this.onObliterateTicket(msg.params);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     async _createOffer() {
