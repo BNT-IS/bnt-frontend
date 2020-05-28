@@ -12,7 +12,7 @@ class TicketReaderManager extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { RTRList: [] };
+        this.state = { };
         this.connectRemoteTicketReader = this.connectRemoteTicketReader.bind(this);
     }
 
@@ -23,17 +23,8 @@ class TicketReaderManager extends React.Component {
         let remoteTicketReader = new RemoteTicketReader();
         remoteTicketReader.onReady = () => {
             this.setState({ connectRTR: null });
-            let rTR = this.state.RTRList;
-            rTR.push(remoteTicketReader);
-            this.setState({ RTRList: rTR });
+            this.props.onRTR(remoteTicketReader);
         };
-        remoteTicketReader.onDisconnected = () => {
-            console.debug("Attempting to remove closed ticketreader");
-            let rTR = this.state.RTRList;
-            let idx = rTR.indexOf(remoteTicketReader);
-            rTR.splice(idx, 1);
-            this.setState({ RTRList: rTR });
-        }
         remoteTicketReader.onOfferCode = (url) => {
             this.setState({ RTRQRCode: url });
         }
@@ -60,7 +51,7 @@ class TicketReaderManager extends React.Component {
         return (
             <Box className="TicketReaderManager" pad="medium">
                 <p>
-                    Derzeit sind {this.state.RTRList.length} Ticket Leser verbunden.
+                    Derzeit sind {this.props.RTRList.length} Ticket Leser verbunden.
                 </p>
                 <Button onClick={this.connectRemoteTicketReader} label="Ticket Leser Hinzufügen"></Button>
                 {this.state.connectRTR &&
