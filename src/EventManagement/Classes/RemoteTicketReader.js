@@ -15,6 +15,7 @@ class RemoteTicketReader {
         this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
         this._connectionChangeHandler = this._connectionChangeHandler.bind(this);
         this.setTicketReaderConfig = this.setTicketReaderConfig.bind(this);
+        this._messageHandler = this._messageHandler.bind(this);
 
         // Initializing empty event listeners to prevent "undefined" errors
 
