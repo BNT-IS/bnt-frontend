@@ -6,38 +6,61 @@ export class LocalTicketMirror {
     constructor() {
         this._createDB = this._createDB.bind(this);
         this.dumpTicketMirror = this.dumpTicketMirror.bind(this);
+        this.getTicketList = this.getTicketList.bind(this);
         if (!window.indexedDB) {
             throw Error("Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.");
         }
+        this.waitingForIDBReadyQueue = [];
         this._initDB();
     }
 
     _initDB() {
+        console.debug('Initializing IDB Connection');
         var request = window.indexedDB.open("TicketMirror", 1);
 
         request.addEventListener('upgradeneeded', this._createDB);
         request.addEventListener('success', (ev) => {
+            console.debug('IDB Connection established');
             this.db = ev.target.result;
+            this.waitingForIDBReadyQueue.forEach((resolve) => {
+                resolve(this.db);
+            });
         });
         request.addEventListener('error', (ev) => {
             console.error("Database error: " + ev.target.errorCode);
         });
     }
 
+    /**
+     * Eventhandler for cases where the IDB has to be created / initialized
+     * @param {Event} event 
+     */
     _createDB(event) {
         this.db = event.target.result;
 
         // Create an objectStore for this database
-        var objectStore = this.db.createObjectStore("tickets", { keyPath: "identifier" });
-        objectStore.createIndex("isValid", "isValid", { unique: false });
-        objectStore.createIndex("isUsed", "isUsed", { unique: false });
-
-        objectStore.transaction.addEventListener('complete', this.dumpTicketMirror);
+        this.db.createObjectStore("tickets", { keyPath: "identifier" });
     }
 
-    dumpTicketMirror() {
+    /**
+     * Getter for the IDB Connection.
+     * @returns Returns a Promis that is resolved with a IDBConnection when it is ready.
+     */
+    _getIDB() {
+        return new Promise((resolve) => {
+            if (this.db) {
+                resolve(this.db);
+            } else {
+                this.waitingForIDBReadyQueue.push(resolve);
+            }
+        });
+    }
 
-        var objectStore = this.db.transaction("tickets", "readwrite").objectStore("tickets");
+    async dumpTicketMirror() {
+        var db = await this._getIDB().catch(console.error);
+        if (!db) return;
+
+        var objectStore = db.transaction("tickets", "readwrite").objectStore("tickets");
 
         // TODO: Fetch real data from the blockchain when online
         const dummyData = [{
@@ -74,13 +97,33 @@ export class LocalTicketMirror {
     }
 
     /**
+     * For frontend purposes to get all tickets out of the db.
+     * @returns {Ticket[]}
+     */
+    getTicketList() {
+        return new Promise(async (resolve, reject) => {
+            var db = await this._getIDB().catch(console.error);
+            if (!db) return reject();
+            var objectStore = db.transaction("tickets", "readonly").objectStore("tickets");
+            var request = objectStore.getAll();
+            request.onerror = reject;
+            request.onsuccess = function (event) {
+                var tickets = event.target.result;
+                return resolve(tickets);
+            };
+        });
+    }
+
+    /**
      * Fetches a ticket by its identifier
      * @param {String} identifier - Unique identifier of the ticket
      * @returns {Ticket} Returns a promise that resolves as the ticket
      */
     getTicket(identifier) {
-        return new Promise((resolve, reject) => {
-            var objectStore = this.db.transaction("tickets", "readonly").objectStore("tickets");
+        return new Promise(async (resolve, reject) => {
+            var db = await this._getIDB().catch(console.error);
+            if (!db) return reject();
+            var objectStore = db.transaction("tickets", "readonly").objectStore("tickets");
             var request = objectStore.get(identifier);
             request.onerror = reject;
             request.onsuccess = function (event) {
@@ -99,8 +142,10 @@ export class LocalTicketMirror {
      * @returns {Promise} Returns a promise that is resolved with null or rejected with an error message
      */
     obliterateTicket(identifier, signature) {
-        return new Promise((resolve, reject) => {
-            var objectStore = this.db.transaction("tickets", "readwrite").objectStore("tickets");
+        return new Promise(async (resolve, reject) => {
+            var db = await this._getIDB().catch(console.error);
+            if (!db) return reject();
+            var objectStore = db.transaction("tickets", "readwrite").objectStore("tickets");
             var request = objectStore.get(identifier);
             request.onerror = reject;
             request.onsuccess = (event) => {
