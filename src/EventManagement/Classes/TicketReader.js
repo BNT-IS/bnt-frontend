@@ -59,6 +59,7 @@ class TicketReader {
 
     _messageHandler(event) {
         console.debug(event.data);
+        alert(event.data);
     }
 
     _receiveChannelHandler(event) {
@@ -83,7 +84,9 @@ class TicketReader {
             let reqId = this._createUUID();
             this.requestMap.set(reqId, { resolve: resolve, reject: reject });
             const msg = {
+                type: "Request",
                 reqId: reqId,
+                context: "ticketMirror",
                 method: "getTicket",
                 params: [identifier]
             }
@@ -100,6 +103,7 @@ class TicketReader {
             let reqId = this._createUUID();
             this.requestMap.set(reqId, { resolve: resolve, reject: reject });
             const msg = {
+                type: "Request",
                 reqId: reqId,
                 context: "ticketMirror",
                 method: "obliterateTicket",
