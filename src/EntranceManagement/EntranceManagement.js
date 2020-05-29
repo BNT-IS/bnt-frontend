@@ -70,7 +70,7 @@ class EntranceManagement extends React.Component {
                         <Route path="/entrance/">
                             <p>Wunderbar, Sie sind verbunden...</p>
                             <p>In Zukunft sollten hier Funktionen zum Ticket-Scan stehen...</p>
-                            <Button label="Lese Ticket" onClick={() => { this.ticketReader.readTicketRemote(123) }}></Button>
+                            <Button label="Lese ein Beispiel Ticket" onClick={() => { this.ticketReader.readTicketRemote("2537f4c1-2bfa-416f-9098-9b61fe4bb59d") }}></Button>
                             <Button label="Entwerte Ticket" onClick={() => { this.ticketReader.obliterateTicketRemote(123, "signature") }}></Button>
                             <Button label="Beispiel Funktion 3"></Button>
                         </Route>
