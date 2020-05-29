@@ -20,34 +20,56 @@ class RemoteTicketReader {
         // Initializing empty event listeners to prevent "undefined" errors
 
         /**
-         * @type {Function} - This eventlistener is called when the 
+         * This eventlistener is called when the 
          * ticket reader is disconnected. Please implement externally.
          */
         this.onDisconnected = function () { };
 
         /**
-         * @type {Function} - This eventlistener is called when the 
+         * This eventlistener is called when the 
          * ticket reader datachannel is ready to use. Please implement externally.
          */
         this.onReady = function () { };
 
         /**
-         * @type {Function} - This eventlistener is called when the QR-Code 
+         * This eventlistener is called when the QR-Code 
          * for the connection offer is generated and accessible via url. Please implement externally.
+         * @param {String} url - The URL of the QR-Code.
          */
-        this.onOfferCode = function () { };
+        this.onOfferCode = function (url) { };
 
         /**
-         * @type {Function} - This eventlistener should return the ticket as JS Object.
+         * This callback is for onGetTicket eventlistener.
+         * @callback onGetTicketCallback
+         * @param {Object} ticket - The ticket as JS Object.
+         * @param {String} [errorMessage] - In case of ticket = null an error a message should be provided.
+         */
+
+        /**
+         * This eventlistener requires an identifier and a callback 
+         * that needs to be called with the ticket as JS Object.
          * Please implement externally.
+         * @param {String} identifier - Identifier of the ticket.
+         * @param {onGetTicketCallback} callback - Callback that should be called with a ticket Object.
          */
-        this.onGetTicket = function () { };
+        this.onGetTicket = function (identifier, callback) { };
 
         /**
-         * @type {Function} - This eventlistener should return true or false 
-         * depending if successfully obliterated or not. Please implement externally.
+         * This callback is for onObliterateTicket eventlistener.
+         * @callback onObliterateTicketCallback
+         * @param {Boolean} success - Whether the obliterating was successful or not.
+         * @param {String} [errorMessage] - In case of success = false, an error message should be provided.
          */
-        this.onObliterateTicket = function () { };
+
+        /**
+         * This eventlistener requires identifier and signature and a callback 
+         * that needs to be called with true or false depending if successfully obliterated or not. 
+         * Please implement externally.
+         * @param {String} identifier - Identifier of the ticket.
+         * @param {String} signature - Signature used for generating the identifier of the ticket.
+         * @param {onObliterateTicketCallback} callback - Callback that should be called with a ticket Object.
+         */
+        this.onObliterateTicket = function (identifier, signature, callback) { };
 
         // Initializing the RTC connection
         this._initConnection();
@@ -98,7 +120,7 @@ class RemoteTicketReader {
     }
 
     _messageHandler(event) {
-        alert(event.data);
+        console.debug("Message received:", event.data);
         var msg;
         try {
             msg = JSON.parse(event.data);
@@ -110,6 +132,7 @@ class RemoteTicketReader {
 
         /** Messages look like this...
          * msg = {
+                type: "Request",     
                 reqId: Unique String,
                 context: String,
                 method: String,
@@ -117,17 +140,56 @@ class RemoteTicketReader {
             }
          */
 
+        /** Answer Messages should look like this...
+        * msg = {
+               type: "Answer",
+               reqId: Unique String,
+               result: Any
+           }
+        */
+
+        // Switching between different request types and contexts
         switch (msg.context) {
             case "ticketMirror":
                 if (msg.method === "getTicket") {
-                    this.onGetTicket(msg.params);
+                    this.onGetTicket(msg.params[0], (ticket, errorMsg) => {
+                        let answerMsg = {
+                            reqId: msg.reqId,
+                            result: { ticket: ticket, errorMessage: errorMsg}
+                        }
+                        try{
+                            this.dataChannel.send(JSON.stringify(answerMsg));
+                        }catch(error){
+                            console.error(error);
+                        }
+                    });
                 } else if (msg.method === "obliterateTicket") {
-                    this.onObliterateTicket(msg.params);
+                    this.onObliterateTicket(msg.params[0], msg.params[1], (success, errorMsg) => {
+                        let answerMsg = {
+                            reqId: msg.reqId,
+                            result: { success: success, errorMessage: errorMsg }
+                        }
+                        try{
+                            this.dataChannel.send(JSON.stringify(answerMsg));
+                        }catch(error){
+                            console.error(error);
+                        }
+                    });
                 }
                 break;
             default:
                 break;
         }
+    }
+
+    _createUUID() {
+        var dt = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (dt + Math.random() * 16) % 16 | 0;
+            dt = Math.floor(dt / 16);
+            return (c === 'x' ? r : (r & 0x3 & 0x8)).toString(16);
+        });
+        return uuid;
     }
 
     async _createOffer() {
