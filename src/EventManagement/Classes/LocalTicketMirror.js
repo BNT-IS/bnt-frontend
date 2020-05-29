@@ -1,7 +1,7 @@
 /**
  * Class for basic operations and preparations for the local caching of ticket data
  */
-export class LocalTicketMirror {
+class LocalTicketMirror {
 
     constructor() {
         this._createDB = this._createDB.bind(this);
@@ -170,3 +170,5 @@ export class LocalTicketMirror {
     }
 
 }
+
+export default LocalTicketMirror;
