@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import adapter from 'webrtc-adapter';
 import QRCode from 'qrcode';
+import pako from 'pako';
 
 /**
  * Represents an object holder for diverse connectio objects to the ticket reader.
@@ -94,11 +95,9 @@ class RemoteTicketReader {
     }
 
     _iceCandidatesHandler(event) {
-        if (this.icecandidates.length <= 1) { // Constrain the candidates to max. 2
-            this.icecandidates.push(event.candidate);
-        }
+        this.icecandidates.push(event.candidate);
         if (this.offer && !this.qrcode) {
-            setTimeout(this._generateOfferCode, 100); // Set a delay to collect some more icecandidates
+            setTimeout(this._generateOfferCode, 200); // Set a delay to collect some more icecandidates
         }
     }
 
@@ -200,8 +199,12 @@ class RemoteTicketReader {
     async _generateOfferCode() {
         let data = { offer: this.offer, candidates: this.icecandidates };
 
+        // Compress data
+        let binaryString = pako.deflate(JSON.stringify(data), { level: 9, to: "string" });
+
         // Create QR Code
-        let url = await QRCode.toDataURL(JSON.stringify(data)).catch(console.error);
+        let url = await QRCode.toDataURL(binaryString).catch(console.error);
+        this.qrcode = url;
         this.onOfferCode(url);
     }
 

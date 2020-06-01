@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import adapter from 'webrtc-adapter';
 import QRCode from 'qrcode';
+import pako from 'pako';
 
 /**
  * Represents a ticket reader on a remote device.
@@ -32,11 +33,9 @@ class TicketReader {
     }
 
     _iceCandidatesHandler(event) {
-        if (this.icecandidates.length <= 1) { // Constrain the candidates to max. 2
-            this.icecandidates.push(event.candidate);
-        }
+        this.icecandidates.push(event.candidate);
         if (this.answer && !this.qrcode) {
-            setTimeout(this._generateAnswerCode, 100); // Set a delay to collect some more icecandidates
+            setTimeout(this._generateAnswerCode, 200); // Set a delay to collect some more icecandidates
         }
     }
 
@@ -120,13 +119,17 @@ class TicketReader {
     async _generateAnswerCode() {
         let data = { answer: this.answer, candidates: this.icecandidates };
 
+        // Compress data
+        let binaryString = pako.deflate(JSON.stringify(data), { level: 9, to: "string" });
+
         // Create QR Code
-        let url = await QRCode.toDataURL(JSON.stringify(data)).catch(console.error);
+        let url = await QRCode.toDataURL(binaryString).catch(console.error);
+        this.qrcode = url;
         this.onAnswerCode(url);
     }
 
-    async setMasterConfig(config) {
-        let obj = JSON.parse(config);
+    async setMasterConfig(binaryString) {
+        let obj = JSON.parse(pako.inflate(binaryString, { to: 'string' }));
 
         // Setting remote description
         await this.localPeerConnection.setRemoteDescription(new RTCSessionDescription(obj.offer)).catch(console.error);
