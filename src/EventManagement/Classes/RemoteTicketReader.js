@@ -208,7 +208,7 @@ class RemoteTicketReader {
         this.onOfferCode(url);
     }
 
-    async setTicketReaderConfig(config) {
+    async setTicketReaderConfig(binaryString) {
         let obj = JSON.parse(pako.inflate(binaryString, { to: 'string' }));
 
         // Setting remote description
