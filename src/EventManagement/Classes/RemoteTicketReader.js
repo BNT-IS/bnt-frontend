@@ -209,7 +209,7 @@ class RemoteTicketReader {
     }
 
     async setTicketReaderConfig(config) {
-        let obj = JSON.parse(config);
+        let obj = JSON.parse(pako.inflate(binaryString, { to: 'string' }));
 
         // Setting remote description
         await this.localPeerConnection.setRemoteDescription(new RTCSessionDescription(obj.answer)).catch(this.handleError);
