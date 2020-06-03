@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/bnt-frontend/precache-manifest.ed5724c8bc2bd115257ccc11a46a4530.js"
+  "/bnt-frontend/precache-manifest.d073bcef3b282065ad88bc7ca8d6cefd.js"
 );
 
 self.addEventListener('message', (event) => {
