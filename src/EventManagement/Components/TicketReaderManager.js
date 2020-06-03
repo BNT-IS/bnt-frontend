@@ -5,6 +5,9 @@ import Dialog from '../../Utilities/Components/Dialog';
 
 import RemoteTicketReader from '../Classes/RemoteTicketReader';
 
+import QRCode from 'qrcode';
+import pako from 'pako';
+
 /**
  * The main unit (master) to which instances of TicketReader can connect.
  */
@@ -12,8 +15,14 @@ class TicketReaderManager extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { };
+        this.state = {};
         this.connectRemoteTicketReader = this.connectRemoteTicketReader.bind(this);
+        this.scanDoneHandler = this.scanDoneHandler.bind(this);
+    }
+
+    scanDoneHandler(binaryString){
+        let config = JSON.parse(pako.inflate(binaryString, { to: 'string' }));
+        this.state.connectRTR.setTicketReaderConfig(config);
     }
 
     /**
@@ -25,7 +34,12 @@ class TicketReaderManager extends React.Component {
             this.setState({ connectRTR: null });
             this.props.onRTR(remoteTicketReader);
         };
-        remoteTicketReader.onOfferCode = (url) => {
+        remoteTicketReader.onOffer = async (config) => {
+            // Compress data
+            let binaryString = pako.deflate(JSON.stringify(config), { level: 9, to: "string" });
+
+            // Create QR Code
+            let url = await QRCode.toDataURL(binaryString).catch(console.error);
             this.setState({ RTRQRCode: url });
         }
         this.setState({ connectRTR: remoteTicketReader, addRTRStep: 0 });
@@ -65,7 +79,7 @@ class TicketReaderManager extends React.Component {
                         {this.state.addRTRStep === 1 &&
                             <div>
                                 <div className="ticket-reader-scanner">
-                                    <QRScanner onDone={this.state.connectRTR.setTicketReaderConfig} label="Scanvorgang starten"></QRScanner>
+                                    <QRScanner onDone={this.scanDoneHandler} label="Scanvorgang starten"></QRScanner>
                                 </div>
                                 <div className="ticket-reader-description">
                                     <p>Bitte nun den Code des Zielgeräts scannen</p>

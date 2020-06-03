@@ -1,7 +1,5 @@
 // eslint-disable-next-line
 import adapter from 'webrtc-adapter';
-import QRCode from 'qrcode';
-import pako from 'pako';
 
 /**
  * Represents an object holder for diverse connectio objects to the ticket reader.
@@ -18,26 +16,29 @@ class RemoteTicketReader {
         this.setTicketReaderConfig = this.setTicketReaderConfig.bind(this);
         this._messageHandler = this._messageHandler.bind(this);
 
+        this.uuid = this._createUUID();
+
         // Initializing empty event listeners to prevent "undefined" errors
 
         /**
          * This eventlistener is called when the 
-         * ticket reader is disconnected. Please implement externally.
+         * ticket reader changed its connection state. Please implement externally.
+         * @param {String} connectionState - State of the connection.
          */
-        this.onDisconnected = function () { };
+        this.onConnectionChanged = function (connectionState) { };
 
         /**
-         * This eventlistener is called when the 
-         * ticket reader datachannel is ready to use. Please implement externally.
+         * This eventlistener is called once when the 
+         * ticket reader datachannel is ready to use after initiaization. Please implement externally.
          */
         this.onReady = function () { };
 
         /**
-         * This eventlistener is called when the QR-Code 
-         * for the connection offer is generated and accessible via url. Please implement externally.
-         * @param {String} url - The URL of the QR-Code.
+         * This eventlistener is called when the data 
+         * for the connection offer is generated. Please implement externally.
+         * @param {Object} config - The config.
          */
-        this.onOfferCode = function (url) { };
+        this.onOffer = function (config) { };
 
         /**
          * This callback is for onGetTicket eventlistener.
@@ -84,7 +85,8 @@ class RemoteTicketReader {
 
         this.localPeerConnection = new RTCPeerConnection(servers);
         this.localPeerConnection.addEventListener('icecandidate', this._iceCandidatesHandler);
-        this.localPeerConnection.addEventListener('iceconnectionstatechange', this._connectionChangeHandler);
+
+        this.localPeerConnection.addEventListener('connectionstatechange', this._connectionChangeHandler);
 
         this.dataChannel = this.localPeerConnection.createDataChannel('sendDataChannel', dataConstraint);
         this.dataChannel.addEventListener('message', this._messageHandler);
@@ -103,9 +105,26 @@ class RemoteTicketReader {
 
     _connectionChangeHandler(event) {
         console.debug(event);
-        if (event.target.iceConnectionState === "disconnected") {
-            this.onDisconnected();
+        let connectionState = event.target.connectionState;
+
+        switch (connectionState) {
+            case "connected":
+                // The connection has become fully connected
+                break;
+            case "disconnected":
+                break;
+            case "failed":
+                // One or more transports has terminated unexpectedly or in an error
+                break;
+            case "closed":
+                // The connection has been closed
+                break;
+            default:
+                break;
         }
+
+        this.onConnectionChanged(connectionState);
+
     }
 
     _dataChannelOpenHandler(event) {
@@ -154,11 +173,11 @@ class RemoteTicketReader {
                     this.onGetTicket(msg.params[0], (ticket, errorMsg) => {
                         let answerMsg = {
                             reqId: msg.reqId,
-                            result: { ticket: ticket, errorMessage: errorMsg}
+                            result: { ticket: ticket, errorMessage: errorMsg }
                         }
-                        try{
+                        try {
                             this.dataChannel.send(JSON.stringify(answerMsg));
-                        }catch(error){
+                        } catch (error) {
                             console.error(error);
                         }
                     });
@@ -168,9 +187,9 @@ class RemoteTicketReader {
                             reqId: msg.reqId,
                             result: { success: success, errorMessage: errorMsg }
                         }
-                        try{
+                        try {
                             this.dataChannel.send(JSON.stringify(answerMsg));
-                        }catch(error){
+                        } catch (error) {
                             console.error(error);
                         }
                     });
@@ -198,24 +217,15 @@ class RemoteTicketReader {
 
     async _generateOfferCode() {
         let data = { offer: this.offer, candidates: this.icecandidates };
-
-        // Compress data
-        let binaryString = pako.deflate(JSON.stringify(data), { level: 9, to: "string" });
-
-        // Create QR Code
-        let url = await QRCode.toDataURL(binaryString).catch(console.error);
-        this.qrcode = url;
-        this.onOfferCode(url);
+        this.onOffer(data);
     }
 
-    async setTicketReaderConfig(binaryString) {
-        let obj = JSON.parse(pako.inflate(binaryString, { to: 'string' }));
-
+    async setTicketReaderConfig(config) {
         // Setting remote description
-        await this.localPeerConnection.setRemoteDescription(new RTCSessionDescription(obj.answer)).catch(this.handleError);
+        await this.localPeerConnection.setRemoteDescription(new RTCSessionDescription(config.answer)).catch(this.handleError);
 
         // Adding ice candidates from remote
-        obj.candidates.forEach((candidate) => {
+        config.candidates.forEach((candidate) => {
             this.localPeerConnection.addIceCandidate(candidate).catch(this.handleError);
         });
     }

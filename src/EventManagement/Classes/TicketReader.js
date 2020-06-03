@@ -1,7 +1,5 @@
 // eslint-disable-next-line
 import adapter from 'webrtc-adapter';
-import QRCode from 'qrcode';
-import pako from 'pako';
 
 /**
  * Represents a ticket reader on a remote device.
@@ -10,46 +8,79 @@ import pako from 'pako';
 class TicketReader {
 
     constructor() {
-        this.requestMap = new Map();
         this._iceCandidatesHandler = this._iceCandidatesHandler.bind(this);
         this._dataChannelOpenHandler = this._dataChannelOpenHandler.bind(this);
         this._receiveChannelHandler = this._receiveChannelHandler.bind(this);
-        this._generateAnswerCode = this._generateAnswerCode.bind(this);
-        this.setMasterConfig = this.setMasterConfig.bind(this);
         this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
         this._connectionChangeHandler = this._connectionChangeHandler.bind(this);
+        this._generateAnswer = this._generateAnswer.bind(this);
+
+        // Map for requests sent via datachannel. Usage is: uuid =>  { resolve: resolve, reject: reject }
+        this.requestMap = new Map();
+
+        // Collection of all local icecandidates
+        this.icecandidates = [];
+
+        // Collection for all icecandidates that the master will provide
+        this.remoteICECandidates = [];
+
+        /**
+         * This eventlistener is called when the 
+         * ticket reader changed its connection state. Please implement externally.
+         * @param {String} connectionState - State of the connection.
+         */
+        this.onConnectionChanged = function (connectionState) { };
+
+        // Finally prepare connection
         this._initConnection();
     }
 
-    _initConnection() {
+    /**
+     * Method that initializes the peer connection.
+     */
+    async _initConnection() {
         const servers = null;
-
-        this.icecandidates = [];
 
         this.localPeerConnection = new RTCPeerConnection(servers);
         this.localPeerConnection.addEventListener('icecandidate', this._iceCandidatesHandler);
-        this.localPeerConnection.addEventListener('iceconnectionstatechange', this._connectionChangeHandler);
+        this.localPeerConnection.addEventListener('connectionstatechange', this._connectionChangeHandler);
         this.localPeerConnection.addEventListener('datachannel', this._receiveChannelHandler);
     }
 
     _iceCandidatesHandler(event) {
         this.icecandidates.push(event.candidate);
         if (this.answer && !this.qrcode) {
-            setTimeout(this._generateAnswerCode, 200); // Set a delay to collect some more icecandidates
+            setTimeout(this._generateAnswer, 200); // Set a delay to collect some more icecandidates
         }
     }
 
     _connectionChangeHandler(event) {
         console.debug(event);
-        if (event.target.iceConnectionState === "disconnected") {
-            this.onDisconnected();
+        let connectionState = event.target.connectionState;
+
+        switch (connectionState) {
+            case "connected":
+                // The connection has become fully connected
+                break;
+            case "disconnected":
+                break;
+            case "failed":
+                // One or more transports has terminated unexpectedly or in an error
+                break;
+            case "closed":
+                // The connection has been closed
+                break;
+            default:
+                break;
         }
+
+        this.onConnectionChanged(connectionState);
+
     }
 
     _dataChannelOpenHandler(event) {
         console.debug(event);
         this.onReady();
-        this.dataChannel.send('Hallo Master!');
     }
 
     _dataChannelClosedHandler(event) {
@@ -89,9 +120,9 @@ class TicketReader {
                 method: "getTicket",
                 params: [identifier]
             }
-            try{
+            try {
                 this.dataChannel.send(JSON.stringify(msg));
-            }catch(e){
+            } catch (e) {
                 reject(e);
             }
         });
@@ -108,41 +139,48 @@ class TicketReader {
                 method: "obliterateTicket",
                 params: [identifier, signature]
             }
-            try{
+            try {
                 this.dataChannel.send(JSON.stringify(msg));
-            }catch(e){
+            } catch (e) {
                 reject(e);
             }
         });
     }
 
-    async _generateAnswerCode() {
-        let data = { answer: this.answer, candidates: this.icecandidates };
-
-        // Compress data
-        let binaryString = pako.deflate(JSON.stringify(data), { level: 9, to: "string" });
-
-        // Create QR Code
-        let url = await QRCode.toDataURL(binaryString).catch(console.error);
-        this.qrcode = url;
-        this.onAnswerCode(url);
-    }
-
-    async setMasterConfig(binaryString) {
-        let obj = JSON.parse(pako.inflate(binaryString, { to: 'string' }));
-
+    /**
+     * Method to set the config received from the master.
+     * @param {Object} config - A JS Object containing the offer and ice candidates from the master. 
+     */
+    async setMasterConfig(config) {
         // Setting remote description
-        await this.localPeerConnection.setRemoteDescription(new RTCSessionDescription(obj.offer)).catch(console.error);
+        await this.localPeerConnection.setRemoteDescription(new RTCSessionDescription(config.offer)).catch(console.error);
 
         // Adding ice candidates from remote
-        obj.candidates.forEach((candidate) => {
+        config.candidates.forEach((candidate) => {
             this.localPeerConnection.addIceCandidate(candidate).catch(console.error);
+            this.remoteICECandidates.push(candidate);
         });
 
         // Creating answer
         this.answer = await this.localPeerConnection.createAnswer().catch(console.error);
-
         await this.localPeerConnection.setLocalDescription(this.answer).catch(console.error);
+    }
+
+    _generateAnswer(){
+        let data = { answer: this.answer, candidates: this.icecandidates };
+        this.onAnswer(data);
+    }
+
+    /**
+     * Dumps all settings to JSON. Use this method to restore a broken session.
+     */
+    toJSON() {
+        let lstore = {
+            localDescription: this.localPeerConnection.currentLocalDescription,
+            remoteDescription: this.localPeerConnection.currentRemoteDescription,
+            candidates: this.remoteICECandidates
+        }
+        return JSON.stringify(lstore);
     }
 
 }

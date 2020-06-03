@@ -33,12 +33,13 @@ class EventManagement extends React.Component {
         this.setState({ RTRList: RTRList });
 
         // In case the rtr is dicsonnected, it should be removed from the list in the view state
-        remoteTicketReader.onDisconnected = () => {
-            console.debug("Attempting to remove closed remote ticket reader");
+        remoteTicketReader.onConnectionChanged = (connectionState) => {
+            console.log(connectionState);
+            /**console.debug("Attempting to remove closed remote ticket reader");
             let RTRList = this.state.RTRList;
             let idx = RTRList.indexOf(remoteTicketReader);
             RTRList.splice(idx, 1);
-            this.setState({ RTRList: RTRList });
+            this.setState({ RTRList: RTRList });*/
         }
 
         // Setting eventhandler for reading a ticket
