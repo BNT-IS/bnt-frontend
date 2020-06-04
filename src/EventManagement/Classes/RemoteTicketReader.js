@@ -8,19 +8,21 @@ class RemoteTicketReader {
 
     constructor() {
         // Binding "this" to the event handlers
-        this._iceCandidatesHandler = this._iceCandidatesHandler.bind(this);
-        this._dataChannelOpenHandler = this._dataChannelOpenHandler.bind(this);
-        this._generateOfferCode = this._generateOfferCode.bind(this);
-        this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
-        this._connectionChangeHandler = this._connectionChangeHandler.bind(this);
+        this.iceCandidatesHandler = this.iceCandidatesHandler.bind(this);
+        this.dataChannelOpenHandler = this.dataChannelOpenHandler.bind(this);
+        this.generateOfferCode = this.generateOfferCode.bind(this);
+        this.dataChannelClosedHandler = this.dataChannelClosedHandler.bind(this);
+        this.connectionChangeHandler = this.connectionChangeHandler.bind(this);
         this.setTicketReaderConfig = this.setTicketReaderConfig.bind(this);
-        this._messageHandler = this._messageHandler.bind(this);
+        this.messageHandler = this.messageHandler.bind(this);
 
-        this.uuid = this._createUUID();
+        // Defining a unique id for this instance
+        this.uuid = this.createUUID();
 
         // Initializing empty event listeners to prevent "undefined" errors
 
         /**
+         * @public
          * This eventlistener is called when the 
          * ticket reader changed its connection state. Please implement externally.
          * @param {String} connectionState - State of the connection.
@@ -28,12 +30,14 @@ class RemoteTicketReader {
         this.onConnectionChanged = function (connectionState) { };
 
         /**
+         * @public
          * This eventlistener is called once when the 
          * ticket reader datachannel is ready to use after initiaization. Please implement externally.
          */
         this.onReady = function () { };
 
         /**
+         * @public
          * This eventlistener is called when the data 
          * for the connection offer is generated. Please implement externally.
          * @param {Object} config - The config.
@@ -48,6 +52,7 @@ class RemoteTicketReader {
          */
 
         /**
+         * @public
          * This eventlistener requires an identifier and a callback 
          * that needs to be called with the ticket as JS Object.
          * Please implement externally.
@@ -64,6 +69,7 @@ class RemoteTicketReader {
          */
 
         /**
+         * @public
          * This eventlistener requires identifier and signature and a callback 
          * that needs to be called with true or false depending if successfully obliterated or not. 
          * Please implement externally.
@@ -74,36 +80,54 @@ class RemoteTicketReader {
         this.onObliterateTicket = function (identifier, signature, callback) { };
 
         // Initializing the RTC connection
-        this._initConnection();
+        this.initConnection();
     }
 
-    _initConnection() {
+    /**
+     * @private
+     * Prepares RTCPeerConnection and datachannels for
+     * the connection with a ticket reader client.
+     */
+    initConnection() {
         const servers = null;
         const dataConstraint = null;
 
         this.icecandidates = [];
 
         this.localPeerConnection = new RTCPeerConnection(servers);
-        this.localPeerConnection.addEventListener('icecandidate', this._iceCandidatesHandler);
+        this.localPeerConnection.addEventListener('icecandidate', this.iceCandidatesHandler);
 
-        this.localPeerConnection.addEventListener('connectionstatechange', this._connectionChangeHandler);
+        this.localPeerConnection.addEventListener('connectionstatechange', this.connectionChangeHandler);
 
         this.dataChannel = this.localPeerConnection.createDataChannel('sendDataChannel', dataConstraint);
-        this.dataChannel.addEventListener('message', this._messageHandler);
-        this.dataChannel.addEventListener('open', this._dataChannelOpenHandler);
-        this.dataChannel.addEventListener('close', this._dataChannelClosedHandler);
+        this.dataChannel.addEventListener('message', this.messageHandler);
+        this.dataChannel.addEventListener('open', this.dataChannelOpenHandler);
+        this.dataChannel.addEventListener('close', this.dataChannelClosedHandler);
 
-        this._createOffer();
+        this.createOffer();
     }
 
-    _iceCandidatesHandler(event) {
+    /**
+     * @private
+     * Eventhandler for new icecandidates from the RTCPeerConnection.
+     * Only for internal use.
+     * @param {RTCPeerConnectionIceEvent} event 
+     */
+    iceCandidatesHandler(event) {
         this.icecandidates.push(event.candidate);
         if (this.offer && !this.qrcode) {
-            setTimeout(this._generateOfferCode, 200); // Set a delay to collect some more icecandidates
+            setTimeout(this.generateOfferCode, 200); // Set a delay to collect some more icecandidates
         }
     }
 
-    _connectionChangeHandler(event) {
+    /**
+     * @private
+     * Eventhandler for changed connection states.
+     * Only for internal use. For external event-listening, the "onConnectionChanged" property
+     * should be implemented!
+     * @param {Event} event 
+     */
+    connectionChangeHandler(event) {
         console.debug(event);
         let connectionState = event.target.connectionState;
 
@@ -127,17 +151,32 @@ class RemoteTicketReader {
 
     }
 
-    _dataChannelOpenHandler(event) {
+    /**
+     * @private
+     * Eventhandler for the case when the datachannel is ready.
+     * @param {Event} event 
+     */
+    dataChannelOpenHandler(event) {
         console.debug(event);
         this.onReady();
         this.dataChannel.send('Hallo Client!');
     }
 
-    _dataChannelClosedHandler(event) {
+    /**
+     * @private
+     * Eventhandler for the case when the datachannel is closed.
+     * @param {Event} event 
+     */
+    dataChannelClosedHandler(event) {
         console.debug('Data Channel Closed', event);
     }
 
-    _messageHandler(event) {
+    /**
+     * @private
+     * Eventhandler for new incoming messages via the datachannel.
+     * @param {Event} event 
+     */
+    messageHandler(event) {
         console.debug("Message received:", event.data);
         var msg;
         try {
@@ -200,7 +239,11 @@ class RemoteTicketReader {
         }
     }
 
-    _createUUID() {
+    /**
+     * @private
+     * Method to create unique id.
+     */
+    createUUID() {
         var dt = new Date().getTime();
         var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = (dt + Math.random() * 16) % 16 | 0;
@@ -210,16 +253,37 @@ class RemoteTicketReader {
         return uuid;
     }
 
-    async _createOffer() {
+    /**
+     * @private
+     * Method that creates a new connection configuration offer.
+     */
+    async createOffer() {
         this.offer = await this.localPeerConnection.createOffer().catch(console.error);
         await this.localPeerConnection.setLocalDescription(this.offer).catch(console.error);
     }
 
-    async _generateOfferCode() {
+    /**
+     * @private
+     * Method to generate a complete configuration for the
+     * ticketreader client.
+     */
+    async generateOfferCode() {
         let data = { offer: this.offer, candidates: this.icecandidates };
         this.onOffer(data);
     }
 
+    /**
+     * @typedef {Object} TicketReaderConfig
+     * @property {RTCSessionDescriptionInit} answer
+     * @property {RTCIceCandidate[]} candidates
+     */
+
+    /**
+     * @public
+     * Method to set the connection config received from the
+     * ticketreader client.
+     * @param {TicketReaderConfig} config 
+     */
     async setTicketReaderConfig(config) {
         // Setting remote description
         await this.localPeerConnection.setRemoteDescription(new RTCSessionDescription(config.answer)).catch(this.handleError);

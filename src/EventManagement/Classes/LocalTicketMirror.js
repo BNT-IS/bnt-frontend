@@ -4,16 +4,28 @@
 class LocalTicketMirror {
 
     constructor() {
+
+        // Binding "this" to methods that get called from other contexts
         this._createDB = this._createDB.bind(this);
         this.dumpTicketMirror = this.dumpTicketMirror.bind(this);
         this.getTicketList = this.getTicketList.bind(this);
+
+        // Check if Indexed DB (IDB) technology is supported in the current browser
         if (!window.indexedDB) {
             throw Error("Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.");
         }
+
+        // Collection for DB Requests that happen before initialization of the DB connection instance (this.db)
         this.waitingForIDBReadyQueue = [];
+
+        // Finally initializing DB connection
         this._initDB();
     }
 
+    /**
+     * Initializes connection to IDB and saves the connection
+     * instance to "this.db"
+     */
     _initDB() {
         console.debug('Initializing IDB Connection');
         var request = window.indexedDB.open("TicketMirror", 1);
@@ -33,6 +45,7 @@ class LocalTicketMirror {
 
     /**
      * Eventhandler for cases where the IDB has to be created / initialized
+     * Only for internal use.
      * @param {Event} event 
      */
     _createDB(event) {
@@ -43,7 +56,7 @@ class LocalTicketMirror {
     }
 
     /**
-     * Getter for the IDB Connection.
+     * Getter for the IDB Connection. Only for internal use.
      * @returns Returns a Promis that is resolved with a IDBConnection when it is ready.
      */
     _getIDB() {
@@ -56,6 +69,9 @@ class LocalTicketMirror {
         });
     }
 
+    /**
+     * Method that writes data to the IDB datastore "tickets"
+     */
     async dumpTicketMirror() {
         var db = await this._getIDB().catch(console.error);
         if (!db) return;
@@ -97,8 +113,17 @@ class LocalTicketMirror {
     }
 
     /**
+     * A local representation of a ticket joined out of the private db and the smart contract
+     * @typedef {Object} Ticket
+     * @property {String} identifier
+     * @property {Boolean} isValid
+     * @property {Boolean} isUsed
+     * @property {String} ticketType 
+     */
+
+    /**
      * For frontend purposes to get all tickets out of the db.
-     * @returns {Ticket[]}
+     * @returns {Ticket[]} Returns an array of tickets
      */
     getTicketList() {
         return new Promise(async (resolve, reject) => {
