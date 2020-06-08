@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, TextInput, Text } from 'grommet';
+import { Box, Button, TextInput, Text, Paragraph} from 'grommet';
 import Web3 from 'web3';
 import WalletLink from 'walletlink';
 
@@ -10,56 +10,61 @@ class AccountManagement extends React.Component {
         this.otpInputHandler = this.otpInputHandler.bind(this);
         this.accountAnlegenHandler = this.accountAnlegenHandler.bind(this);
         this.ansichtAccountAnlegen = this.ansichtAccountAnlegen.bind(this);
+        this.linkToCreateCoinbaseWallet = this.linkToCreateCoinbaseWallet.bind(this);
         this.signaturÜberprüfen = this.signaturÜberprüfen.bind(this);
         this.walletLogin = this.walletLogin.bind(this);
         this.walletVerifizieren = this.walletVerifizieren.bind(this);
         this.state = { otp: "", step: 0 };
         this.sampleArray = ["12345", "67891", "23456", "78912", "34567", "89123", "45678", "91234", "56789"];
-        
+
     }
-    
+
 
     otpInputHandler(event) {
         this.setState({ otp: event.target.value });
     }
 
-    ansichtAccountAnlegen(){
+    ansichtAccountAnlegen() {
         //Wechselt in die Ansicht zur Neuanlage eines Accounts
         this.setState({ step: 1 });
     }
 
     accountAnlegenHandler() {
-        for(var i=0; i<this.sampleArray.length; i++){
-            var j = false; 
+        for (var i = 0; i < this.sampleArray.length; i++) {
+            var j = false;
             console.log(this.state.otp, this.sampleArray[i])
-            if(this.state.otp === this.sampleArray[i]){
+            if (this.state.otp === this.sampleArray[i]) {
                 this.setState({ step: 2 });
                 j = true;
                 break;
             }
-            if (j === false){
+            if (j === false) {
                 alert("Das eingegebene Passwort ist ungültig. Das richtige Passwort wäre " + this.state.otp);
                 this.setState({ step: 0 });
                 break;
-            }              
-        }      
+            }
+        }
     }
 
-    walletVerifizieren(){
+    walletVerifizieren() {
         //Überprüft, ob der Nutzer tatsächlich ein funktionierendes Wallet verbunden hat
         //TODO: Wallet verifizieren
         this.setState({ step: 3 });
     }
 
-    signaturÜberprüfen(){
+    signaturÜberprüfen() {
         //Überprüft, ob das angegebene Wallet auch wirklich dem Nutzer gehört, indem ein Random-Wert von diesem signiert werden soll
         //TODO: Signaturprozess
         this.setState({ step: 4 });
     }
 
-    walletLogin(){
+    walletLogin() {
         //Wechselt in die Ansicht zur Anmeldung mit einem bestehenden Wallet
         this.setState({ step: 5 });
+    }
+
+    linkToCreateCoinbaseWallet() {
+        window.open('https://wallet.coinbase.com/#signup', '_blank');
     }
 
     render() {
@@ -68,12 +73,12 @@ class AccountManagement extends React.Component {
             <Box className="AccountManagement" pad="medium" gap="small">
 
                 {this.state.step === 0 &&
-                <Box gap="small">
-                    Klicke hier, um einen neuen Account anzulegen
-                    <Button label ="Account anlegen" onClick ={this.ansichtAccountAnlegen} gap="small"></Button>
+                    <Box gap="small">
+                        Klicke hier, um einen neuen Account anzulegen
+                    <Button label="Account anlegen" onClick={this.ansichtAccountAnlegen} gap="small"></Button>
                     Klicke hier, um dich mit deinem Wallet einzuloggen
                     <Button label="Mit vorhandenem Wallet einloggen" onClick={this.walletLogin}></Button>
-                </Box> 
+                    </Box>
                 }
 
                 {this.state.step === 1 &&
@@ -94,19 +99,28 @@ class AccountManagement extends React.Component {
                             Um Tickets zu erwerben benötigen Sie ein sogenanntes Wallet.
                             Dieses ist vergleichbar mit Ihrer Geldbörse zu der nur Sie Zugriff haben.
                         </Text>
+                        <Paragraph fill ="true">
+                            Für unser Ticket-System muss dieses Wallet Ethereum-fähig sein.
+                            Wir empfehlen Ihnen daher das Coinbase Wallet.
+                            Bitte installieren Sie sich das Coinbase Wallet über die offizielle Website.
+                            Kommen Sie nach Abschluss der Einrichtung wieder auf diese Seite zurück.                         
+                        </Paragraph>
+
+                        <Button label="Wallet auf dem Smartphone erstellen" onClick={this.linkToCreateCoinbaseWallet}></Button>
+
                         <Button label="Ich habe das Wallet erstellt" onClick={this.walletVerifizieren}></Button>
                     </Box>
                 }
                 {this.state.step === 3 &&
                     <Box gap="small">
                         Überprüfe, ob das angegebene Wallet auch existiert bzw. verbunden ist
-                        <Button label ="Prüfe Wallet" onClick={this.signaturÜberprüfen}></Button>
+                        <Button label="Prüfe Wallet" onClick={this.signaturÜberprüfen}></Button>
                     </Box>
                 }
                 {this.state.step === 4 &&
                     <Box gap="small">
                         Überprüfe mittels Signatur, ob das Wallet auch dem Nutzer gehört
-                        <Button label ="Zur Walletanmeldung" onClick={this.walletLogin}></Button>
+                        <Button label="Zur Walletanmeldung" onClick={this.walletLogin}></Button>
                     </Box>
                 }
                 {this.state.step === 5 &&
