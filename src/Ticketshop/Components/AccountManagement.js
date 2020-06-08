@@ -94,7 +94,6 @@ class AccountManagement extends React.Component {
                 }
                 {this.state.step === 2 &&
                     <Box gap="small">
-                        Hier muss Hinweis erfolgen zum Wallet erstellen und verknüpfen
                         <Text>
                             Um Tickets zu erwerben benötigen Sie ein sogenanntes Wallet.
                             Dieses ist vergleichbar mit Ihrer Geldbörse zu der nur Sie Zugriff haben.
