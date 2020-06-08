@@ -3,7 +3,7 @@ import adapter from 'webrtc-adapter';
 
 /**
  * Represents a ticket reader on a remote device.
- * Use this class to connect to a TicketReaderManager.
+ * Use this class to connect to a RemoteTicketReader.
  */
 class TicketReader {
 

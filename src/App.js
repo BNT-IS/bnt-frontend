@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Guest from './Guest/Guest';
+import Guest from './Ticketshop/Guest';
 import EntranceManagement from './EntranceManagement/EntranceManagement';
 import EventManagement from './EventManagement/EventManagement';
 import { Grommet, grommet } from 'grommet';
@@ -16,7 +16,6 @@ class App extends React.Component {
     };
     this.scanDoneHandler = this.scanDoneHandler.bind(this);
     this.obliterateTokens = this.obliterateTokens.bind(this);
-    //this.scanDoneHandler("0x9a2f730AFd66E990567AFc09665bE014EB76FAeB");
   }
 
   errorDisplay(msg) {
