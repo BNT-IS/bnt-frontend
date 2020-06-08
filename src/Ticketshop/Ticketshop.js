@@ -4,12 +4,13 @@ import { Switch, Route, Link } from "react-router-dom";
 import WalletSetup from './Components/WalletSetup';
 import UserMainMenu from './Components/UserMainMenu';
 import TicketOverview from './Components/TicketOverview';
+import AccountManagement from './Components/AccountManagement';
 
-class Guest extends React.Component {
+class Ticketshop extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { };
     }
 
     render() {
@@ -24,7 +25,7 @@ class Guest extends React.Component {
                         <TicketOverview></TicketOverview>
                     </Route>
                     <Route path="/guest/setup">
-                        <WalletSetup></WalletSetup>
+                        <AccountManagement></AccountManagement>
                     </Route>
                     <Route path="/guest/">
                         <UserMainMenu></UserMainMenu>
@@ -35,4 +36,4 @@ class Guest extends React.Component {
     }
 }
 
-export default Guest;
+export default Ticketshop;

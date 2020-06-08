@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Guest from './Ticketshop/Guest';
+import Ticketshop from './Ticketshop/Ticketshop';
 import EntranceManagement from './EntranceManagement/EntranceManagement';
 import EventManagement from './EventManagement/EventManagement';
 import { Grommet, grommet } from 'grommet';
@@ -90,7 +90,7 @@ class App extends React.Component {
         </Switch>
         <Switch>
           <Route path="/guest">
-            <Guest></Guest>
+            <Ticketshop eigenschaft1="test"></Ticketshop>
           </Route>
           <Route path="/entrance">
             <EntranceManagement></EntranceManagement>
