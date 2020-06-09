@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Text } from 'grommet';
+import { Box, Button, Text, TextInput } from 'grommet';
 import Web3 from 'web3';
 import WalletLink from 'walletlink';
 
@@ -76,12 +76,12 @@ class WalletSetup extends React.Component {
     /**
      * Example method for showing how a message can be signed and verified.
      */
-    async sign() {
+    async sign(message) {
         if (!window.ethereum) return this.displayError();
         if (!window.ethereum.selectedAddress) return this.displayError();
         var from = window.ethereum.selectedAddress;
 
-        var text = 'Hallo du Frosch!';
+        var text = message;
         var msg = this.web3.utils.stringToHex(text);
 
         var params = [msg, from]
@@ -146,7 +146,12 @@ class WalletSetup extends React.Component {
                 <Text>
                     Hier folgt eine DEMO!!!
                 </Text>
-                <Button label="Sign and Verify Message" onClick={this.sign}></Button>
+                <TextInput
+                    placeholder="Nachricht zum signieren"
+                    value={this.state.signMessage}
+                    onChange={(event) => { this.setState({ signMessage: event.target.value }) }}
+                ></TextInput>
+                <Button label="Sign and Verify Message" onClick={() => { this.sign(this.state.signMessage) }}></Button>
             </Box>
         );
     }

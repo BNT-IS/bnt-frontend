@@ -27,6 +27,9 @@ class Ticketshop extends React.Component {
                     <Route path="/guest/setup">
                         <AccountManagement></AccountManagement>
                     </Route>
+                    <Route path="/guest/demosetup">
+                        <WalletSetup></WalletSetup>
+                    </Route>
                     <Route path="/guest/">
                         <UserMainMenu></UserMainMenu>
                     </Route>
