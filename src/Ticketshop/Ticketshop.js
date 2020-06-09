@@ -5,12 +5,13 @@ import WalletSetup from './Components/WalletSetup';
 import UserMainMenu from './Components/UserMainMenu';
 import TicketOverview from './Components/TicketOverview';
 import AccountManagement from './Components/AccountManagement';
+import Bestellungsuebsericht from './Components/Bestellungsuebsericht';
 
 class Ticketshop extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { };
+        this.state = {};
     }
 
     render() {
@@ -29,6 +30,9 @@ class Ticketshop extends React.Component {
                     </Route>
                     <Route path="/guest/demosetup">
                         <WalletSetup></WalletSetup>
+                    </Route>
+                    <Route path="/guest/bestellungsuebsericht">
+                        <Bestellungsuebsericht></Bestellungsuebsericht>
                     </Route>
                     <Route path="/guest/">
                         <UserMainMenu></UserMainMenu>

@@ -10,6 +10,7 @@ class WalletSetup extends React.Component {
         this.state = {};
         this.sign = this.sign.bind(this);
         this.connectWallet = this.connectWallet.bind(this);
+        
     }
 
     /**
