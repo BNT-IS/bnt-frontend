@@ -5,6 +5,7 @@ import WalletSetup from './Components/WalletSetup';
 import UserMainMenu from './Components/UserMainMenu';
 import TicketOverview from './Components/TicketOverview';
 import AccountManagement from './Components/AccountManagement';
+import Bestellungsuebsericht from './Components/Bestellungsuebsericht';
 
 class Ticketshop extends React.Component {
 
@@ -26,6 +27,9 @@ class Ticketshop extends React.Component {
                     </Route>
                     <Route path="/guest/setup">
                         <AccountManagement></AccountManagement>
+                    </Route>
+                    <Route path="/guest/bestellungsuebsericht">
+                        <Bestellungsuebsericht></Bestellungsuebsericht>
                     </Route>
                     <Route path="/guest/">
                         <UserMainMenu></UserMainMenu>
