@@ -87,7 +87,6 @@ class AccountManagement extends React.Component {
         }
         this.setState({ connected: window.ethereum.selectedAddress ? true : false });
 
-        //Initialisiere Web3 Provider Object
         this.web3 = new Web3(window.ethereum);
 
     }
@@ -155,7 +154,34 @@ class AccountManagement extends React.Component {
     }
 
     async verifyAddress(){
-        //Wie in WalletSetup lösen 
+        if (!window.ethereum) return this.displayError();
+        if (!window.ethereum.selectedAddress) return this.displayError();
+        var from = window.ethereum.selectedAddress;
+
+        var text = 'Test12345';
+        var msg = this.web3.utils.stringToHex(text);
+
+        var params = [msg, from]
+        var method = 'personal_sign'
+
+        this.web3.currentProvider.send({
+            method,
+            params,
+            from,
+        }, (err, result) => {
+            if (err) return console.error(err)
+            if (result.error) return console.error(result.error)
+
+            console.log(result);
+
+            var recovered = this.web3.eth.accounts.recover(msg, result.result);
+
+            if (recovered.toLowerCase() === from.toLowerCase()) {
+                alert('Successfully ecRecovered signer as ' + from)
+            } else {
+                alert('Failed to verify signer when comparing ' + recovered + ' to ' + from)
+            }
+        })
 
     }
 
@@ -274,7 +300,7 @@ render() {
                         Hier folgt eine Demonstration zur Signatur
                             </Text>
 
-                    <Button label="Signaturprozess anstoßen" onClick={this.sign}></Button>
+                    <Button label="Signaturprozess anstoßen" onClick={this.verifyAddress}></Button>
                 </Box>
             }
             {this.state.step === 4 &&
@@ -287,6 +313,7 @@ render() {
                 <Box gap="small">
                     Bitte klicken Sie auf den Button, um sich einzuloggen.
                     Hier noc begrßnden warum signieren----....
+                    <Button label="Signaturprozess anstoßen" onClick={this.sign}></Button>
                 </Box>
             }
         </Box>
