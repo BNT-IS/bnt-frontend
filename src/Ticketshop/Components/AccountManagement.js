@@ -14,6 +14,7 @@ class AccountManagement extends React.Component {
         this.linkToCreateCoinbaseWallet = this.linkToCreateCoinbaseWallet.bind(this);
         this.signaturÜberprüfen = this.signaturÜberprüfen.bind(this);
         this.sign = this.sign.bind(this);
+        this.verifyAddress = this.verifyAddress.bind(this);
         this.walletLogin = this.walletLogin.bind(this);
         this.walletVerifizieren = this.walletVerifizieren.bind(this);
         this.state = { otp: "", step: 0 };
