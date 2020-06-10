@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/bnt-frontend/static/css/main.730e9d71.chunk.css",
-    "main.js": "/bnt-frontend/static/js/main.2fad4583.chunk.js",
-    "main.js.map": "/bnt-frontend/static/js/main.2fad4583.chunk.js.map",
+    "main.js": "/bnt-frontend/static/js/main.be725ae9.chunk.js",
+    "main.js.map": "/bnt-frontend/static/js/main.be725ae9.chunk.js.map",
     "runtime-main.js": "/bnt-frontend/static/js/runtime-main.6bdd408e.js",
     "runtime-main.js.map": "/bnt-frontend/static/js/runtime-main.6bdd408e.js.map",
-    "static/js/2.681362b8.chunk.js": "/bnt-frontend/static/js/2.681362b8.chunk.js",
-    "static/js/2.681362b8.chunk.js.map": "/bnt-frontend/static/js/2.681362b8.chunk.js.map",
+    "static/js/2.0488e3d6.chunk.js": "/bnt-frontend/static/js/2.0488e3d6.chunk.js",
+    "static/js/2.0488e3d6.chunk.js.map": "/bnt-frontend/static/js/2.0488e3d6.chunk.js.map",
     "index.html": "/bnt-frontend/index.html",
-    "precache-manifest.7edb933093a5bba2e66f05aebd423ceb.js": "/bnt-frontend/precache-manifest.7edb933093a5bba2e66f05aebd423ceb.js",
+    "precache-manifest.5d31b1d9fc5e9e3b6bd51cdbf721d907.js": "/bnt-frontend/precache-manifest.5d31b1d9fc5e9e3b6bd51cdbf721d907.js",
     "service-worker.js": "/bnt-frontend/service-worker.js",
     "static/css/main.730e9d71.chunk.css.map": "/bnt-frontend/static/css/main.730e9d71.chunk.css.map",
-    "static/js/2.681362b8.chunk.js.LICENSE.txt": "/bnt-frontend/static/js/2.681362b8.chunk.js.LICENSE.txt"
+    "static/js/2.0488e3d6.chunk.js.LICENSE.txt": "/bnt-frontend/static/js/2.0488e3d6.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.6bdd408e.js",
-    "static/js/2.681362b8.chunk.js",
+    "static/js/2.0488e3d6.chunk.js",
     "static/css/main.730e9d71.chunk.css",
-    "static/js/main.2fad4583.chunk.js"
+    "static/js/main.be725ae9.chunk.js"
   ]
 }
