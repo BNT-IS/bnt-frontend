@@ -11,7 +11,7 @@ class Ticketshop extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { };
+        this.state = {};
     }
 
     render() {
@@ -27,6 +27,9 @@ class Ticketshop extends React.Component {
                     </Route>
                     <Route path="/guest/setup">
                         <AccountManagement></AccountManagement>
+                    </Route>
+                    <Route path="/guest/demosetup">
+                        <WalletSetup></WalletSetup>
                     </Route>
                     <Route path="/guest/bestellungsuebsericht">
                         <Bestellungsuebsericht></Bestellungsuebsericht>
