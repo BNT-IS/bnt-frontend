@@ -13,6 +13,8 @@ import WalletLink from 'walletlink';
             this.createUser = this.createUser.bind(this);
             this.otpBestätigen = this.otpBestätigen.bind(this);
             this.otpInputHandler = this.otpInputHandler.bind(this);
+            this.setState1 = this.setState1.bind(this);
+            this.setState6 = this.setState6.bind(this);
             this.sign = this.sign.bind(this);
             this.state = { otp: "", step: 0 };
             this.verifyAddress = this.verifyAddress.bind(this);
@@ -196,27 +198,35 @@ async sign(challengeString){
     })
 }
 
+setState1(){
+    this.setState({step: 1});
+}
+
+setState6(){
+    this.setState({step: 6});
+}
+
 
 render() {
     return (
-            <Box className="Account-Management" pad="medium" gap="small">
+            <Box className="AccountManagement" pad="medium" gap="small">
               {this.state.step === 0 &&
                 <Box gap="small">
-                    Klicke hier, um einen neuen Account anzulegen
-                    <Button label="Neuen Account anlegen" gap="small" onClick={this.setState({step: 1 })}></Button>
-                    Klicke hier, um dich mit einem bestehenden Account anzumelden
-                    <Button label="Mit bestehendem Account anmelden"></Button>
+                    <Text>Klicke hier, um einen neuen Account anzulegen</Text>
+                    <Button label="Neuen Account anlegen" gap="small" onClick={this.setState1}></Button>
+                    <Text>Klicke hier, um dich mit einem bestehenden Account anzumelden</Text>
+                    <Button label="Mit bestehendem Account anmelden" onClick={this.setState6}></Button>
                 </Box>   
               } 
               {this.state.step === 1 &&
                 <Box gap="small">
-                    Bitte geben Sie das OneTime-Passwort ein und bestätigen Sie die Eingabe
+                    <Text>Bitte geben Sie das OneTime-Passwort ein und bestätigen Sie die Eingabe</Text>
                     <TextInput placeholder="OTP eingeben" value={this.state.otp} onChange={this.otpInputHandler}></TextInput>
                     <Button label="Eingabe bestätigen" onClick={this.otpBestätigen}></Button>
                 </Box>
               }
               {this.state.step === 2 &&
-                <Box className ="WalletSetup" direction="column" gap="small">
+                <Box classname="WalletSetup" direction="column" gap="small">
                     <h1>Wallet Setup</h1>
                     <Text>Um Tickets zu erwerben benötigen Sie ein sogenanntes Wallet. Dieses ist vergleichbar mit Ihrer Geldbörse zu der nur Sie Zugriff haben.</Text>
                     {(!this.state.walletAvailable && !this.state.connected) &&
@@ -252,7 +262,7 @@ render() {
               {this.state.step === 5 &&
                 <Box gap="small">
                     <Text>Der Benutzer wurde erfolgreich angelegt. Klicke auf den Button, um zur Anmeldung zu gelangen. </Text>
-                    <Button label="Zur Anmeldung"></Button>
+                    <Button label="Zur Anmeldung" onClick={this.setState6}></Button>
                 </Box>    
               }
               {this.state.step === 6 &&
