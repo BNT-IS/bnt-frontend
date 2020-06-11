@@ -9,7 +9,7 @@ class TicketBestellung extends React.Component {
         this.AbsolventenTicketAdd = this.AbsolventenTicketAdd.bind(this);
         this.GuestTicketAdd = this.GuestTicketAdd.bind(this);
         this.ToPayment = this.ToPayment.bind(this);
-       // this.checkZero = this.checkZero.bind(this);
+    
 
         this.state = { 
             guestcount: 0, 
@@ -95,10 +95,6 @@ class TicketBestellung extends React.Component {
 
                 </Box>
                 }
-
-
-
-
             </Box>
         );
     }
