@@ -26,7 +26,7 @@ class Ticketshop extends React.Component {
                     <Route path="/guest/ticketbestellen">
                         <TicketBestellung></TicketBestellung>
                     </Route>
-                    <Route path="/guest/tickets">
+                    <Route path="/guest/tickets/">
                         <TicketOverview></TicketOverview>
                     </Route>
                     <Route path="/guest/setup">
@@ -35,7 +35,7 @@ class Ticketshop extends React.Component {
                     <Route path="/guest/demosetup">
                         <WalletSetup></WalletSetup>
                     </Route>
-                    <Route path="/guest/bestellungsuebsericht">
+                    <Route path="/guest/bestellungsuebersicht">
                         <Bestellungsuebsericht></Bestellungsuebsericht>
                     </Route>
                     <Route path="/guest/">
