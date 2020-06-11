@@ -31,31 +31,23 @@ class TicketBestellung extends React.Component {
         this.setState({ step: 3})
     }
 
-/*Prüfen ob Gästeanzahl unter 0 liegt
-    checkZero = () => {
-        const guestcount = this.props.guestcount;
-        if(guestcount < 0){
-            console.log(false);
+    //Funktion für die Counter
+    increment = (property) => {
+        if (property == "guest" && this.state.guestcount < 2){
+            this.setState({guestcount: this.state.guestcount + 1});
+        }
+        else if (property =="park" && this.state.parkcount < 3){
+            this.setState({parkcount: this.state.parkcount + 1});
         }
     }
-*/
-
-    //Funktion für die GästeTicketCounter
-    increment = () => {
-        this.setState({guestcount: this.state.guestcount + 1});
+    decrement = (property) => {
+        if (property == "guest" && this.state.guestcount > 0){
+            this.setState({guestcount: this.state.guestcount - 1});
+        }
+        else if (property =="park" && this.state.parkcount > 0){
+            this.setState({parkcount: this.state.parkcount - 1});
+        }
     }
-    decrement = () => {
-        this.setState({guestcount: this.state.guestcount - 1});
-    }
-
-    //Funktion für die ParkticketCounter
-    addition = () => {
-        this.setState({parkcount: this.state.parkcount + 1});
-    }
-    subtract = () => {
-        this.setState({parkcount: this.state.parkcount - 1});
-    }
-
 
     render() {
         return (
@@ -72,8 +64,8 @@ class TicketBestellung extends React.Component {
                 {this.state.step === 1 &&
                 <Box gap="small">
                     <Text>Bitte geben sie an, wie viele Gäste Sie mitnehmen wollen.</Text>
-                    <Button onClick={this.increment} className="guestcount" label="+"></Button>
-                    <Button onClick={this.decrement} className="guestcount" label="-"></Button>
+                    <Button onClick={() => this.increment("guest")} className="guestcount" label="+"></Button>
+                    <Button onClick={() => this.decrement("guest")} className="guestcount" label="-"></Button>
                     <h2>{this.state.guestcount}</h2>
 
                    <Button onClick={this.GuestTicketAdd} label="Weiter"></Button>
@@ -82,10 +74,10 @@ class TicketBestellung extends React.Component {
 
                 {this.state.step === 2 &&
                 <Box gap="small">
-                    Bitte geben sie an, wie viele Parktickets Sie benötigen.
+                    <Text>Bitte geben sie an, wie viele Parktickets Sie benötigen.</Text>   
 
-                    <Button onClick={this.addition} className="parkcount" label="+"></Button>
-                    <Button onClick={this.subtract} className="parkcount" label="-"></Button>
+                    <Button onClick={() => this.increment("park")} className="parkcount" label="+"></Button>
+                    <Button onClick={() => this.decrement("park")} className="parkcount" label="-"></Button>
                     <h2>{this.state.parkcount}</h2>
                     <Button onClick={this.ToPayment} label="Zur Bezahlung"></Button>
                 </Box>
@@ -93,8 +85,10 @@ class TicketBestellung extends React.Component {
 
                 {this.state.step === 3 &&
                 <Box gap="small">
-                    <Text>Sie haben folgendes bestellt: </Text> Absolvententicket 1 Gästeticket 2 Parkticket 0
-                    <Text>Bitte überweisen Sie folgenden Betrag auf das Konto: XXXXYYYYZZZZ.<br/>
+                    <Text>Sie haben folgendes bestellt: <br/>
+                    Absolvententicket 1 <br/> 
+                    Gästeticket {this.state.guestcount} Parkticket {this.state.parkcount}
+                    Bitte überweisen Sie folgenden Betrag auf das Konto: XXXXYYYYZZZZ.<br/>
                     Geben Sie ihren Namen als Verwendungszweck an.<br/>
                     Nach Rechnungseingang erhalten Sie Ihre Tickets an ihr Wallet gesendet.<br/>
                     </Text>
