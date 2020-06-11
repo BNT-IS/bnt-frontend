@@ -30,15 +30,7 @@ class TicketOverview extends React.Component {
 
     constructor(props) {
         super(props);
-        // Some dummy data...
-        this.state = {
-            tickets: [
-                { identifier: "ABC", ticketType: "Absolvent", forename: "Fabian", surname: "Busch" },
-                { identifier: "DEF", ticketType: "Absolvent", forename: "Robin", surname: "Fuchs" },
-                { identifier: "GHI", ticketType: "Absolvent", forename: "Nils", surname: "Niemann" },
-                { identifier: "JKL", ticketType: "Absolvent", forename: "Alexander", surname: "Beuerle" }
-            ]
-        }
+        this.state = { tickets: [], loading: false }
     }
 
     componentDidMount() {
@@ -46,6 +38,7 @@ class TicketOverview extends React.Component {
     }
 
     async fetchTickets() {
+        this.setState({ loading: true });
         let address = "0x3Da85f73bC1B1662FE247391dEcD2a52f139fd13";
         var response = await fetch("http://localhost:3000/api/v1/users/" + address + "/tickets", {
             //method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -72,7 +65,7 @@ class TicketOverview extends React.Component {
             }
         });
 
-        this.setState({ tickets: tickets });
+        this.setState({ tickets: tickets, loading: false });
     }
 
     generateQRCodes() {
@@ -91,7 +84,7 @@ class TicketOverview extends React.Component {
 
     render() {
         let ticketElements = this.state.tickets.map((ticket) => <TicketListItem key={ticket.identifier} ticket={ticket}></TicketListItem>);
-
+        
         return (
             <Box className="TicketOverview" direction="column" gap="medium" pad="medium">
                 <Switch>
@@ -105,6 +98,7 @@ class TicketOverview extends React.Component {
                                 <h1 className="NumberOfTickets">{this.state.tickets.length}</h1>
                             </Box>
                             <Box className="TicketList">
+                                {this.state.loading && <p className="loader"></p>}
                                 {ticketElements}
                             </Box>
                         </Box>
