@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, TextInput, Text } from 'grommet';
 import Web3 from 'web3';
 import WalletLink from 'walletlink';
+//import AsyncStorage from '@react-native-community/async-storage';
 
 
     class AccountManagement extends React.Component{
@@ -131,11 +132,13 @@ async createUser(){
 }
 
 async walletLogin(){
-    //if(!this.state.walletAvailable){
-    // this.setState({step: 2})
+    //if(!this.walletAvailable){
+    //    alert("Es wurde kein verfügbares Wallet gefunden.");
+    //    return;
     //}
-    //if(!this.state.walletAvailable && !this.state.connected){
-    // this.connectWallet();
+    //if(!this.state.connected){
+    //    alert("Das Wallet wurde noch nicht verbunden.")
+    //    return;
     //}
     const response = await fetch("http://localhost:3000/auth/login", {
         method: 'POST',
@@ -154,8 +157,11 @@ async walletLogin(){
 
     const data = await response.json().catch(console.log);
     console.log(data);
-    //if(!data.challenge)
+    if(!data.challenge){
+        alert("Keine Challenge vorhanden!")
+    } else {
     this.sign(data.challenge);
+    }
 }
 
 async sign(challengeString){
@@ -178,7 +184,7 @@ async sign(challengeString){
         if (result.error) return console.error(result.error)
 
         console.log(result);
-        //Mit dem Result weiterrechnen
+        //Mit dem Result weiterrechnen, um Token auszugeben
 
         const response = await fetch('http://localhost:3000/auth/chr/' + challengeString,{
             method: 'POST',
@@ -206,6 +212,23 @@ setState6(){
     this.setState({step: 6});
 }
 
+//storeData = async (value) => {
+//    try{
+//        await AsyncStorage.setItem('StorageKey', value)
+//    }catch (error){
+//        alert("Beim speichern ist ein Fehler aufgetreten.")
+//    }
+//}
+
+//getData = async () => {
+//    try{
+//        const value = await AsyncStorage.getItem('StorageKey')
+//        if(value !== null){
+//            console.log(value)
+//        }
+//    } catch (error){
+//    }
+//}
 
 render() {
     return (
@@ -268,7 +291,22 @@ render() {
               {this.state.step === 6 &&
                 <Box gap="small">
                     <h1>Anmeldung mit einem vorhandenen Wallet</h1>
-                    <Button label="Anmeldung starten" onClick={this.walletLogin}></Button>
+                    {(!this.state.walletAvailable && !this.state.connected)&&
+                        <Box gap="small">
+                            <Text>Es ist kein Wallet verfügbar. Bitte erstellen Sie ein Wallet und verbinden Sie dieses.</Text>
+                        </Box>    
+                    }
+                    {(!this.state.connected)&&
+                        <Box>
+                            <Text>Ein Wallet ist vorhanden, aber nicht verbunden. Bitte verbinden Sie das Wallet mit der Applikation.</Text>
+                        </Box>    
+                    }
+                    {(this.state.connected) &&
+                        <Box>
+                            <Text>Ein Wallet ist vorhanden und verbunden. Die Anmeldung ist möglich.</Text>
+                            <Button label="Anmeldung starten" onClick={this.walletLogin}></Button>
+                        </Box>
+                    }
                 </Box>
               }
             </Box>
