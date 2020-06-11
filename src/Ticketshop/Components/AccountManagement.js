@@ -264,8 +264,9 @@ render() {
                             <Button label="Mit vorhandenem Wallet anmelden" onClick={this.connectWallet}></Button>
                         </Box>
                     }
-                    {(this.state.walletAvailable && this.state.connected)&&
-                        this.verifyAddress()
+                    {(this.state.walletAvailable && this.state.connected) &&
+                        //this.verifyAddress() <- @Robin: Das hier geht nicht!!!!
+                        <p>Test</p>
                         //Was kommt genau hier rein?
                     }
                 </Box>    
