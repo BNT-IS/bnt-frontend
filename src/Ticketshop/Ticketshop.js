@@ -6,6 +6,7 @@ import UserMainMenu from './Components/UserMainMenu';
 import TicketOverview from './Components/TicketOverview';
 import AccountManagement from './Components/AccountManagement';
 import Bestellungsuebsericht from './Components/Bestellungsuebsericht';
+import TicketBestellung from './Components/TicketBestellung';
 
 class Ticketshop extends React.Component {
 
@@ -22,6 +23,9 @@ class Ticketshop extends React.Component {
                     <Menu label="Account" items={[{ label: 'Logout' }]} />
                 </Header>
                 <Switch>
+                    <Route path="/guest/ticketbestellen">
+                        <TicketBestellung></TicketBestellung>
+                    </Route>
                     <Route path="/guest/tickets">
                         <TicketOverview></TicketOverview>
                     </Route>
