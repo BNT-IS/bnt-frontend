@@ -1,9 +1,8 @@
 import React from 'react';
 import './TicketOverview.css';
-import Obliterator from './Obliterator.js';
-import { Box, Button, Text, Header } from 'grommet';
+import { Box, Button } from 'grommet';
 
-class Bestellungsuebsericht extends React.Component {
+class BookingOverview extends React.Component {
 
     constructor(props) {
         super(props);
@@ -12,7 +11,7 @@ class Bestellungsuebsericht extends React.Component {
     }
 
     async loadListHandler() {
-        var liste = [{ label: "abc" }, { label: "blue" }, { label: "Yellow" }]
+        //var liste = [{ label: "abc" }, { label: "blue" }, { label: "Yellow" }]
 
         var response = await fetch("http://localhost:3000/api/v1/bookings/user/0x1", {
             //method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -28,7 +27,7 @@ class Bestellungsuebsericht extends React.Component {
 
         console.log(response)
 
-        var data = await response.json().catch(console.log)
+        //var data = await response.json().catch(console.log)
 
         //this.setState({ buchungen: liste })
     }
@@ -52,4 +51,4 @@ class Bestellungsuebsericht extends React.Component {
     }
 }
 
-export default Bestellungsuebsericht;
+export default BookingOverview;
