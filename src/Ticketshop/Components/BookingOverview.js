@@ -39,9 +39,9 @@ class BookingOverview extends React.Component {
         this.loadTicketsHandler = this.loadTicketsHandler.bind(this);
         this.state = { buchungen: [], tickets: [] };
     }
-
+ 
     async loadListHandler() {
-        var response = await fetch("http://localhost:3000/api/v1/bookings/user/0x1", {
+        var response = await fetch("http://localhost:3000/api/v1/users/0x1/bookings", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -53,6 +53,7 @@ class BookingOverview extends React.Component {
         if (!response) return
         console.log(response)
         var data = await response.json().catch(console.log)
+        if(!data) return;
         this.setState({ buchungen: data })
         this.state.buchungen.forEach((buchung) => {
             this.loadTicketsHandler(buchung.id)
@@ -61,7 +62,7 @@ class BookingOverview extends React.Component {
     }
 
     async loadTicketsHandler(bookingId) {
-        var response = await fetch("http://localhost:3000/api/v1/bookings/ticketsBooked/" + bookingId, {
+        var response = await fetch("http://localhost:3000/api/v1/bookings/" + bookingId + "/ticketsBooked" , {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached

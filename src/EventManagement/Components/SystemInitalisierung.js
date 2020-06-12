@@ -20,29 +20,21 @@ class SystemInitalisierung extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { dateiTyp: "none" };
-        this.inputDatatype = this.inputDatatype.bind(this);
+        this.state = { dateiTyp: "CSV" };
         
-    }
 
-    inputDatatype(dateiTyp){
-            const [value, setValue] = this.state.dateiTyp;
-            return (
-              <Select
-                options={['CSV', 'XLSX']}
-                value={value}
-                onChange={({ option }) => setValue(option)}
-              />
-            );
     }
 
     render() {
-        var Anzeige = this.inputDatatype('CSV');
 
         return (
             <Box className="SystemInitalisierung" direction="column" gap="medium" pad="medium">
-                <Box className="Auswahlmenü"> 
-                {Anzeige}
+                <Box className="Auswahlmenü">
+                    <Select
+                        options={['CSV', 'XLSX']}
+                        value={this.state.dateiTyp}
+                        onChange={({ value, option }) => {this.setState({dateiTyp: option})}}
+                    />
                 </Box>
             </Box>
 
