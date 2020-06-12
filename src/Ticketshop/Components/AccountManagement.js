@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Button, TextInput, Text } from 'grommet';
 import Web3 from 'web3';
 import WalletLink from 'walletlink';
-//import AsyncStorage from '@react-native-community/async-storage';
 
 
     class AccountManagement extends React.Component{
@@ -17,9 +16,11 @@ import WalletLink from 'walletlink';
             this.setState1 = this.setState1.bind(this);
             this.setState6 = this.setState6.bind(this);
             this.sign = this.sign.bind(this);
-            this.state = { otp: "", step: 0 };
+            this.state = { otp: "", step: 0 , Token: ""};
+            this.tokenHandler = this.tokenHandler.bind(this);
             this.verifyAddress = this.verifyAddress.bind(this);
             this.walletLogin = this.walletLogin.bind(this);
+            this.walletVerbinden = this.walletVerbinden.bind(this);
         }
 
 componentDidMount() {
@@ -30,7 +31,7 @@ componentDidMount() {
 init(){
         const APP_NAME = 'DHBW Bachelors Night Ticketing - 2020'
         const APP_LOGO_URL = 'https://einfachtierisch.de/media/cache/article_teaser/cms/2015/09/Katze-lacht-in-die-Kamera-shutterstock-Foonia-76562038.jpg?595617'
-        const ETH_JSONRPC_URL = 'https://mainnet.infura.io/v3/efaece4f5f4443979063839c124c8171' // Mainnet
+        const ETH_JSONRPC_URL = 'https://mainnet.infura.io/v3/efaece4f5f4443979063839c124c8171'
         const CHAIN_ID = 1
 
         this.setState({ walletAvailable: window.ethereum ? true : false });
@@ -49,11 +50,14 @@ init(){
         this.setState({ connected: window.ethereum.selectedAddress ? true : false });
 
         this.web3 = new Web3(window.ethereum);
-
     }
 
 otpInputHandler(event){
     this.setState({otp: event.target.value});
+}
+
+tokenHandler(event){
+    this.setState({Token: event.target.value});
 }
 
 otpBestätigen(){
@@ -132,14 +136,7 @@ async createUser(){
 }
 
 async walletLogin(){
-    //if(!this.walletAvailable){
-    //    alert("Es wurde kein verfügbares Wallet gefunden.");
-    //    return;
-    //}
-    //if(!this.state.connected){
-    //    alert("Das Wallet wurde noch nicht verbunden.")
-    //    return;
-    //}
+
     const response = await fetch("http://localhost:3000/auth/login", {
         method: 'POST',
         mode: 'cors',
@@ -183,8 +180,9 @@ async sign(challengeString){
         if (err) return console.error(err)
         if (result.error) return console.error(result.error)
 
-        console.log(result);
+        console.log(result); //result = Ergebnis des Blockchain-Aufrufs
         //Mit dem Result weiterrechnen, um Token auszugeben
+        //Hier muss dann noch eine "Login-Funktion" ausgeführt werden.
 
         const response = await fetch('http://localhost:3000/auth/chr/' + challengeString,{
             method: 'POST',
@@ -201,6 +199,14 @@ async sign(challengeString){
             return;
         }
         console.log(response)
+        //Nur Javascript Response Object
+        var jsResponse = await response.json().catch(console.log);
+
+        console.log(jsResponse)
+        if (!jsResponse) return;
+        
+        this.setToken(jsResponse.token);
+
     })
 }
 
@@ -212,23 +218,20 @@ setState6(){
     this.setState({step: 6});
 }
 
-//storeData = async (value) => {
-//    try{
-//        await AsyncStorage.setItem('StorageKey', value)
-//    }catch (error){
-//        alert("Beim speichern ist ein Fehler aufgetreten.")
-//    }
-//}
+async walletVerbinden(){
+    var accounts = await window.ethereum.enable().catch(this.displayError)
+    if (!accounts) return;
 
-//getData = async () => {
-//    try{
-//        const value = await AsyncStorage.getItem('StorageKey')
-//        if(value !== null){
-//            console.log(value)
-//        }
-//    } catch (error){
-//    }
-//}
+    console.log(`User's address is ${accounts[0]}`);
+    this.setState({connected: true});
+    this.setState({step: 6});
+}
+
+setToken(Token){
+    localStorage.setItem('Tokenwert', Token);
+    var value = localStorage.getItem('Tokenwert');
+    console.log(value);
+}
 
 render() {
     return (
@@ -295,11 +298,13 @@ render() {
                     {(!this.state.walletAvailable && !this.state.connected)&&
                         <Box gap="small">
                             <Text>Es ist kein Wallet verfügbar. Bitte erstellen Sie ein Wallet und verbinden Sie dieses.</Text>
+                            <Button label="Wallet erstellen" onClick={this.createCoinbaseWallet}></Button>
                         </Box>    
                     }
                     {(!this.state.connected)&&
                         <Box>
-                            <Text>Ein Wallet ist vorhanden, aber nicht verbunden. Bitte verbinden Sie das Wallet mit der Applikation.</Text>
+                            <Text>Ihr Wallet scheint nicht verbunden zu sein. Bitte verbinden Sie das Wallet.</Text>
+                            <Button label="Wallet verbinden" onClick={this.walletVerbinden}></Button>
                         </Box>    
                     }
                     {(this.state.connected) &&
@@ -310,9 +315,15 @@ render() {
                     }
                 </Box>
               }
+              {this.state.step === 888 &&
+                <Box gap="small">
+                    <h1>Willkommen bei Barry's Testgelände</h1>
+                    <TextInput placeholder="Test-Token eingeben" value={this.state.Token} onChange={this.tokenHandler}></TextInput>
+                    <Button label="Test" onClick={() =>{this.setToken(this.state.Token)}}></Button>
+                </Box>
+              }
             </Box>
     );
 }
-
 }   
 export default AccountManagement;
