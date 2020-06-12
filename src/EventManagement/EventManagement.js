@@ -3,6 +3,7 @@ import { Box } from 'grommet';
 import { Switch, Route, Link } from "react-router-dom";
 import IndexedDBExample from './Components/IndexedDBExample';
 import TicketReaderManager from './Components/TicketReaderManager';
+import SystemInitalisierung from './Components/SystemInitalisierung';
 
 import LocalTicketMirror from './Classes/LocalTicketMirror';
 
@@ -67,6 +68,7 @@ class EventManagement extends React.Component {
                     <li><Link to="/eventmgmt/rtrm">Manage Remote Ticket Readers</Link></li>
                     <li><Link to="/eventmgmt/entrancedb">Show Entrance Dashboard</Link></li>
                     <li><Link to="/eventmgmt/ticketshop">Manage Ticketshop</Link></li>
+                    <li><Link to="/eventmgmt/SystemInitalisierung">System Initalisieren</Link></li>
                 </ul>
                 <Switch>
                     <Route path="/eventmgmt/rtrm">
@@ -74,6 +76,9 @@ class EventManagement extends React.Component {
                     </Route>
                     <Route path="/eventmgmt/entrancedb">
                         <IndexedDBExample localTicketMirror={this.localTicketMirror}></IndexedDBExample>
+                    </Route>
+                    <Route path="/eventmgmt/SystemInitalisierung">
+                        <SystemInitalisierung></SystemInitalisierung>
                     </Route>
                     <Route path="/eventmgmt/ticketshop">
                         <Box pad="medium">Hier müsste dann sowas wie ein Ticketshop Management Dashboard hin...</Box>
