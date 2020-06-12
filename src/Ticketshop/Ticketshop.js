@@ -5,7 +5,8 @@ import WalletSetup from './Components/WalletSetup';
 import UserMainMenu from './Components/UserMainMenu';
 import TicketOverview from './Components/TicketOverview';
 import AccountManagement from './Components/AccountManagement';
-import Bestellungsuebsericht from './Components/Bestellungsuebsericht';
+import BookingOverview from './Components/BookingOverview';
+import TicketBestellung from './Components/TicketBestellung';
 
 class Ticketshop extends React.Component {
 
@@ -22,6 +23,9 @@ class Ticketshop extends React.Component {
                     <Menu label="Account" items={[{ label: 'Logout' }]} />
                 </Header>
                 <Switch>
+                    <Route path="/guest/ticketbestellen">
+                        <TicketBestellung></TicketBestellung>
+                    </Route>
                     <Route path="/guest/tickets/">
                         <TicketOverview></TicketOverview>
                     </Route>
@@ -32,7 +36,7 @@ class Ticketshop extends React.Component {
                         <WalletSetup></WalletSetup>
                     </Route>
                     <Route path="/guest/bestellungsuebersicht">
-                        <Bestellungsuebsericht></Bestellungsuebsericht>
+                        <BookingOverview></BookingOverview>
                     </Route>
                     <Route path="/guest/">
                         <UserMainMenu></UserMainMenu>

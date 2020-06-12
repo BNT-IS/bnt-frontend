@@ -31,7 +31,7 @@ class BestellungsItem extends React.Component {
 
 }
 
-class Bestellungsuebsericht extends React.Component {
+class BookingOverview extends React.Component {
 
     constructor(props) {
         super(props);
@@ -114,4 +114,4 @@ class Bestellungsuebsericht extends React.Component {
     }
 }
 
-export default Bestellungsuebsericht;
+export default BookingOverview;
