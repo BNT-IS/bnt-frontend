@@ -155,7 +155,7 @@ class AccountManagement extends React.Component {
         const data = await response.json().catch(console.log);
         console.log(data);
         if (!data.challenge) {
-            alert("Anmeldung fehlgeschlagen. Möglicherweise haben Sie noch kein Konto bei uns!")
+            alert("Ihre aktuelle Ethereum Adresse ist uns nicht bekannt. Möglicherweise haben Sie noch kein Konto bei uns!")
         } else {
             this.sign(data.challenge);
         }
