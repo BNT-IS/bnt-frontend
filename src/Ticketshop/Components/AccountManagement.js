@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, TextInput, Text } from 'grommet';
 import Web3 from 'web3';
 import WalletLink from 'walletlink';
+import Config from '../../config';
 
 
 class AccountManagement extends React.Component {
@@ -31,7 +32,7 @@ class AccountManagement extends React.Component {
     init() {
         const APP_NAME = 'DHBW Bachelors Night Ticketing - 2020'
         const APP_LOGO_URL = 'https://einfachtierisch.de/media/cache/article_teaser/cms/2015/09/Katze-lacht-in-die-Kamera-shutterstock-Foonia-76562038.jpg?595617'
-        const ETH_JSONRPC_URL = 'https://mainnet.infura.io/v3/efaece4f5f4443979063839c124c8171'
+        const ETH_JSONRPC_URL = Config.INFURA_URI
         const CHAIN_ID = 1
 
         this.setState({ walletAvailable: window.ethereum ? true : false });
@@ -114,7 +115,7 @@ class AccountManagement extends React.Component {
     }
 
     async createUser() {
-        const response = await fetch('http://localhost:3000/auth/otpcreate/' + this.state.otp, {
+        const response = await fetch(Config.BACKEND_BASE_URI + '/auth/otpcreate/' + this.state.otp, {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
@@ -137,7 +138,7 @@ class AccountManagement extends React.Component {
 
     async walletLogin() {
 
-        const response = await fetch("http://localhost:3000/auth/login", {
+        const response = await fetch(Config.BACKEND_BASE_URI + "/auth/login", {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
@@ -184,7 +185,7 @@ class AccountManagement extends React.Component {
             //Mit dem Result weiterrechnen, um Token auszugeben
             //Hier muss dann noch eine "Login-Funktion" ausgeführt werden.
 
-            const response = await fetch('http://localhost:3000/auth/chr/' + challengeString, {
+            const response = await fetch(Config.BACKEND_BASE_URI + '/auth/chr/' + challengeString, {
                 method: 'POST',
                 mode: 'cors',
                 cache: 'no-cache',

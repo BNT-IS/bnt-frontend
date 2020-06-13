@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Box, Button, Text } from 'grommet';
+import Config from '../../config';
 
 class TicketBestellung extends React.Component {
 
@@ -74,7 +75,7 @@ class TicketBestellung extends React.Component {
 
                 {this.state.step === 1 &&
                 <Box gap="small">
-                    <Text>Bitte geben sie an, wie viele Gäste Sie mitnehmen wollen.</Text>
+                    <Text>Bitte geben sie an, wie viele Begleitpersonen Sie mitnehmen wollen.</Text>
                     <Button onClick={() => this.increment("guest")} className="guestcount" label="+"></Button>
                     <Button onClick={() => this.decrement("guest")} className="guestcount" label="-"></Button>
                     <h2>{this.state.guestcount}</h2>
@@ -87,7 +88,6 @@ class TicketBestellung extends React.Component {
                 {this.state.step === 2 &&
                 <Box gap="small">
                     <Text>Bitte geben sie an, wie viele Parktickets Sie benötigen.</Text>   
-
                     <Button onClick={() => this.increment("park")} className="parkcount" label="+"></Button>
                     <Button onClick={() => this.decrement("park")} className="parkcount" label="-"></Button>
                     <h2>{this.state.parkcount}</h2>
@@ -98,9 +98,9 @@ class TicketBestellung extends React.Component {
 
                 {this.state.step === 3 &&
                 <Box gap="small">
-                    <Text>Sie haben folgendes bestellt: <br/>
-                    Absolvententicket 1 <br/> 
-                    Gästeticket {this.state.guestcount} <br/>
+                    <Text>Sie haben folgende Tickets bestellt: <br/>
+                    Absolventent: 1 <br/> 
+                    Begleitpersonen: {this.state.guestcount} <br/>
                     Parkticket {this.state.parkcount}
                     </Text>
                     <Button onClick={this.WindowParkTicket} label="Zurück"></Button>
@@ -114,9 +114,9 @@ class TicketBestellung extends React.Component {
                     Geben Sie ihren Namen als Verwendungszweck an.<br/>
                     Nach Rechnungseingang erhalten Sie Ihre Tickets an ihr Wallet gesendet.<br/>
                     </Text>   
-                    <Text>Sie haben folgendes bestellt: <br/>
-                    Absolvententicket 1 <br/> 
-                    Gästeticket {this.state.guestcount} <br/>
+                    <Text>Sie haben folgende Tickets bestellt: <br/>
+                    Absolventent: 1 <br/> 
+                    Begleitpersonen: {this.state.guestcount} <br/>
                     Parkticket {this.state.parkcount}
                     </Text>
                 </Box>

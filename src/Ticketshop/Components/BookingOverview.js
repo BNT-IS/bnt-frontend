@@ -1,6 +1,7 @@
 import React from 'react';
 import './TicketOverview.css';
 import { Box, Text, Accordion, AccordionPanel } from 'grommet';
+import Config from '../../config';
 
 class BestellungsItem extends React.Component {
 
@@ -47,7 +48,7 @@ class BookingOverview extends React.Component {
 
     async loadListHandler() {
         this.setState({ loading: true });
-        var response = await fetch("http://localhost:3000/api/v1/users/0x1/bookings", {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v1/users/0x1/bookings", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -73,7 +74,7 @@ class BookingOverview extends React.Component {
          
         if(ticketsLoaded !== -1) return;
 
-        var response = await fetch("http://localhost:3000/api/v1/bookings/" + bookingId + "/ticketsBooked", {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v1/bookings/" + bookingId + "/ticketsBooked", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
