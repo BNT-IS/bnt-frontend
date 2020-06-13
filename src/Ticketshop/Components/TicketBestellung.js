@@ -44,18 +44,18 @@ class TicketBestellung extends React.Component {
 
     //Funktion für die Counter
     increment = (property) => {
-        if (property == "guest" && this.state.guestcount < 2){
+        if (property === "guest" && this.state.guestcount < 2){
             this.setState({guestcount: this.state.guestcount + 1});
         }
-        else if (property =="park" && this.state.parkcount < 3){
+        else if (property === "park" && this.state.parkcount < 3){
             this.setState({parkcount: this.state.parkcount + 1});
         }
     }
     decrement = (property) => {
-        if (property == "guest" && this.state.guestcount > 0){
+        if (property === "guest" && this.state.guestcount > 0){
             this.setState({guestcount: this.state.guestcount - 1});
         }
-        else if (property =="park" && this.state.parkcount > 0){
+        else if (property ==="park" && this.state.parkcount > 0){
             this.setState({parkcount: this.state.parkcount - 1});
         }
     }
