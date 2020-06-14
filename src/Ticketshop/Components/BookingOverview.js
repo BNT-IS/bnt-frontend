@@ -9,6 +9,14 @@ class BestellungsItem extends React.Component {
         this.state = { hiddenTickets: false };
     }
 
+    setToken(Token){
+        localStorage.setItem('Tokenwert', Token);
+    }
+    getToken(){
+        var value = localStorage.getItem('Tokenwert');
+        console.log(value);
+    }
+
     render(){
         var ticketsForBooking = [];
         this.props.tickets.forEach((ticket) => {

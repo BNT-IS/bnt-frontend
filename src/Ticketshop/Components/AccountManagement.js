@@ -229,9 +229,12 @@ async walletVerbinden(){
 
 setToken(Token){
     localStorage.setItem('Tokenwert', Token);
+}
+getToken(){
     var value = localStorage.getItem('Tokenwert');
     console.log(value);
 }
+
 
 render() {
     return (
@@ -268,9 +271,9 @@ render() {
                         </Box>
                     }
                     {(this.state.walletAvailable && this.state.connected) &&
-                        //this.verifyAddress() <- @Robin: Das hier geht nicht!!!!
-                        <p>Test</p>
-                        //Was kommt genau hier rein?
+                        <div className="Adresse verifizieren">
+                            {this.verifyAddress}
+                        </div>
                     }
                 </Box>    
               }

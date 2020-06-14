@@ -49,6 +49,14 @@ class TicketBestellung extends React.Component {
         }
     }
 
+    setToken(Token){
+        localStorage.setItem('Tokenwert', Token);
+    }
+    getToken(){
+        var value = localStorage.getItem('Tokenwert');
+        console.log(value);
+    }
+
     render() {
         return (
             <Box className="TicketBestellung" direction="column" gap="medium" pad="medium">
@@ -57,7 +65,6 @@ class TicketBestellung extends React.Component {
                 <Box gap="small">
                     Klicke hier, um ein Absolvententicket zu kaufen.
                     <Button label=" Ein Absolventen Ticket kaufen" onClick={this.AbsolventenTicketAdd} gap="small"></Button>
-                   
                 </Box>
                 }
 

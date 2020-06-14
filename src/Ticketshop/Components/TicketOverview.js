@@ -82,6 +82,14 @@ class TicketOverview extends React.Component {
         })
     }
 
+    setToken(Token){
+        localStorage.setItem('Tokenwert', Token);
+    }
+    getToken(){
+        var value = localStorage.getItem('Tokenwert');
+        console.log(value);
+    }
+
     render() {
         let ticketElements = this.state.tickets.map((ticket) => <TicketListItem key={ticket.identifier} ticket={ticket}></TicketListItem>);
         
