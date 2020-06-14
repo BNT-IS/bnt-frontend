@@ -25,6 +25,10 @@ class SystemInitalisierung extends React.Component {
 
     }
 
+    // TODO: Step fürs Aufsetzen von Master-User mit Wallet
+    // TODO: Step fürs Initialisieren der DB
+    // TODO: Step fürs Aufladen des Backend-Wallets mit Ether...
+
     render() {
 
         return (
