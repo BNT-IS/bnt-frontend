@@ -3,6 +3,7 @@ import './TicketOverview.css';
 import { Box, Button, Text } from 'grommet';
 import { Switch, Route, Link, useParams } from "react-router-dom";
 import QRCode from 'qrcode';
+import Config from '../../config';
 
 function SingleTicketViewer(props) {
     let { identifier } = useParams();
@@ -40,7 +41,7 @@ class TicketOverview extends React.Component {
     async fetchTickets() {
         this.setState({ loading: true });
         let address = "0x3Da85f73bC1B1662FE247391dEcD2a52f139fd13";
-        var response = await fetch("http://localhost:3000/api/v1/users/" + address + "/tickets", {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v1/users/" + address + "/tickets", {
             //method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
