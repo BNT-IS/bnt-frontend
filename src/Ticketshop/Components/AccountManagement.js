@@ -228,17 +228,17 @@ class AccountManagement extends React.Component {
         this.setState({ step: 6 });
     }
 
-setToken(Token){
-    localStorage.setItem('Tokenwert', Token);
-}
-getToken(){
-    var value = localStorage.getItem('Tokenwert');
-    console.log(value);
-}
+    setToken(Token) {
+        localStorage.setItem('access_token', Token);
+    }
+    
+    getToken() {
+        return localStorage.getItem('access_token');
+    }
 
 
-render() {
-    return (
+    render() {
+        return (
             <Box className="AccountManagement" pad="medium" gap="small">
                 {this.state.step === 0 &&
                     <Box gap="small">
@@ -268,64 +268,64 @@ render() {
                             <Box gap="small">
                                 <Text>Als Nächstes benötigt unsere Plattform die Addresse Ihres Wallets. Bitte bestätigen Sie daher die Verbindung mit Ihrem Wallet über folgende Schaltfläche.Sie geben dadurch <b>nicht</b> Ihre Kontrolle über das Wallet ab!
                             Nach einem Klick auf den Button muss mit Coinbase Wallet der angezeigte QR-Code eingescannt werden, um das Wallet zu überprüfen.</Text>
-                            <Button label="Mit vorhandenem Wallet anmelden" onClick={this.connectWallet}></Button>
-                        </Box>
-                    }
-                    {(this.state.walletAvailable && this.state.connected) &&
-                        <div className="Adresse verifizieren">
-                            {this.verifyAddress}
-                        </div>
-                    }
-                </Box>    
-              }
-              {this.state.step === 3 &&
-                <Box gap="small">
-                    <Text>Ein Wallet wurde erfolgreich verbunden. Das Wallet muss anhand einer Testsignatur überprüft werden.</Text>
-                    <Button label="Führe Testsignatur aus" onClick={this.verifyAddress}></Button>
-                </Box>
-              }
-              {this.state.step === 4 &&
-                <Box gap="small">
-                    <Text>Klicke auf den Button, um einen Benutzer zu erstellen.</Text>
-                    <Button label="Benutzer erstellen" onClick={this.createUser}></Button>
-                </Box>
-              }
-              {this.state.step === 5 &&
-                <Box gap="small">
-                    <Text>Der Benutzer wurde erfolgreich angelegt. Klicke auf den Button, um zur Anmeldung zu gelangen. </Text>
-                    <Button label="Zur Anmeldung" onClick={this.setState6}></Button>
-                </Box>    
-              }
-              {this.state.step === 6 &&
-                <Box gap="small">
-                    <h1>Anmeldung mit einem vorhandenen Wallet</h1>
-                    {(!this.state.walletAvailable && !this.state.connected)&&
-                        <Box gap="small">
-                            <Text>Es ist kein Wallet verfügbar. Bitte erstellen Sie ein Wallet und verbinden Sie dieses.</Text>
-                            <Button label="Wallet erstellen" onClick={this.createCoinbaseWallet}></Button>
-                        </Box>    
-                    }
-                    {(!this.state.connected)&&
-                        <Box>
-                            <Text>Ihr Wallet scheint nicht verbunden zu sein. Bitte verbinden Sie das Wallet.</Text>
-                            <Button label="Wallet verbinden" onClick={this.walletVerbinden}></Button>
-                        </Box>    
-                    }
-                    {(this.state.connected) &&
-                        <Box>
-                            <Text>Ein Wallet ist vorhanden und verbunden. Die Anmeldung ist möglich.</Text>
-                            <Button label="Anmeldung starten" onClick={this.walletLogin}></Button>
-                        </Box>
-                    }
-                </Box>
-              }
-              {this.state.step === 888 &&
-                <Box gap="small">
-                    <h1>Willkommen bei Barry's Testgelände</h1>
-                    <TextInput placeholder="Test-Token eingeben" value={this.state.Token} onChange={this.tokenHandler}></TextInput>
-                    <Button label="Test" onClick={() =>{this.setToken(this.state.Token)}}></Button>
-                </Box>
-              }
+                                <Button label="Mit vorhandenem Wallet anmelden" onClick={this.connectWallet}></Button>
+                            </Box>
+                        }
+                        {(this.state.walletAvailable && this.state.connected) &&
+                            <div className="Adresse verifizieren">
+                                {this.verifyAddress}
+                            </div>
+                        }
+                    </Box>
+                }
+                {this.state.step === 3 &&
+                    <Box gap="small">
+                        <Text>Ein Wallet wurde erfolgreich verbunden. Das Wallet muss anhand einer Testsignatur überprüft werden.</Text>
+                        <Button label="Führe Testsignatur aus" onClick={this.verifyAddress}></Button>
+                    </Box>
+                }
+                {this.state.step === 4 &&
+                    <Box gap="small">
+                        <Text>Klicke auf den Button, um einen Benutzer zu erstellen.</Text>
+                        <Button label="Benutzer erstellen" onClick={this.createUser}></Button>
+                    </Box>
+                }
+                {this.state.step === 5 &&
+                    <Box gap="small">
+                        <Text>Der Benutzer wurde erfolgreich angelegt. Klicke auf den Button, um zur Anmeldung zu gelangen. </Text>
+                        <Button label="Zur Anmeldung" onClick={this.setState6}></Button>
+                    </Box>
+                }
+                {this.state.step === 6 &&
+                    <Box gap="small">
+                        <h1>Anmeldung mit einem vorhandenen Wallet</h1>
+                        {(!this.state.walletAvailable && !this.state.connected) &&
+                            <Box gap="small">
+                                <Text>Es ist kein Wallet verfügbar. Bitte erstellen Sie ein Wallet und verbinden Sie dieses.</Text>
+                                <Button label="Wallet erstellen" onClick={this.createCoinbaseWallet}></Button>
+                            </Box>
+                        }
+                        {(!this.state.connected) &&
+                            <Box gap="small">
+                                <Text>Ihr Wallet scheint nicht verbunden zu sein. Bitte verbinden Sie das Wallet.</Text>
+                                <Button label="Wallet verbinden" onClick={this.walletVerbinden}></Button>
+                            </Box>
+                        }
+                        {(this.state.connected) &&
+                            <Box gap="small">
+                                <Text>Ein Wallet ist vorhanden und verbunden. Die Anmeldung ist möglich.</Text>
+                                <Button label="Anmeldung starten" onClick={this.walletLogin}></Button>
+                            </Box>
+                        }
+                    </Box>
+                }
+                {this.state.step === 888 &&
+                    <Box gap="small">
+                        <h1>Willkommen bei Barry's Testgelände</h1>
+                        <TextInput placeholder="Test-Token eingeben" value={this.state.Token} onChange={this.tokenHandler}></TextInput>
+                        <Button label="Test" onClick={() => { this.setToken(this.state.Token) }}></Button>
+                    </Box>
+                }
             </Box>
         );
     }
