@@ -20,6 +20,9 @@ class TicketBestellung extends React.Component {
         };        
     }
 
+    // @Nils Für das generieren des Identifiers für das Ticket einfach erstmal eine Zufallszahl nehmen!
+    // Aber bitte eine extra Funktion für generieren des Ticket-Identifiers anlegen, dann können wir später gemeinsam den "echten/sicheren" Identifier-Generator programmieren
+
 
 
     WindowAbsolventTicket(){
@@ -29,7 +32,7 @@ class TicketBestellung extends React.Component {
 
 
     WindowGuestTicket(){
-        //Wechselt die Ansicht zu den GästeTickets
+        //Wechselt die Ansicht zu den GästeTickets // @Nils es sind "Begleitpersonen". "Gäste" verwenden wir eher als Überbegriff für Absolventen und Begleitpersonen
         this.setState({ step: 1 })
     }
     WindowParkTicket(){
