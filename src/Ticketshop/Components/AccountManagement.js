@@ -17,7 +17,7 @@ class AccountManagement extends React.Component {
         this.setState1 = this.setState1.bind(this);
         this.setState6 = this.setState6.bind(this);
         this.sign = this.sign.bind(this);
-        this.state = { otp: "", step: 0, Token: "" };
+        this.state = { otp: "", step: 0, Token: "" }; // @Robin Camelcase! -> Token -> token
         this.tokenHandler = this.tokenHandler.bind(this);
         this.verifyAddress = this.verifyAddress.bind(this);
         this.walletLogin = this.walletLogin.bind(this);
@@ -80,7 +80,7 @@ class AccountManagement extends React.Component {
     }
 
     displayError() {
-        alert("Ups, das hat leider nicht funktioniert. Bitte versuche es erneut.")
+        alert("Ups, das hat leider nicht funktioniert. Bitte versuchen Sie es erneut.")
     }
 
     async verifyAddress() {
@@ -126,7 +126,7 @@ class AccountManagement extends React.Component {
         }).catch(console.log);
 
         if (!response) {
-            alert("Fehler");
+            alert("Fehler"); // @Robin Bisschen aussagekräftiger sollte das dann für den User schon sein ;)
             return;
         }
 
@@ -149,7 +149,7 @@ class AccountManagement extends React.Component {
         }).catch(console.log);
 
         if (!response) {
-            alert("Fehler!");
+            alert("Fehler!"); // @Robin Bisschen aussagekräftiger sollte das dann für den User schon sein ;)
             return;
         }
 
@@ -196,7 +196,7 @@ class AccountManagement extends React.Component {
             }).catch(console.log);
 
             if (!response) {
-                alert("Fehler");
+                alert("Fehler"); // @Robin Bisschen aussagekräftiger sollte das dann für den User schon sein ;)
                 return;
             }
             console.log(response)
@@ -228,10 +228,17 @@ class AccountManagement extends React.Component {
         this.setState({ step: 6 });
     }
 
+    // @Robin: Für globale Autentifizierung: https://reactjs.org/docs/context.html React context...
+    // Könnte ganz praktisch sein.. Habe ich ausprobiert mit App.js und Ticketshop -> Siehe also dort mal nach
+    // Überlege doch mal, ob du die Logik so auslagern kannst, dass irgendwie global überprüft wird, ob ein Token verfügbar ist, ob dieser funktioniert und, ob das Wallet verbunden ist.
+    // Bsp.: 1. Checke ob access_token verfügbar ist 
+    // 2. Überprüfe, ob das Wallet verfügbar, verbunden und ob du die selectedAddress abrufen kannst. 
+    // 3. Checke, ob der access_token funktioniert, indem du die User-Daten von der GET /users/:address abrufst.
+    // Wenn irgendwas davon nicht geht/ schiefgeht, ist der User nicht eingeloggt und du müsstest auf eine Login-Route im Frontend weiterleiten...
     setToken(Token) {
         localStorage.setItem('access_token', Token);
     }
-    
+
     getToken() {
         return localStorage.getItem('access_token');
     }
@@ -301,19 +308,25 @@ class AccountManagement extends React.Component {
                         <h1>Anmeldung mit einem vorhandenen Wallet</h1>
                         {(!this.state.walletAvailable && !this.state.connected) &&
                             <Box gap="small">
-                                <Text>Es ist kein Wallet verfügbar. Bitte erstellen Sie ein Wallet und verbinden Sie dieses.</Text>
+                            { // @Robin eventuell Bescheid geben, dass es sich hier explizit um das Coinbase Wallet handelt, da dieses bequem auf dem Smartphone installiert werden kann und dann drahtlos funktioniert.
+                            // Alternativ ist ein Wallet im Browser erforderlich...sowas wie MetaMask. 
+                                // Stell dir vor, wie der Dümmste User davor steht und sich fragt, warum jetzt aufeinmal Coinbase?!
+                                // Also einfach vielleicht mehr Infos hier...
+                            
+                            }
+                                <Text>Es ist kein Wallet verfügbar. Bitte erstellen Sie ein Wallet und verbinden Sie dieses.</Text> 
                                 <Button label="Wallet erstellen" onClick={this.createCoinbaseWallet}></Button>
                             </Box>
                         }
                         {(!this.state.connected) &&
                             <Box gap="small">
-                                <Text>Ihr Wallet scheint nicht verbunden zu sein. Bitte verbinden Sie das Wallet.</Text>
+                                <Text>Ihr Wallet scheint nicht verbunden zu sein. Bitte bestätigen Sie die Verbindung mit Ihrem Wallet im nächsten Schritt.</Text>
                                 <Button label="Wallet verbinden" onClick={this.walletVerbinden}></Button>
                             </Box>
                         }
                         {(this.state.connected) &&
                             <Box gap="small">
-                                <Text>Ein Wallet ist vorhanden und verbunden. Die Anmeldung ist möglich.</Text>
+                                <Text>Ein Wallet ist vorhanden und verbunden. Die Anmeldung ist möglich. Bitte bestätigen ("unterschreiben") Sie die nächste Anfrage Ihres Wallets, damit wir Ihre Identität überprüfen können.</Text>
                                 <Button label="Anmeldung starten" onClick={this.walletLogin}></Button>
                             </Box>
                         }

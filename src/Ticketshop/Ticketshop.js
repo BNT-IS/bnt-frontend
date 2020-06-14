@@ -1,4 +1,8 @@
 import React from 'react';
+
+// @Robin Hier mal eine externe js Datei für so Kontext kram...
+import UserContext from '../AppContexts/UserContext';
+
 import { Menu, Header, Box } from 'grommet';
 import { Switch, Route, Link } from "react-router-dom";
 import WalletSetup from './Components/WalletSetup';
@@ -15,12 +19,19 @@ class Ticketshop extends React.Component {
         this.state = {};
     }
 
+    // @Robin Nutze Usercontext so: static contextType = UserContext;
+
     render() {
         return (
             <Box className="Guest">
                 <Header background="brand" justify="between" pad="10px">
                     <Link to="/guest">Home</Link>
-                    <Menu label="Account" items={[{ label: 'Logout' }]} />
+                    {
+                        // @Robin Nutze Usercontext oder so:
+                        <UserContext.Consumer>
+                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }]} />}
+                        </UserContext.Consumer>
+                    }
                 </Header>
                 <Switch>
                     <Route path="/guest/ticketbestellen">
