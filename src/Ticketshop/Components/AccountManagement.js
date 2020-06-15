@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import WalletLink from 'walletlink';
 import Config from '../../config';
 
+import UserContext from '../../AppContexts/UserContext'
 
 class AccountManagement extends React.Component {
 
@@ -17,7 +18,7 @@ class AccountManagement extends React.Component {
         this.setState1 = this.setState1.bind(this);
         this.setState6 = this.setState6.bind(this);
         this.sign = this.sign.bind(this);
-        this.state = { otp: "", step: 0, token: "" };
+        this.state = { otp: "", step: 0, access_token: "" , user:{ address: '' , email: '' , role: 1 , auth_token: this.getToken()}};
         this.tokenHandler = this.tokenHandler.bind(this);
         this.verifyAddress = this.verifyAddress.bind(this);
         this.walletLogin = this.walletLogin.bind(this);
@@ -60,7 +61,7 @@ class AccountManagement extends React.Component {
 
     tokenHandler(event) {
         //Liest den eingegebenen Token aus dem Input-Feld aus und speichert diesen zwischen
-        this.setState({ token: event.target.value });
+        this.setState({ access_token: event.target.value });
     }
 
     otpBestätigen() {
@@ -80,7 +81,7 @@ class AccountManagement extends React.Component {
         if (!accounts) return;
 
         console.log(`User's address is ${accounts[0]}`);
-        this.setState({ connected: true });
+        this.setState({ connected: window.ethereum.selectedAddress ? true : false });
         this.setState({ step: 3 });
     }
 
@@ -235,7 +236,7 @@ class AccountManagement extends React.Component {
         if (!accounts) return;
 
         console.log(`User's address is ${accounts[0]}`);
-        this.setState({ connected: true });
+        this.setState({ connected: window.ethereum.selectedAddress ? true : false });
         this.setState({ step: 6 });
     }
 
@@ -246,9 +247,9 @@ class AccountManagement extends React.Component {
     // 2. Überprüfe, ob das Wallet verfügbar, verbunden und ob du die selectedAddress abrufen kannst. 
     // 3. Checke, ob der access_token funktioniert, indem du die User-Daten von der GET /users/:address abrufst.
     // Wenn irgendwas davon nicht geht/ schiefgeht, ist der User nicht eingeloggt und du müsstest auf eine Login-Route im Frontend weiterleiten...
-    setToken(token) {
+    setToken(access_token) {
         //Schreibt einen Token in den LocalStorage des Browsers
-        localStorage.setItem('access_token', token);
+        localStorage.setItem('access_token', access_token);
     }
 
     getToken() {
@@ -297,7 +298,7 @@ class AccountManagement extends React.Component {
                         }
                         {(this.state.walletAvailable && this.state.connected) &&
                             <div className="Adresse verifizieren">
-                                {this.verifyAddress}
+                                {this.verifyAddress()&& ""}
                             </div>
                         }
                     </Box>
@@ -312,13 +313,17 @@ class AccountManagement extends React.Component {
                 {this.state.step === 4 &&
                 //Erstellt einen neuen User mit dem angegebenen OTP und der ausgewählten Walletadresse
                     <Box gap="small">
-                        {this.createUser}
+                        <div classname="User erstellen">
+                        {this.createUser() && ""}
+                        </div>
                     </Box>
                 }
                 {this.state.step === 5 &&
                 //Springt zur Anmeldung mit einem vorhandenen Wallet
                     <Box gap="small">
-                        {this.setState6}
+                        <div classname="Anmeldung mit Wallet">
+                        {this.setState6() &&""}
+                        </div>
                     </Box>
                 }
                 {this.state.step === 6 &&
@@ -349,8 +354,8 @@ class AccountManagement extends React.Component {
                 //Test-Seite für verschiedene Funktionen, welche im Standard-Prozess nicht aufgerufen wird
                     <Box gap="small">
                         <h1>Willkommen bei Virgil's Testgelände</h1>
-                        <TextInput placeholder="Test-Token eingeben" value={this.state.token} onChange={this.tokenHandler}></TextInput>
-                        <Button label="Eingabe bestätigen" onClick={() => { this.setToken(this.state.token) }}></Button>
+                        <TextInput placeholder="Test-Token eingeben" value={this.state.access_token} onChange={this.tokenHandler}></TextInput>
+                        <Button label="Eingabe bestätigen" onClick={() => { this.setToken(this.state.access_token) }}></Button>
                     </Box>
                 }
             </Box>
