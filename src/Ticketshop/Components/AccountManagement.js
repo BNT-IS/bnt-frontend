@@ -122,7 +122,7 @@ class AccountManagement extends React.Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ address: window.ethereum.selectedAddress })
+            body: JSON.stringify({ user: window.ethereum.selectedAddress })
         }).catch(console.log);
 
         if (!response) {
@@ -145,7 +145,7 @@ class AccountManagement extends React.Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ address: window.ethereum.selectedAddress })
+            body: JSON.stringify({ user: window.ethereum.selectedAddress })
         }).catch(console.log);
 
         if (!response) {
@@ -192,7 +192,7 @@ class AccountManagement extends React.Component {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ address: from, signature: result.result })
+                body: JSON.stringify({ user: from, signature: result.result })
             }).catch(console.log);
 
             if (!response) {
