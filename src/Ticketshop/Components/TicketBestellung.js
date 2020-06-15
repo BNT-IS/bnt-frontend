@@ -24,15 +24,11 @@ class TicketBestellung extends React.Component {
     // Aber bitte eine extra Funktion für generieren des Ticket-Identifiers anlegen, dann können wir später gemeinsam den "echten/sicheren" Identifier-Generator programmieren
 
 
-
+//Wechsel der Ansichtenfenster
     WindowAbsolventTicket(){
         this.setState({ step: 0})
     }
-    
-
-
     WindowGuestTicket(){
-        //Wechselt die Ansicht zu den GästeTickets // @Nils es sind "Begleitpersonen". "Gäste" verwenden wir eher als Überbegriff für Absolventen und Begleitpersonen
         this.setState({ step: 1 })
     }
     WindowParkTicket(){
@@ -68,12 +64,11 @@ class TicketBestellung extends React.Component {
     render() {
         let textInputs = [];
         for (let i = 0; i < this.state.guestcount; i++){
-            let elem = <TextInput key={i}  placeholder="Name des Gastes" ></TextInput>
-            textInputs.push(elem)
-        } 
-
-        
-
+            let forename = <TextInput key={i}  placeholder="Vorname des Gastes" ></TextInput>
+            let surname = <TextInput key={i}  placeholder="Nachname des Gastes" ></TextInput>
+            textInputs.push(forename);
+            textInputs.push(surname);
+        }
 
         return (
             <Box className="TicketBestellung" direction="column" gap="medium" pad="medium">
