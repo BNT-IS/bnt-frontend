@@ -69,6 +69,8 @@ class BookingOverview extends React.Component {
         console.log(response)
         var data = await response.json().catch(console.log)
         if (!data) return;
+
+        // TODO: Error Handling, wenn data nur eine Message ist... data.message
         this.setState({ buchungen: data, loading: false })
     }
 
