@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Box, Button, Text } from 'grommet';
+import { Box, Button, Text, TextInput } from 'grommet';
+import { setConstantValue } from 'typescript';
 
 class TicketBestellung extends React.Component {
 
@@ -15,7 +16,7 @@ class TicketBestellung extends React.Component {
         this.state = { 
             guestcount: 0, 
             parkcount: 0, 
-            step: 0 
+            step: 0,
         };        
     }
 
@@ -28,7 +29,7 @@ class TicketBestellung extends React.Component {
 
 
     WindowGuestTicket(){
-        //Wechselt die Ansicht zu den GästeTickets
+        //Wechselt die Ansicht zu den Besuchertickets
         this.setState({ step: 1 })
     }
     WindowParkTicket(){
@@ -60,7 +61,17 @@ class TicketBestellung extends React.Component {
         }
     }
 
+
     render() {
+        let textInputs = [];
+        for (let i = 0; i < this.state.guestcount; i++){
+            let elem = <TextInput key={i}  placeholder="Name des Gastes" ></TextInput>
+            textInputs.push(elem)
+        } 
+
+        
+
+
         return (
             <Box className="TicketBestellung" direction="column" gap="medium" pad="medium">
                
@@ -78,6 +89,10 @@ class TicketBestellung extends React.Component {
                     <Button onClick={() => this.increment("guest")} className="guestcount" label="+"></Button>
                     <Button onClick={() => this.decrement("guest")} className="guestcount" label="-"></Button>
                     <h2>{this.state.guestcount}</h2>
+
+                    {textInputs}
+                    
+                
 
                     <Button onClick={this.WindowAbsolventTicket} label="Zurück"></Button>
                     <Button onClick={this.WindowParkTicket} label="Weiter"></Button>
