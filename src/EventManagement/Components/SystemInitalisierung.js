@@ -20,7 +20,12 @@ class Hauptansicht extends React.Component {
 
     constructor(props) {
         super(props);
+        this.onClickHandler = this.onClickHandler.bind(this);
         this.state = {};
+    }
+
+    onClickHandler() {
+        this.props.onStartInitializing(1);
     }
 
     render() {
@@ -43,7 +48,7 @@ class Hauptansicht extends React.Component {
                     { initializeStep: 'Einlesen der Absolventen-Liste und Erstellung der One Time Passwörter', doneSteps: 'false' },
                 ]}
             />
-            <Button label="System initalisieren"></Button>
+            <Button label="System initalisieren" onClick={this.onClickHandler}></Button>
         </Box>
         return Ansicht;
     }
@@ -54,16 +59,19 @@ class AddWallet extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { addresse: "", initialeListe: [] };
+        this.state = { addresse: "", initialeListe: [], textInput: "" };
     }
 
     render() {
         var Ansicht = [];
-        var Textbox = this.Example();
+        //var Textbox = this.Example();
         Ansicht = <Box>
             <Text>Hinzufügen des Wallets für den Master-User:</Text>
-            {Textbox};
-            
+            <TextInput
+                placeholder="Test"
+                value={this.state.textInput}
+                onChange={(event) => {this.setState({textInput: event.target.value}) }}
+            />
         </Box>
         return Ansicht;
     }
@@ -104,17 +112,22 @@ class SystemInitalisierung extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { initializeStep: 1, Ansicht: [], addresse: "" };
+        this.changeStep = this.changeStep.bind(this);
+        this.state = { initializeStep: 0, Ansicht: [], addresse: "" };
     }
 
     // TODO: Step fürs Aufsetzen von Master-User mit Wallet
     // TODO: Step fürs Initialisieren der DB
     // TODO: Step fürs Aufladen des Backend-Wallets mit Ether...
 
+    changeStep() {
+        this.setState({ initializeStep: ++this.state.initializeStep });
+    }
+
     loadView() {
         if (this.state.initializeStep === 0) {
             var Ansicht = [];
-            Ansicht = <Hauptansicht></Hauptansicht>;
+            Ansicht = <Hauptansicht onStartInitializing={this.changeStep} ></Hauptansicht>;
             return Ansicht;
         }
 
@@ -137,24 +150,15 @@ class SystemInitalisierung extends React.Component {
         }
     }
 
-    Example() {
-        const [value, setValue] = this.state.addresse;
-        return (
-          <TextInput
-            placeholder="type here"
-            value={value}
-            onChange={event => setValue(event.target.value)}
-          />
-        );
-      }
-
     render() {
-       var Ansicht = this.loadView();
-       //{Ansicht}
-        var Ansicht = this.Example();
+        var Ansicht = this.loadView();
+        //{Ansicht}
+        //var Ansicht = this.Example();
         return (
             <Box className="SystemInitalisierung" direction="column" gap="medium" pad="medium" align="center">
-                {Ansicht}
+                {this.state.initializeStep === 0 && <Hauptansicht onStartInitializing={this.changeStep} ></Hauptansicht>}
+                {this.state.initializeStep === 1 && <AddWallet></AddWallet>}
+                <Button onClick={this.changeStep} label="TEst"></Button>
                 <Box className="Auswahlmenü">
                     <Select
                         options={['CSV', 'XLSX']}
