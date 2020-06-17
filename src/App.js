@@ -15,7 +15,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     // @Robin Hinzugefügt für globales User Objekt
-    this.state = { user: { address: '0x1', email: 'test@fabianbusch.me', role: 0 , auth_token: localStorage.getItem('access_token') } };
+    this.state = { user: { address: null, email: null, role: null, auth_token: null } };
   }
 
   render() {
