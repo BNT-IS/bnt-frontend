@@ -9,14 +9,6 @@ class BestellungsItem extends React.Component {
         super(props);
     }
 
-    setToken(Token){
-        localStorage.setItem('Tokenwert', Token);
-    }
-    getToken(){
-        var value = localStorage.getItem('Tokenwert');
-        console.log(value);
-    }
-
     render(){
         var ticketsForBooking = [];
         this.props.tickets.forEach((ticket) => {
@@ -56,13 +48,13 @@ class BookingOverview extends React.Component {
 
     async loadListHandler() {
         this.setState({ loading: true });
-        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v1/users/0x1/bookings", {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/users/1/bookings", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer f1df51e1835233014368105514f07a70e9f2255b279e5535810d7fbf2d565cc1d692d8b06d53f6157423bb3c63b97e5a42adfbe6277e48dc028d8043683acca13b1b9f83773015ff5f3533e9ad08943bac2eb003f24fc3e6c910d2e83e69f39ec1d3e3ac98d4d2965312670810aab8ec152338654bcab32e7c82cbe83545b0b5f307feed1976239fbe2718c97abab76768e6dcdb3e243fcead76ef2bc2ca72045f748da22dee9881a3aefe0b18ce9dd6d34eb4032ed56e1cb4d8bf11d2ff0d663b65f3ee2b2da04af8bc3b0473c4046fdc53248905d3499955f635c6ed9bb7e2defb03b54414ac617e4f73c96e6639bf1b89111458f5d830387f0c51e2c5a5d6',
+                'Authorization': 'Bearer 91ba3c0f6ae8d56c4714260a8dbb7c6ce606797be4fb79eedfc73e4d6f212d255487b44e9c1b264deca11183605744c4c8c70d01b097872b41551c7a5dc8af3b7b7f755388835c67b8b094de2253e9ac95850e0575717ea5c3a9efa7239a0adaa70f6fcffec09f4b25ee4b6118fe0e9483f0d3faf8be0976a608460b0ad2156c0ddcc5f483db50404c2f6567b16a6087682d10c4ec22935be53f164a206d3f592baad81c301496b5ff5fca105e65a4121e1f0ae327d9eb5ae8f3f754fdbe7187f6a83e9e6fbe789268d8292521760e1b3f1dcb2a162b55a5b8b8089b21b996e1875f14b0b705a9cbcc806f4f3c4ac229cd3740175b0bf610bd514447430d2f15',
             }
         }).catch(console.log)
         if (!response) return
@@ -79,18 +71,18 @@ class BookingOverview extends React.Component {
 
         let bookingId = this.state.buchungen[indexOfBooking].id;
         let ticketsLoaded = this.state.tickets.findIndex((ticket) => {
-            return ticket.booking === bookingId
+            return ticket.bookingId === bookingId
         })
          
         if(ticketsLoaded !== -1) return;
 
-        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v1/bookings/" + bookingId + "/ticketsBooked", {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/bookings/" + bookingId + "/ticketsBooked", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer f1df51e1835233014368105514f07a70e9f2255b279e5535810d7fbf2d565cc1d692d8b06d53f6157423bb3c63b97e5a42adfbe6277e48dc028d8043683acca13b1b9f83773015ff5f3533e9ad08943bac2eb003f24fc3e6c910d2e83e69f39ec1d3e3ac98d4d2965312670810aab8ec152338654bcab32e7c82cbe83545b0b5f307feed1976239fbe2718c97abab76768e6dcdb3e243fcead76ef2bc2ca72045f748da22dee9881a3aefe0b18ce9dd6d34eb4032ed56e1cb4d8bf11d2ff0d663b65f3ee2b2da04af8bc3b0473c4046fdc53248905d3499955f635c6ed9bb7e2defb03b54414ac617e4f73c96e6639bf1b89111458f5d830387f0c51e2c5a5d6',
+                'Authorization': 'Bearer 91ba3c0f6ae8d56c4714260a8dbb7c6ce606797be4fb79eedfc73e4d6f212d255487b44e9c1b264deca11183605744c4c8c70d01b097872b41551c7a5dc8af3b7b7f755388835c67b8b094de2253e9ac95850e0575717ea5c3a9efa7239a0adaa70f6fcffec09f4b25ee4b6118fe0e9483f0d3faf8be0976a608460b0ad2156c0ddcc5f483db50404c2f6567b16a6087682d10c4ec22935be53f164a206d3f592baad81c301496b5ff5fca105e65a4121e1f0ae327d9eb5ae8f3f754fdbe7187f6a83e9e6fbe789268d8292521760e1b3f1dcb2a162b55a5b8b8089b21b996e1875f14b0b705a9cbcc806f4f3c4ac229cd3740175b0bf610bd514447430d2f15',
             }
         }).catch(console.log)
 
@@ -110,7 +102,7 @@ class BookingOverview extends React.Component {
         var buchungen = [];
         this.state.buchungen.forEach((buchung) => {
             var filteredTickets = this.state.tickets.filter((ticket) => {
-                return ticket.booking === buchung.id
+                return ticket.bookingId === buchung.id
             })
             buchungen.push(<BestellungsItem key={buchung.id} booking={buchung} tickets={filteredTickets}></BestellungsItem>)
         });
