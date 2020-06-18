@@ -16,13 +16,13 @@ class BestellungsItem extends React.Component {
                 <Box key={ticket.identifier} pad="small">
                     <span>Ticket Identifier: {ticket.identifier}</span>
                     <span>Nachname: {ticket.surname}</span>
-                    <span>Vorname: {ticket.forename}/</span>
+                    <span>Vorname: {ticket.forename}</span>
                     <span>Ticket Typ: {ticket.ticketType}</span>
                 </Box>
             )
         });
         var buchung = this.props.booking;
-        var accPanelLabel = "Buchungs-ID: " + buchung.id + " Account: " + buchung.user + " Buchungsdatum: " + buchung.dateBooked + " Bezahldatum: " + buchung.datePaid;
+        var accPanelLabel = "Buchungs-ID: " + buchung.id + " Buchungsdatum: " + buchung.createdAt + " Bezahldatum: " + buchung.paidAt;
         return (
             <AccordionPanel label={accPanelLabel}>
                 <Text margin="small">Folgende Tickets wurden gebucht:</Text>
