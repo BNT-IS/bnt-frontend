@@ -3,7 +3,7 @@ import './App.css';
 
 // @Robin siehe https://reactjs.org/docs/context.html
 import UserContext from './AppContexts/UserContext';
-
+import AccountManagement from './AccountManagement/AccountManagement'
 import Ticketshop from './Ticketshop/Ticketshop';
 import EntranceManagement from './EntranceManagement/EntranceManagement';
 import EventManagement from './EventManagement/EventManagement';
@@ -15,14 +15,16 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     // @Robin Hinzugefügt für globales User Objekt
-    this.state = { user: { address: null, email: null, role: null, auth_token: null } };
+    this.state = { user: { id: null, email: null, role: null, access_token: null } };
   }
 
   render() {
     console.log(this.state.user);
     return (
       // @Robin Hinzugefügt für globales User Objekt siehe https://reactjs.org/docs/context.html
-      <UserContext.Provider value={{ user: this.state.user, logout: () => { this.setState({ user: undefined }) } }}>
+      <UserContext.Provider value={{ user: this.state.user, logout: () => { this.setState({ user: {id: null, email: null, role: null, access_token: null}}) }, 
+      login: () => {this.setState({ user: { id: localStorage.getItem('user_id'), email: localStorage.getItem('user_email'), role: localStorage.getItem('user_role'), access_token: localStorage.getItem('access_token')}})}}}> 
+        
         <Grommet theme={grommet}>
           <Switch>
             <Route exact path="/">
@@ -30,6 +32,7 @@ class App extends React.Component {
                 <li><Link to="/guest">Gast</Link></li>
                 <li><Link to="/entrance">Einlass-Management</Link></li>
                 <li><Link to="/eventmgmt">Event-Management</Link></li>
+                <li><Link to="/Accountmanagement">Accountmanagement</Link></li>
               </ul>
             </Route>
           </Switch>
@@ -42,6 +45,9 @@ class App extends React.Component {
             </Route>
             <Route path="/eventmgmt">
               <EventManagement></EventManagement>
+            </Route>
+            <Route path="/Accountmanagement">
+              <AccountManagement></AccountManagement>
             </Route>
           </Switch>
         </Grommet>

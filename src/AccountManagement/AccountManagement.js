@@ -1,21 +1,26 @@
 import React from 'react';
 import { Box, Button, TextInput, Text } from 'grommet';
 import Web3 from 'web3';
-import Config from '../../config';
+import Config from '../config';
 
-import UserContext from '../../AppContexts/UserContext'
 
 class AccountManagement extends React.Component {
 
     constructor(props) {
         super(props);
         this.createUser = this.createUser.bind(this);
+        this.login = this.login.bind(this);
+        this.loginPassHandler = this.loginPassHandler.bind(this);
+        this.mailHandler = this.mailHandler.bind(this);
         this.otpBestätigen = this.otpBestätigen.bind(this);
         this.otpInputHandler = this.otpInputHandler.bind(this);
+        this.pass1Handler = this.pass1Handler.bind(this);
+        this.pass2Handler = this.pass2Handler.bind(this);
         this.setState1 = this.setState1.bind(this);
         this.setState6 = this.setState6.bind(this);
-        this.state = { otp: "", step: 0, access_token: "" };
+        this.state = { dhbw_mail: "", login_pass: "", new_pass: "", otp: "", pass1: "", pass2: "", step: 0, access_token: ""};
         this.tokenHandler = this.tokenHandler.bind(this);
+        this.verifyPasswort = this.verifyPasswort.bind(this);
     }
 
     componentDidMount() {
@@ -43,21 +48,49 @@ class AccountManagement extends React.Component {
         this.setState({ step: 2 });
     }
 
+    pass1Handler(event) {
+        this.setState({ pass1: event.target.value });
+    }
+
+    pass2Handler(event) {
+        this.setState({ pass2: event.target.value });
+    }
+
+    mailHandler(event) {
+        this.setState({ dhbw_mail: event.target.value });
+    }
+
+    loginPassHandler(event) {
+        this.setState({ login_pass: event.target.value });
+    }
+
+    verifyPasswort(){
+        if(this.state.pass1 === this.state.pass2){
+            alert("Die angegebenen Passwörter stimmen überein!");
+            this.createUser(this.state.pass2);
+        }
+        else {
+            alert("Die angegebenen Passwörter stimmen nicht überein!");
+            this.setState({ pass1: "" });
+            this.setState({ pass2: "" });
+        }
+    }
+
     displayError() {
         //Wirft eine Standardfehlermeldung aus
         alert("Ups, das hat leider nicht funktioniert. Bitte versuchen Sie es erneut.")
     }
 
-    async createUser() {
-        //Legt anhand des eingegebenen OTP's einen User mit der ausgewählten Walletadresse an
-        const response = await fetch(Config.BACKEND_BASE_URI + '/auth/otpcreate/' + this.state.otp, {
+    async createUser(pw) {
+        //Legt anhand des eingegebenen OTP's einen User mit dem gewählten Passwort an
+        const response = await fetch(Config.BACKEND_BASE_URI + '/auth/createUser/' + this.state.otp, {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ user: window.ethereum.selectedAddress })
+            body: JSON.stringify({ newPassword: pw })
         }).catch(console.log);
 
         if (!response) {
@@ -66,10 +99,49 @@ class AccountManagement extends React.Component {
         }
 
         const test = await response.json().catch(console.log);
-
-        console.log(test);
+        if(test.message !== "Passwort nicht existent."){
         alert("Der Nutzer wurde erfolgreich angelegt.");
-        this.setState({ step: 5 });
+        this.setState ({ step: 3 });
+        }
+        else {
+            alert(test.message + " Ihr angegebenes OTP scheint nicht zu exisitieren. Bitte überprüfen Sie die Eingabe.");
+            this.setState ({ step: 1 });
+        }
+    }
+
+    async login() {
+        const response = await fetch(Config.BACKEND_BASE_URI + '/auth/login', {
+            method: 'POST',
+            mose: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: this.state.dhbw_mail, password: this.state.login_pass})
+        }).catch(console.log);
+
+        const userValue = await response.json().catch(console.log);
+        console.log(userValue);
+        if(userValue.message !== "Falsche E-Mailadresse oder falsches Passwort."){
+        this.setToken('access_token', userValue.token);
+        this.setToken('user_id', userValue.user.id);
+        this.setToken('user_email', userValue.user.email);
+        this.setToken('user_role', userValue.user.role);
+        this.setState({ step: 3 });
+        }
+        else {
+            alert(userValue.message);
+        }
+    }
+
+    setToken(token_name, access_token) {
+        //Schreibt einen Token in den LocalStorage des Browsers
+        localStorage.setItem(token_name, access_token);
+    }
+
+    getToken() {
+        //Liest einen Token aus dem LocalStorage des Browsers aus
+        return localStorage.getItem('access_token');
     }
 
     setState1() {
@@ -89,15 +161,6 @@ class AccountManagement extends React.Component {
     // 2. Überprüfe, ob das Wallet verfügbar, verbunden und ob du die selectedAddress abrufen kannst. 
     // 3. Checke, ob der access_token funktioniert, indem du die User-Daten von der GET /users/:address abrufst.
     // Wenn irgendwas davon nicht geht/ schiefgeht, ist der User nicht eingeloggt und du müsstest auf eine Login-Route im Frontend weiterleiten...
-    setToken(access_token) {
-        //Schreibt einen Token in den LocalStorage des Browsers
-        localStorage.setItem('access_token', access_token);
-    }
-
-    getToken() {
-        //Liest einen Token aus dem LocalStorage des Browsers aus
-        return localStorage.getItem('access_token');
-    }
 
 
     render() {
@@ -116,80 +179,41 @@ class AccountManagement extends React.Component {
                 {this.state.step === 1 &&
                 //Eingabe des persönlichen OTP's
                     <Box gap="small">
-                        <Text>Bitte geben Sie das OneTime-Passwort ein und bestätigen Sie die Eingabe</Text>
+                        <Text>Bitte geben Sie das OneTime-Passwort ein, das wir an Ihre DHBW-Mailadresse versendet haben, und bestätigen Sie die Eingabe</Text>
                         <TextInput placeholder="OTP eingeben" value={this.state.otp} onChange={this.otpInputHandler}></TextInput>
                         <Button label="Eingabe bestätigen" onClick={this.otpBestätigen}></Button>
                     </Box>
                 }
                 {this.state.step === 2 &&
-                //Aufruf zur Erstellung eines Wallets, falls keines verfügbar. Aufruf zur Verbindung des Wallets mit der BA-Night Applikation durch Scannen des QR-Codes durch das Wallet.
-                    <Box classname="WalletSetup" direction="column" gap="small">
-                        <h1>Wallet Setup</h1>
-                        <Text>Um Tickets zu erwerben benötigen Sie ein sogenanntes Wallet. Dieses ist vergleichbar mit Ihrer Geldbörse zu der nur Sie Zugriff haben.</Text>
-                        {(!this.state.walletAvailable && !this.state.connected) &&
-                            <Box gap="small">
-                                <Button label="Wallet auf dem Smartphone erstellen" onClick={this.createCoinbaseWallet}></Button>
-                            </Box>
-                        }
-                        {(!this.state.connected) &&
-                            <Box gap="small">
-                                <Text>Als Nächstes benötigt unsere Plattform die Addresse Ihres Wallets. Bitte bestätigen Sie daher die Verbindung mit Ihrem Wallet über folgende Schaltfläche.Sie geben dadurch <b>nicht</b> Ihre Kontrolle über das Wallet ab!
-                            Nach einem Klick auf den Button muss mit Coinbase Wallet der angezeigte QR-Code eingescannt werden, um das Wallet zu überprüfen.</Text>
-                                <Button label="Mit vorhandenem Wallet anmelden" onClick={this.connectWallet}></Button>
-                            </Box>
-                        }
-                        {(this.state.walletAvailable && this.state.connected) &&
-                            <div className="Adresse verifizieren">
-                                {this.verifyAddress()&& ""}
-                            </div>
-                        }
+                    <Box classname="Passwortvergabe" direction="column" gap="small">
+                        <h1>Passwortvergabe</h1>
+                        <Text>Bitte vergeben Sie ein neues Passwort für Ihren Account</Text>
+                        <TextInput placeholder="Neues Passwort vergeben" value={this.state.pass1} onChange={this.pass1Handler}></TextInput>
+                        <TextInput placeholder="Neues Passwort bestätigen" value={this.state.pass2} onChange={this.pass2Handler}></TextInput>
+                        <Button label="Passwort bestätigen" onClick={this.verifyPasswort}></Button>
                     </Box>
                 }
                 {this.state.step === 3 &&
-                //Sendet eine Testsignatur an das verbundene Wallet, um zu überprüfen, ob das angegebene Wallet auch dem Benutzer gehört
+                
                     <Box gap="small">
-                        <Text>Ein Wallet wurde erfolgreich verbunden. Das Wallet muss anhand einer Testsignatur überprüft werden.</Text>
-                        <Button label="Führe Testsignatur aus" onClick={this.verifyAddress}></Button>
+                        <Text>Sie haben sich erfolgreich angemeldet.</Text>
+                        <Button label="Test123" ></Button>
                     </Box>
                 }
                 {this.state.step === 4 &&
-                //Erstellt einen neuen User mit dem angegebenen OTP und der ausgewählten Walletadresse
                     <Box gap="small">
-                        <div classname="User erstellen">
-                        {this.createUser() && ""}
-                        </div>
                     </Box>
                 }
                 {this.state.step === 5 &&
-                //Springt zur Anmeldung mit einem vorhandenen Wallet
                     <Box gap="small">
-                        <div classname="Anmeldung mit Wallet">
-                        {this.setState6() &&""}
-                        </div>
                     </Box>
                 }
                 {this.state.step === 6 &&
-                //Anmeldung mit einem vorhandenen Coinbase-Wallet
                     <Box gap="small">
-                        <h1>Anmeldung mit einem vorhandenen Coinbase-Wallet</h1>
-                        {(!this.state.walletAvailable && !this.state.connected) &&
-                            <Box gap="small">
-                                <Text>Es ist kein Wallet verfügbar. Bitte erstellen Sie ein Coinbase-Wallet und verbinden Sie dieses.</Text> 
-                                <Button label="Wallet erstellen" onClick={this.createCoinbaseWallet}></Button>
-                            </Box>
-                        }
-                        {(!this.state.connected) &&
-                            <Box gap="small">
-                                <Text>Ihr Coinbase-Wallet scheint nicht verbunden zu sein. Bitte bestätigen Sie die Verbindung mit Ihrem Wallet im nächsten Schritt.</Text>
-                                <Button label="Wallet verbinden" onClick={this.walletVerbinden}></Button>
-                            </Box>
-                        }
-                        {(this.state.walletAvailable && this.state.connected) &&
-                            <Box gap="small">
-                                <Text>Ein Coinbase-Wallet ist vorhanden und verbunden. Die Anmeldung ist möglich. Bitte bestätigen ("unterschreiben") Sie die nächste Anfrage Ihres Wallets, damit wir Ihre Identität überprüfen können.</Text>
-                                <Button label="Anmeldung starten" onClick={this.walletLogin}></Button>
-                            </Box>
-                        }
+                        <h1>Anmeldung mit einem vorhandenen Account</h1>
+                        <TextInput placeholder="DHBW-Mailadresse eingeben" value={this.state.dhbw_mail} onChange={this.mailHandler}></TextInput>
+                        <TextInput placeholder="Account-Passwort eingeben" value={this.state.login_pass} onChange={this.loginPassHandler}></TextInput>
+                        <Button label="Anmelden" onClick={this.login}></Button>
                     </Box>
                 }
                 {this.state.step === 888 &&

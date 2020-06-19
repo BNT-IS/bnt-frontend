@@ -8,7 +8,6 @@ import { Switch, Route, Link } from "react-router-dom";
 import WalletSetup from './Components/WalletSetup';
 import UserMainMenu from './Components/UserMainMenu';
 import TicketOverview from './Components/TicketOverview';
-import AccountManagement from './Components/AccountManagement';
 import BookingOverview from './Components/BookingOverview';
 import TicketBestellung from './Components/TicketBestellung';
 
@@ -29,7 +28,7 @@ class Ticketshop extends React.Component {
                     {
                         // @Robin Nutze Usercontext oder so:
                         <UserContext.Consumer>
-                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }]} />}
+                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }, { label: 'Login', onClick: userContext.login}]} />}
                         </UserContext.Consumer>
                     }
                 </Header>
@@ -39,9 +38,6 @@ class Ticketshop extends React.Component {
                     </Route>
                     <Route path="/guest/tickets/">
                         <TicketOverview></TicketOverview>
-                    </Route>
-                    <Route path="/guest/setup">
-                        <AccountManagement></AccountManagement>
                     </Route>
                     <Route path="/guest/demosetup">
                         <WalletSetup></WalletSetup>
