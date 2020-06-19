@@ -1,7 +1,8 @@
 import React from 'react';
 //import './TicketOverview.css';
-import { Box, Button, Accordion, AccordionPanel, Select, Text, List, TextInput } from 'grommet';
+import { Box, Button, Select, Text, List, TextInput } from 'grommet';
 import Config from '../../config';
+import { CSVReader } from 'react-papaparse';
 
 class Hauptansicht extends React.Component {
 
@@ -14,32 +15,49 @@ class Hauptansicht extends React.Component {
     getConfigured(key) {
         var wert = this.props.mapTest.get(key);
         if (!wert)
-            return "Nicht erledigt";
+            return <Text key={key}>Nicht erledigt</Text>;
         if (wert)
-            return "Erledigt"
+            return <Text key={key}>Erledigt</Text>;
     }
 
     render() {
         var Ansicht = [];
-        Ansicht[0] = <Box>
-            <Text textAlign="center">
-                Guten Tag und Herzlich Wilkommen zum Ticketsystem.
-                Die nächsten Schritte dienen zur Initalisierung des Systems.
-                Sie werden durch die notwendigen Vorbereitungsschritte geführt.
-                Für die Initalisierung sind folgende Schritte notwendig:
-            </Text>
-            <List
-                primaryKey="initializeStep"
-                secondaryKey="doneSteps"
-                data={[
-                    { initializeStep: <Text size="large" weight="bold">Vorbereitsungsschritt</Text>, doneSteps: <Text size="large" weight="bold">Zustand</Text> },
-                    { initializeStep: <Text weight="normal">Hinzufügen eines Wallets für den Master-User</Text>, doneSteps: this.getConfigured("AW") },
-                    { initializeStep: <Text weight="normal">Initalisieren der Datenbank</Text>, doneSteps: this.getConfigured("DB") },
-                    { initializeStep: <Text weight="normal">Hinzufügen von Ether zu dem Wallet für den Master-User</Text>, doneSteps: this.getConfigured("MS") },
-                    { initializeStep: <Text weight="normal">Einlesen der Absolventen-Liste und Erstellung der One Time Passwörter</Text>, doneSteps: this.getConfigured("AL") },
-                ]}
-            />
-        </Box>
+        if (this.props.initializeStep === 0) {
+            Ansicht[0] = <Box pad="medium" key="start">
+                <Text textAlign="center">
+                    Guten Tag und Herzlich Wilkommen zum Ticketsystem.
+                </Text>
+                <Text>
+                    Die nächsten Schritte dienen zur Initalisierung des Systems.
+                    Sie werden durch die notwendigen Vorbereitungsschritte geführt.
+                </Text>
+                <Text textAlign="center">
+                    Für die Initalisierung sind folgende Schritte notwendig
+                </Text>
+            </Box>
+        }
+        if (this.props.initializeStep === 5) {
+            Ansicht[0] = <Box pad="medium" key="end">
+                <Text textAlign="center">
+                    Herzlich Glückwunsch Sie haben das Ticketsystem erfolgreich konfiguriert!
+                </Text>
+            </Box>
+        }
+
+        Ansicht[1] =
+            <Box>
+                <List
+                    primaryKey="initializeStep"
+                    secondaryKey="doneSteps"
+                    data={[
+                        { initializeStep: <Text size="large" weight="bold" key="header">Vorbereitsungsschritt</Text>, doneSteps: <Text size="large" weight="bold" key="headerZustand">Zustand</Text> },
+                        { initializeStep: <Text weight="normal" key="StatusAdminWallet">Hinzufügen eines Wallets für den Master-User</Text>, doneSteps: this.getConfigured("AW") },
+                        { initializeStep: <Text weight="normal" key="StatusDB"> Initalisieren der Datenbank</Text>, doneSteps: this.getConfigured("DB") },
+                        { initializeStep: <Text weight="normal" key="StatusMS">Initialisieren des Mailservers</Text>, doneSteps: this.getConfigured("MS") },
+                        { initializeStep: <Text weight="normal" key="StatusListe">Einlesen der Absolventen-Liste und Erstellung der One Time Passwörter</Text>, doneSteps: this.getConfigured("AL") },
+                    ]}
+                />
+            </Box>
         return Ansicht;
     }
 }
@@ -49,6 +67,7 @@ class AddWallet extends React.Component {
     constructor(props) {
         super(props);
         this.state = { addresse: "", };
+        this.configureTheAdminWallet = this.configureTheAdminWallet.bind(this);
     }
 
     //TODO: CONFIUGRE WALLET ANPASSEN AUF URI 
@@ -75,12 +94,16 @@ class AddWallet extends React.Component {
     render() {
         var Ansicht = [];
         Ansicht = <Box>
-            <Text size="large" weight="bold">Hinzufügen des Wallets für den Master-User:</Text>
-            <TextInput
-                placeholder="Test"
-                value={this.state.textInput}
-                onChange={(event) => { this.setState({ textInput: event.target.value }) }}
-            />
+            <Box pad="medium">
+                <Text size="large" weight="bold">Hinzufügen des Wallets für den Master-User:</Text>
+            </Box>
+            <Box pad="medium">
+                <TextInput
+                    placeholder="Test"
+                    value={this.state.textInput}
+                    onChange={(event) => { this.setState({ textInput: event.target.value }) }}
+                />
+            </Box>
             <Button onClick={this.setValueTrue} label="Hinzufügen"></Button>
         </Box>
         return Ansicht;
@@ -92,9 +115,10 @@ class ConfigureDatabase extends React.Component {
     constructor(props) {
         super(props);
         this.state = { host: "", user: "", password: "", db: "" };
+        this.configureTheDatabase = this.configureTheDatabase.bind(this);
     }
 
-    //TODO: CONFIUGRE DATABASE ANPASSEN AUF URI 
+    //TODO: Problem bei body 
     async configureTheDatabase() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/database", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -124,38 +148,44 @@ class ConfigureDatabase extends React.Component {
     render() {
         var Ansicht = [];
         Ansicht = <Box>
-            <Text size="large" weight="bold">Konfigurieren der Datenbank:</Text>
-            <Box>Datenbank-Host:
+            <Box pad="medium">
+                <Text size="large" weight="bold">Konfigurieren der Datenbank:</Text>
+            </Box>
+            <Box pad="medium">
+                <Text weight="bold">Datenbank-Host:</Text>
                 <TextInput
                     placeholder="Hier bitte den Datenbank-Host eingeben"
                     value={this.state.host}
                     onChange={(event) => { this.setState({ host: event.target.value }) }}
-                /></Box>
-            <Box>Datenbank-Host:
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold">Benutzer:</Text>
                 <TextInput
-                    placeholder="Hier bitte den Datenbank-Host eingeben"
-                    value={this.state.host}
-                    onChange={(event) => { this.setState({ host: event.target.value }) }}
-                /></Box>
-            Benutzer:
-            <TextInput
-                placeholder="Hier bitte den Benutzer eingeben"
-                value={this.state.user}
-                onChange={(event) => { this.setState({ user: event.target.value }) }}
-            />
-            Passwort:
-            <TextInput
-                placeholder="Hier bitte das Passwort eingeben"
-                value={this.state.password}
-                onChange={(event) => { this.setState({ password: event.target.value }) }}
-            />
-            Datenbank:
-            <TextInput
-                placeholder="ier bitte die Datenbank eingeben"
-                value={this.state.db}
-                onChange={(event) => { this.setState({ db: event.target.value }) }}
-            />
-            <Button onClick={this.configureTheDatabase} label="Abschließen"></Button>
+                    placeholder="Hier bitte den Benutzer eingeben"
+                    value={this.state.user}
+                    onChange={(event) => { this.setState({ user: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold">Passwort:</Text>
+                <TextInput
+                    placeholder="Hier bitte das Passwort eingeben"
+                    value={this.state.password}
+                    onChange={(event) => { this.setState({ password: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold"> Datenbank:</Text>
+                <TextInput
+                    placeholder="Hier bitte die Datenbank eingeben"
+                    value={this.state.db}
+                    onChange={(event) => { this.setState({ db: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="medium">
+                <Button onClick={this.configureTheDatabase} label="Abschließen"></Button>
+            </Box>
         </Box>
         return Ansicht;
     }
@@ -165,10 +195,11 @@ class ConfigureMailserver extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { host: "", port: Number, conncetion: Boolean, user: "", password: "", standardMail: "", standardPrefix: "" };
+        this.state = { host: "", port: null, conncetion: true, user: "", password: "", standardMail: "", standardPrefix: "" };
+        this.configureTheMailserver = this.configureTheMailserver.bind(this);
     }
 
-    //TODO: CONFIUGRE MAILSERVER ANPASSEN AUF URI 
+    //TODO: Problem bei body ? 
     async configureTheMailserver() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/mailserver", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -202,50 +233,67 @@ class ConfigureMailserver extends React.Component {
         var Ansicht = [];
         Ansicht = <Box>
             <Text size="large" weight="bold">Konfigurieren des Mailservers:</Text>
-            Mailserver-Host:
-            <TextInput
-                placeholder="Hier bitte den Mailserver-Host eingeben"
-                value={this.state.textInput}
-                onChange={(event) => { this.setState({ host: event.target.value }) }}
-            />
-            Port:
-            <TextInput
-                placeholder="Hier bitte den Port eingeben"
-                value={this.state.port}
-                onChange
-                ={(event) => { this.setState({ port: event.target.value }) }}
-            />
-            Sichere Verbindung:
-            <Select
-                options={['true', 'false']}
-                value={this.state.conncetion}
-                onChange={({ value, option }) => { this.setState({ conncetion: option }) }}
-            />
-            Benutzer:
-            <TextInput
-                placeholder="Hier bitte den Benutzer eingeben"
-                value={this.state.user}
-                onChange={(event) => { this.setState({ user: event.target.value }) }}
-            />
-            Passwort:
-            <TextInput
-                placeholder="Hier bitte das Passwort eingeben"
-                value={this.state.password}
-                onChange={(event) => { this.setState({ password: event.target.value }) }}
-            />
-            Standard Mail:
-            <TextInput
-                placeholder="Hier bitte die Standard Mail eingeben"
-                value={this.state.standardMail}
-                onChange={(event) => { this.setState({ standardMail: event.target.value }) }}
-            />
-           Standard Subject Prefix:
-            <TextInput
-                placeholder="Hier bitte den Standard Prefix eingeben"
-                value={this.state.standardPrefix}
-                onChange={(event) => { this.setState({ standardPrefix: event.target.value }) }}
-            />
-            <Button onClick={this.configureTheMailserver} label="Abschließen"></Button>
+            <Box pad="small">
+                <Text weight="bold">Mailserver-Host:</Text>
+                <TextInput
+                    placeholder="Hier bitte den Mailserver-Host eingeben"
+                    value={this.state.textInput}
+                    onChange={(event) => { this.setState({ host: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold"> Port:</Text>
+                <TextInput
+                    placeholder="Hier bitte den Port eingeben"
+                    value={this.state.port}
+                    onChange
+                    ={(event) => { this.setState({ port: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold">Sichere Verbindung:</Text>
+                <Select
+                    options={['true', 'false']}
+                    value={this.state.conncetion}
+                    onChange={({ value, option }) => { this.setState({ conncetion: option }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold"> Benutzer:</Text>
+                <TextInput
+                    placeholder="Hier bitte den Benutzer eingeben"
+                    value={this.state.user}
+                    onChange={(event) => { this.setState({ user: event.target.value }) }}
+                />
+            </Box>
+
+            <Box pad="small">
+                <Text weight="bold">Passwort: </Text>
+                <TextInput
+                    placeholder="Hier bitte das Passwort eingeben"
+                    value={this.state.password}
+                    onChange={(event) => { this.setState({ password: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold">Standard Mail:</Text>
+                <TextInput
+                    placeholder="Hier bitte die Standard Mail eingeben"
+                    value={this.state.standardMail}
+                    onChange={(event) => { this.setState({ standardMail: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold">Standard Subject Prefix:</Text>
+                <TextInput
+                    placeholder="Hier bitte den Standard Prefix eingeben"
+                    value={this.state.standardPrefix}
+                    onChange={(event) => { this.setState({ standardPrefix: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Button onClick={this.configureTheMailserver} label="Abschließen"></Button>
+            </Box>
         </Box>
         return Ansicht;
         //TODO STANDARD (????)
@@ -256,7 +304,8 @@ class AbsolventenListe extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { listeEingelesen: false, initialeListe: [], dateiTyp: "CSV" };
+        this.state = { listeEingelesen: false, finished: false, initialeListe: [], dateiTyp: "CSV", path: "" };
+        this.useListAndSendMail = this.useListAndSendMail.bind(this);
     }
 
     //TODO FUNKTION ERSTELLEN
@@ -277,21 +326,84 @@ class AbsolventenListe extends React.Component {
 
         if (!data.message) return
 
+        this.setState({ finished: true })
         this.props.changeValueOfmapTest("AL");
     }
 
+
+    //FUNKTIONEN FÜR CSV-Reader
+
+    //Eingelesene Daten entgegennehmen und in den State schreiben
+    handleOnDrop = (data) => {
+        var liste = [];
+        console.log('---------------------------')
+        console.log(data)
+        console.log('---------------------------')
+
+        data.forEach((data) => {
+            console.log(data.data)
+            liste.push(data.data)
+        });
+
+        this.setState({ listeEingelesen: true, initialeListe: liste })
+    }
+
+    handleOnError = (err, file, inputElem, reason) => {
+        console.log(err)
+    }
+
+    handleOnRemoveFile = (data) => {
+        console.log('---------------------------')
+        console.log(data)
+        console.log('---------------------------')
+    }
+
+
     render() {
         var Ansicht = [];
+        var emailList = this.state.initialeListe;
         Ansicht = <Box>
-            <Text size="large" weight="bold">Einlesen der Absolventen Liste</Text>
-            <Box className="Auswahlmenü">
-                <Select
-                    options={['CSV', 'XLSX']}
-                    value={this.state.dateiTyp}
-                    onChange={({ value, option }) => { this.setState({ dateiTyp: option }) }}
-                />
+            <Box pad="medium">
+                <Text size="large" weight="bold">Einlesen der Absolventen Liste</Text>
             </Box>
-            <Button onClick={this.useListAndSendMail} label="Abschließen"></Button>
+
+            {!this.state.listeEingelesen && !this.state.finished &&
+                <Box className="Eingaben">
+                    <Box pad="medium">
+                        <Text>Bitte eine Liste in der folgenden Darstellung einlesen:</Text>
+                        <span><Text weight="bold">Header: </Text><Text>E-Mail; Name</Text></span>
+                        <span><Text weight="bold">Datensatz 1: </Text><Text>Beispiel@web.de; Mustermann, Max</Text></span>
+                    </Box>
+                    <CSVReader
+                        onDrop={this.handleOnDrop}
+                        onError={this.handleOnError}
+                        config={{
+                            delimiter: ";",
+                            header: true
+                        }}
+                        addRemoveButton
+                        onRemoveFile={this.handleOnRemoveFile}
+                    >
+                        <span>Drop CSV file here or click to upload.</span>
+                    </CSVReader>
+                </Box>
+            }
+
+            {this.state.listeEingelesen && !this.state.finished &&
+                <List className="langeListe" pad="medium"
+                    primaryKey="E-Mail"
+                    secondaryKey="Name"
+                    data={emailList}
+                />
+            }
+            <Box pad="medium">
+                <Button onClick={this.useListAndSendMail} label="Abschließen"></Button>
+            </Box>
+
+            {this.state.listeEingelesen && this.state.finished &&
+                <Text>Bitte den Nächsten Schritt</Text>
+            }
+
         </Box>
         return Ansicht;
     }
@@ -317,20 +429,20 @@ class SystemInitalisierung extends React.Component {
     }
 
     changeStep() {
-        this.setState({ initializeStep: ++this.state.initializeStep });
+        this.setState({ initializeStep: 1 + this.state.initializeStep });
     }
 
     render() {
         return (
             <Box className="SystemInitalisierung" direction="column" gap="medium" pad="medium" align="center">
-                {this.state.initializeStep === 0 && <Hauptansicht mapTest={this.state.mapTest}></Hauptansicht>}
+                {this.state.initializeStep === 0 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}></Hauptansicht>}
                 {this.state.initializeStep === 1 && <AddWallet changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}></AddWallet>}
                 {this.state.initializeStep === 2 && <ConfigureDatabase changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}></ConfigureDatabase>}
                 {this.state.initializeStep === 3 && <ConfigureMailserver changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}></ConfigureMailserver>}
                 {this.state.initializeStep === 4 && <AbsolventenListe changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}></AbsolventenListe>}
-                {this.state.initializeStep === 5 && <Hauptansicht mapTest={this.state.mapTest}></Hauptansicht>}
+                {this.state.initializeStep === 5 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}></Hauptansicht>}
                 {this.state.initializeStep < 5 && <Button onClick={this.changeStep} label="Nächster Schritt"></Button>}
-                {this.state.initializeStep === 5 && <Box> <Button label="Zurück"></Button><Button label="Konfigurationen anzeigen"></Button></Box>}
+                {this.state.initializeStep === 5 && <Box pad="medium"> <Button label="Zurück"></Button> <Button label="Konfigurationen anzeigen"></Button></Box>}
             </Box>
         );
     }
