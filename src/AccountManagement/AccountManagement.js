@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Button, TextInput, Text } from 'grommet';
+import { Box, Button, TextInput, Text, Menu, Header} from 'grommet';
 import Web3 from 'web3';
 import Config from '../config';
-
+import UserContext from '../AppContexts/UserContext';
+import {Link } from "react-router-dom";
 
 class AccountManagement extends React.Component {
 
@@ -166,7 +167,16 @@ class AccountManagement extends React.Component {
     render() {
         //Stellt die jeweiligen Schritte für den Benutzer dar
         return (
+
             <Box className="AccountManagement" pad="medium" gap="small">
+                <Header background="brand" justify="between" pad="10px">
+                    <Link to="../">Home</Link>
+                    {
+                        <UserContext.Consumer>
+                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }, { label: 'Login', onClick: userContext.login}]} />}
+                        </UserContext.Consumer>
+                    }
+                </Header>
                 {this.state.step === 0 &&
                 //Startseite des Accountmanagements, Auswahl zwischen Neuanlage eines Áccounts und Anmeldung mit einem bestehenden Account
                     <Box gap="small">
@@ -225,7 +235,9 @@ class AccountManagement extends React.Component {
                     </Box>
                 }
             </Box>
-        );
+        ); 
     }
 }
 export default AccountManagement;
+
+

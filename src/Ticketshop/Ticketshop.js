@@ -24,7 +24,7 @@ class Ticketshop extends React.Component {
         return (
             <Box className="Guest">
                 <Header background="brand" justify="between" pad="10px">
-                    <Link to="/guest">Home</Link>
+                    <Link to="../">Home</Link>
                     {
                         // @Robin Nutze Usercontext oder so:
                         <UserContext.Consumer>

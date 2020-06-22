@@ -1,9 +1,10 @@
 import React from 'react';
-import { Box } from 'grommet';
+import { Box, Header, Menu } from 'grommet';
 import { Switch, Route, Link } from "react-router-dom";
 import IndexedDBExample from './Components/IndexedDBExample';
 import TicketReaderManager from './Components/TicketReaderManager';
 import SystemInitalisierung from './Components/SystemInitalisierung';
+import UserContext from '../AppContexts/UserContext';
 
 import LocalTicketMirror from './Classes/LocalTicketMirror';
 
@@ -63,7 +64,16 @@ class EventManagement extends React.Component {
 
     render() {
         return (
+            
             <Box className="EventManagement">
+                <Header background="brand" justify="between" pad="10px">
+                    <Link to="../">Home</Link>
+                    {
+                        <UserContext.Consumer>
+                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }, { label: 'Login', onClick: userContext.login}]} />}
+                        </UserContext.Consumer>
+                    }
+                </Header>
                 <ul>
                     <li><Link to="/eventmgmt/rtrm">Manage Remote Ticket Readers</Link></li>
                     <li><Link to="/eventmgmt/entrancedb">Show Entrance Dashboard</Link></li>
