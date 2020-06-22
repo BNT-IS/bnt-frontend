@@ -36,7 +36,11 @@ class TicketBestellung extends React.Component {
         this.WindowGuestTicket = this.WindowGuestTicket.bind(this);
         this.WindowParkTicket = this.WindowParkTicket.bind(this);
         this.ToOverview = this.ToOverview.bind(this);
+        this.ToOrder = this.ToOrder.bind(this);
         this.ToPayment = this.ToPayment.bind(this);
+        this.createTickets = this.createTickets.bind(this);
+        this.createBooking = this.createBooking.bind(this);
+        this.onInputHandler = this.onInputHandler.bind(this);
 
 
         this.state = {
@@ -44,14 +48,39 @@ class TicketBestellung extends React.Component {
             parkcount: 0,
             step: 0,
             persons: [],
-            personInputFields: []
+            personInputFields: [],
+            graduate: {
+                forename: "",
+                surname: ""
+            },
+            bookingResult: null
         };
+
+
     }
 
     // @Nils Für das generieren des Identifiers für das Ticket einfach erstmal eine Zufallszahl nehmen!
     // Aber bitte eine extra Funktion für generieren des Ticket-Identifiers anlegen, dann können wir später gemeinsam den "echten/sicheren" Identifier-Generator programmieren
 
+    onInputHandler(event, type) {
+        if (type == "forename") {
+            this.setState({
+                graduate: {
+                    forename: event.target.value, 
+                    surname: this.state.graduate.surname
+                }
+            })
+        } else {
+            this.setState({
+                graduate: {
+                    surname: event.target.value,
+                    forename: this.state.graduate.forename
+                }
+            })
+        }
 
+
+    }
     //Wechsel der Ansichtenfenster
     WindowAbsolventTicket() {
         this.setState({ step: 0 })
@@ -68,9 +97,12 @@ class TicketBestellung extends React.Component {
     ToPayment() {
         this.setState({ step: 4 })
     }
+    ToOrder() {
+        this.setState({ step: 5 })
+    }
 
 
-    //Funktion für die Counter
+    //Funktion für die Counter und der Namen der Gäste
     increment = (property) => {
         if (property === "guest" && this.state.guestcount < 2) {
 
@@ -81,7 +113,6 @@ class TicketBestellung extends React.Component {
 
             this.state.personInputFields.push(personInput);
             this.setState({ persons: personsList, personInputFields: this.state.personInputFields, guestcount: this.state.guestcount + 1 });
-            
 
         }
         else if (property === "park" && this.state.parkcount < 3) {
@@ -98,39 +129,111 @@ class TicketBestellung extends React.Component {
     }
 
 
-    /*async fetchTickets() {
-        this.setState({ loading: true });
-        let address = "0x3Da85f73bC1B1662FE247391dEcD2a52f139fd13";
-        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v1/users/" + address + "/tickets", {
+    async createBooking() {
+        let userId = "1";
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/bookings", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer 43059960ead1db519cbbed4aa934462808262fa6204daefabcab4b0b38b667d61828556556e4b9e80b6a91e9990fc8704bbf399cdafd41b06ddc0c31a500accb94b96fa096bf8789c7c582f9e5df0ead8f23ef77a9b045ccbb78a60cd2401592e79b8c396cd4520297cfb0603011a7f373f9dbbc6a37527bd160b5e754850cbf8779a4c5049e816a9b9bee268e110baf53e901e80aa8df89d6a07b92cf33b581294bedc1b8da2c9a583845b13766f4c89abc9ac3466b69748a1ba0bf6a80a8c2b6aa6ec084c88c2cc4d212470089dbb9e4bce056c90e8a0ebaa5b9e563c80d20ac173b791769eac9d29c509810086f1700c7cec0071a03bb7aed67fec7215979',
-            }
+                'Authorization': 'Bearer 91ba3c0f6ae8d56c4714260a8dbb7c6ce606797be4fb79eedfc73e4d6f212d255487b44e9c1b264deca11183605744c4c8c70d01b097872b41551c7a5dc8af3b7b7f755388835c67b8b094de2253e9ac95850e0575717ea5c3a9efa7239a0adaa70f6fcffec09f4b25ee4b6118fe0e9483f0d3faf8be0976a608460b0ad2156c0ddcc5f483db50404c2f6567b16a6087682d10c4ec22935be53f164a206d3f592baad81c301496b5ff5fca105e65a4121e1f0ae327d9eb5ae8f3f754fdbe7187f6a83e9e6fbe789268d8292521760e1b3f1dcb2a162b55a5b8b8089b21b996e1875f14b0b705a9cbcc806f4f3c4ac229cd3740175b0bf610bd514447430d2f15',
+            },
+            body: JSON.stringify({ userId: userId })
         }).catch(console.log);
-
-        if (!response) return;
-
-        var tickets = await response.json().catch(console.log);
-
-        if (!tickets) return;
-
-        tickets.forEach((ticket) => {
-            switch (ticket.ticketType) {
-                case "0": ticket.ticketType = "Absolvent"; break;
-                case "1": ticket.ticketType = "Begleitperson"; break;
-                case "2": ticket.ticketType = "Parkticket"; break;
-                default: break;
-            }
-        });
-
-        this.setState({ tickets: tickets, loading: false });
-    }*/
+        // Error Handling für Benutzer
+        if (!response){
+            this.setState({step: 100}); 
+            return;
+         }
 
 
-   
+        var result = await response.json().catch(console.log);
+        console.log(result)
+        this.setState({ bookingResult: result });
+
+        if (!result){
+           this.setState({step: 100}); 
+           return;
+        }
+        console.log(result);
+
+        await this.createTickets();
+    }
+
+    generateIdentifier() {
+        return Math.random() * 100000;
+    }
+
+    async createTickets() {
+        console.log(this.state)
+        let bookingResult = this.state.bookingResult.id;
+        for (let element of this.state.persons) {
+            console.log(element);
+            var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/ticketsBooked", {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer 91ba3c0f6ae8d56c4714260a8dbb7c6ce606797be4fb79eedfc73e4d6f212d255487b44e9c1b264deca11183605744c4c8c70d01b097872b41551c7a5dc8af3b7b7f755388835c67b8b094de2253e9ac95850e0575717ea5c3a9efa7239a0adaa70f6fcffec09f4b25ee4b6118fe0e9483f0d3faf8be0976a608460b0ad2156c0ddcc5f483db50404c2f6567b16a6087682d10c4ec22935be53f164a206d3f592baad81c301496b5ff5fca105e65a4121e1f0ae327d9eb5ae8f3f754fdbe7187f6a83e9e6fbe789268d8292521760e1b3f1dcb2a162b55a5b8b8089b21b996e1875f14b0b705a9cbcc806f4f3c4ac229cd3740175b0bf610bd514447430d2f15',
+                },
+                body: JSON.stringify({
+                    identifier: this.generateIdentifier(),
+                    bookingId: bookingResult,
+                    ticketType: 1,
+                    forename: element.forename,
+                    surname: element.surname,
+                    isWheelchairUser: false,
+                })
+            }).catch(console.log);
+            // Error Handling für Benutzer
+            if (!response) {
+                this.setState({step: 100}); 
+                return;
+             }
+            var result = await response.json().catch(console.log);
+            if (!result) {
+                this.setState({step: 100}); 
+                return;
+             }
+            console.log(result)
+        }
+        //Ticket für Absolvent in DB schreiben
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/ticketsBooked", {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 91ba3c0f6ae8d56c4714260a8dbb7c6ce606797be4fb79eedfc73e4d6f212d255487b44e9c1b264deca11183605744c4c8c70d01b097872b41551c7a5dc8af3b7b7f755388835c67b8b094de2253e9ac95850e0575717ea5c3a9efa7239a0adaa70f6fcffec09f4b25ee4b6118fe0e9483f0d3faf8be0976a608460b0ad2156c0ddcc5f483db50404c2f6567b16a6087682d10c4ec22935be53f164a206d3f592baad81c301496b5ff5fca105e65a4121e1f0ae327d9eb5ae8f3f754fdbe7187f6a83e9e6fbe789268d8292521760e1b3f1dcb2a162b55a5b8b8089b21b996e1875f14b0b705a9cbcc806f4f3c4ac229cd3740175b0bf610bd514447430d2f15',
+            },
+            body: JSON.stringify({
+                identifier: this.generateIdentifier(),
+                bookingId: bookingResult,
+                ticketType: 0,
+                forename: this.state.graduate.forename,
+                surname: this.state.graduate.surname,
+                isWheelchairUser: false,
+            })
+        }).catch(console.log);
+        // Error Handling für Benutzer
+        if (!response) {
+            this.setState({step: 100}); 
+            return;
+         }
+
+        var result = await response.json().catch(console.log);
+
+        if (!result) {
+            this.setState({step: 100}); 
+            return;
+         }
+
+        console.log(result)
+        this.ToOrder();
+    }
+
 
 
 
@@ -142,6 +245,8 @@ class TicketBestellung extends React.Component {
 
                 {this.state.step === 0 &&
                     <Box gap="small">
+                        <TextInput name="forename" placeholder="Vorname des Absolventen" value={this.state.graduate.forename} onChange={(event) => this.onInputHandler(event, "forename")}></TextInput>
+                        <TextInput name="surname" placeholder="Nachname des Absolventen" value={this.state.graduate.surname} onChange={(event) => this.onInputHandler(event, "surname")}></TextInput>
                         Klicke hier, um ein Absolvententicket zu kaufen.
                     <Button label=" Ein Absolventen Ticket kaufen" onClick={this.WindowGuestTicket} gap="small"></Button>
                     </Box>
@@ -153,10 +258,7 @@ class TicketBestellung extends React.Component {
                         <Button onClick={() => this.increment("guest")} className="guestcount" label="+"></Button>
                         <Button onClick={() => this.decrement("guest")} className="guestcount" label="-"></Button>
                         <h2>{this.state.guestcount}</h2>
-
                         {this.state.personInputFields}
-
-
                         <Button onClick={this.WindowAbsolventTicket} label="Zurück"></Button>
                         <Button onClick={this.WindowParkTicket} label="Weiter"></Button>
                     </Box>
@@ -196,6 +298,18 @@ class TicketBestellung extends React.Component {
                     Begleitpersonen: {this.state.guestcount} <br />
                     Parkticket {this.state.parkcount}
                         </Text>
+                        <Button label="Buchung erstellen" onClick={this.createBooking}></Button>
+                    </Box>
+                }
+                {this.state.step === 5 &&
+                    <Box gap="small">
+                        Erfolgreich bestellt!
+                    </Box>
+                }
+
+                {this.state.step === 100 &&
+                    <Box gap="small">
+                        <Text>Ein Fehler im Bestellvorgang ist aufgetreten!</Text>
                     </Box>
                 }
 
