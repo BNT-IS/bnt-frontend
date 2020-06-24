@@ -1,11 +1,13 @@
 import React from 'react';
-import { Box, Button, TextInput, Text, Menu, Header} from 'grommet';
+import { Box, Button, TextInput, Text, Menu, Header } from 'grommet';
 import Web3 from 'web3';
 import Config from '../config';
 import UserContext from '../AppContexts/UserContext';
-import {Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 class AccountManagement extends React.Component {
+
+    static contextType = UserContext;
 
     constructor(props) {
         super(props);
@@ -19,7 +21,7 @@ class AccountManagement extends React.Component {
         this.pass2Handler = this.pass2Handler.bind(this);
         this.setState1 = this.setState1.bind(this);
         this.setState6 = this.setState6.bind(this);
-        this.state = { dhbw_mail: "", login_pass: "", new_pass: "", otp: "", pass1: "", pass2: "", step: 0, access_token: ""};
+        this.state = { dhbw_mail: "", login_pass: "", new_pass: "", otp: "", pass1: "", pass2: "", step: 0, access_token: "" };
         this.tokenHandler = this.tokenHandler.bind(this);
         this.verifyPasswort = this.verifyPasswort.bind(this);
     }
@@ -56,8 +58,8 @@ class AccountManagement extends React.Component {
         this.setState({ login_pass: event.target.value });
     }
 
-    verifyPasswort(){
-        if(this.state.pass1 === this.state.pass2){
+    verifyPasswort() {
+        if (this.state.pass1 === this.state.pass2) {
             alert("Die angegebenen Passwörter stimmen überein!");
             this.createUser(this.state.pass2);
         }
@@ -85,19 +87,24 @@ class AccountManagement extends React.Component {
             body: JSON.stringify({ newPassword: pw })
         }).catch(console.log);
 
-        if (!response) {
+        if (!response.ok) {
             alert("Für das eingegebene OTP konnte kein User angelegt werden.");
+            const rückgabe = await response.json().catch(console.log);
+            if (rückgabe.message) {
+                alert(rückgabe.message + " Ihr angegebenes OTP scheint nicht zu exisitieren. Bitte überprüfen Sie die Eingabe.");
+                this.setState({ step: 1 });
+            }
             return;
-        }
-
-        const test = await response.json().catch(console.log);
-        if(test.message !== "Passwort nicht existent."){
-        alert("Der Nutzer wurde erfolgreich angelegt.");
-        this.setState ({ step: 3 });
-        }
-        else {
-            alert(test.message + " Ihr angegebenes OTP scheint nicht zu exisitieren. Bitte überprüfen Sie die Eingabe.");
-            this.setState ({ step: 1 });
+        } else {
+            const rückgabe = await response.json().catch(console.log);
+            if (rückgabe) {
+                alert("Der Nutzer wurde erfolgreich angelegt.");
+                this.setToken('access_token', rückgabe.token);
+                this.setToken('user_id', rückgabe.user.id);
+                this.setToken('user_email', rückgabe.user.email);
+                this.setToken('user_role', rückgabe.user.role);
+                this.handleFinalLogin();
+            }
         }
     }
 
@@ -109,21 +116,32 @@ class AccountManagement extends React.Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email: this.state.dhbw_mail, password: this.state.login_pass})
+            body: JSON.stringify({ email: this.state.dhbw_mail, password: this.state.login_pass })
         }).catch(console.log);
 
-        const userValue = await response.json().catch(console.log);
-        console.log(userValue);
-        if(userValue.message !== "Falsche E-Mailadresse oder falsches Passwort."){
-        this.setToken('access_token', userValue.token);
-        this.setToken('user_id', userValue.user.id);
-        this.setToken('user_email', userValue.user.email);
-        this.setToken('user_role', userValue.user.role);
-        this.setState({ step: 3 });
+        if (!response.ok) {
+            alert("Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie ihre Angaben.");
+            const rückgabe = await response.json().catch(console.log);
+            if (rückgabe.message) {
+                alert("Ihre Anmeldedaten scheinen nicht zu stimmen. Bitte überprüfen Sie ihre Angaben.");
+                this.setState({ step: 1 })
+            }
+            return;
+        } else {
+            const rückgabe = await response.json().catch(console.log);
+            if (rückgabe) {
+                this.setToken('access_token', rückgabe.token);
+                this.setToken('user_id', rückgabe.user.id);
+                this.setToken('user_email', rückgabe.user.email);
+                this.setToken('user_role', rückgabe.user.role);
+                this.handleFinalLogin();
+            }
         }
-        else {
-            alert(userValue.message);
-        }
+    }
+
+    handleFinalLogin(){
+        this.context.reloadLocalStorage();
+        this.context.login();
     }
 
     setToken(token_name, access_token) {
@@ -146,15 +164,6 @@ class AccountManagement extends React.Component {
         this.setState({ step: 6 });
     }
 
-    // @Robin: Für globale Autentifizierung: https://reactjs.org/docs/context.html React context...
-    // Könnte ganz praktisch sein.. Habe ich ausprobiert mit App.js und Ticketshop -> Siehe also dort mal nach
-    // Überlege doch mal, ob du die Logik so auslagern kannst, dass irgendwie global überprüft wird, ob ein Token verfügbar ist, ob dieser funktioniert und, ob das Wallet verbunden ist.
-    // Bsp.: 1. Checke ob access_token verfügbar ist 
-    // 2. Überprüfe, ob das Wallet verfügbar, verbunden und ob du die selectedAddress abrufen kannst. 
-    // 3. Checke, ob der access_token funktioniert, indem du die User-Daten von der GET /users/:address abrufst.
-    // Wenn irgendwas davon nicht geht/ schiefgeht, ist der User nicht eingeloggt und du müsstest auf eine Login-Route im Frontend weiterleiten...
-
-
     render() {
         //Stellt die jeweiligen Schritte für den Benutzer dar
         return (
@@ -164,12 +173,12 @@ class AccountManagement extends React.Component {
                     <Link to="../">Home</Link>
                     {
                         <UserContext.Consumer>
-                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }, { label: 'Login', onClick: userContext.login}]} />}
+                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }, { label: 'Login', onClick: userContext.login }]} />}
                         </UserContext.Consumer>
                     }
                 </Header>
                 {this.state.step === 0 &&
-                //Startseite des Accountmanagements, Auswahl zwischen Neuanlage eines Áccounts und Anmeldung mit einem bestehenden Account
+                    //Startseite des Accountmanagements, Auswahl zwischen Neuanlage eines Áccounts und Anmeldung mit einem bestehenden Account
                     <Box gap="small">
                         <Text>Klicke hier, um einen neuen Account anzulegen</Text>
                         <Button label="Neuen Account anlegen" gap="small" onClick={this.setState1}></Button>
@@ -178,7 +187,7 @@ class AccountManagement extends React.Component {
                     </Box>
                 }
                 {this.state.step === 1 &&
-                //Eingabe des persönlichen OTP's
+                    //Eingabe des persönlichen OTP's
                     <Box gap="small">
                         <Text>Bitte geben Sie das OneTime-Passwort ein, das wir an Ihre DHBW-Mailadresse versendet haben, und bestätigen Sie die Eingabe</Text>
                         <TextInput placeholder="OTP eingeben" value={this.state.otp} onChange={this.otpInputHandler}></TextInput>
@@ -194,13 +203,6 @@ class AccountManagement extends React.Component {
                         <Button label="Passwort bestätigen" onClick={this.verifyPasswort}></Button>
                     </Box>
                 }
-                {this.state.step === 3 &&
-                
-                    <Box gap="small">
-                        <Text>Sie haben sich erfolgreich angemeldet.</Text>
-                        <Button label="Test123" ></Button>
-                    </Box>
-                }
                 {this.state.step === 6 &&
                     <Box gap="small">
                         <h1>Anmeldung mit einem vorhandenen Account</h1>
@@ -210,7 +212,7 @@ class AccountManagement extends React.Component {
                     </Box>
                 }
                 {this.state.step === 888 &&
-                //Test-Seite für verschiedene Funktionen, welche im Standard-Prozess nicht aufgerufen wird
+                    //Test-Seite für verschiedene Funktionen, welche im Standard-Prozess nicht aufgerufen wird
                     <Box gap="small">
                         <h1>Willkommen bei Virgil's Testgelände</h1>
                         <TextInput placeholder="Test-Token eingeben" value={this.state.access_token} onChange={this.tokenHandler}></TextInput>
@@ -218,7 +220,7 @@ class AccountManagement extends React.Component {
                     </Box>
                 }
             </Box>
-        ); 
+        );
     }
 }
 export default AccountManagement;
