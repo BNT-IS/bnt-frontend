@@ -2,14 +2,20 @@ import React from 'react';
 import { Box, Button, Select, Text, List, TextInput, DataTable, Meter } from 'grommet';
 import Config from '../../config';
 import './ShopManagement.css';
+import { Switch, Route, Link } from "react-router-dom";
+import ShopManagementConfTickets from './ShopManagementConfTickets';
 
 class DataQuickViewTickets extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-
         };
+        this.callShopManagamentConfTickets = this.callShopManagamentConfTickets.bind(this);
 
+    }
+    callShopManagamentConfTickets(){
+        var value = 1;
+    this.props.changeInitializeStep(value);
     }
 
     render() {
@@ -33,7 +39,7 @@ class DataQuickViewTickets extends React.Component {
             />
             <Box className="platzhalter" ></Box>
             <Box className="ButtonBox">
-            <Button className="buttonInDash" label="Ticketanzahl konfigurieren"></Button>
+                <Button className="buttonInDash" label="Ticketanzahl konfigurieren" onClick={this.callShopManagamentConfTickets}></Button>
             </Box>
         </Box>
         return Ansicht;
@@ -56,9 +62,7 @@ class DataQuickViewPayment extends React.Component {
                 switcher = "Konfiguriert"
             }
             bezahloptionenArray.push({ bezahlOption: key, konfiguriert: switcher })
-
         }
-        console.log(bezahloptionenArray)
         return bezahloptionenArray;
     }
 
@@ -71,7 +75,7 @@ class DataQuickViewPayment extends React.Component {
                 columns={[
                     {
                         property: 'bezahlOption',
-                        header: <Text weight="bold">Tickettyp</Text>,
+                        header: <Text weight="bold">Bezahloption</Text>,
                         primary: true,
                     },
                     {
@@ -83,7 +87,7 @@ class DataQuickViewPayment extends React.Component {
             />
             <Box className="platzhalter" ></Box>
             <Box className="ButtonBox">
-            <Button className="buttonInDash" label="Bezahloptionen konfigurieren"></Button>
+                <Button className="buttonInDash" label="Bezahloptionen konfigurieren"></Button>
             </Box>
         </Box>
         return Ansicht;
@@ -107,7 +111,7 @@ class DataQuickViewBookings extends React.Component {
                 columns={[
                     {
                         property: 'status',
-                        header: <Text weight="bold">Tickettyp</Text>,
+                        header: <Text weight="bold">Status</Text>,
                         primary: true,
                     },
                     {
@@ -119,7 +123,7 @@ class DataQuickViewBookings extends React.Component {
             />
             <Box className="platzhalter" ></Box>
             <Box className="ButtonBox">
-            <Button className="buttonInDash" label="Buchungen "></Button>
+                <Button className="buttonInDash" label="Buchungen "></Button>
             </Box>
         </Box>
         return Ansicht;
@@ -144,7 +148,7 @@ class DataQuickViewSalesStatistics extends React.Component {
                 columns={[
                     {
                         property: 'status',
-                        header: <Text weight="bold">Tickettyp</Text>,
+                        header: <Text weight="bold">Status</Text>,
                         primary: true,
                     },
                     {
@@ -156,7 +160,7 @@ class DataQuickViewSalesStatistics extends React.Component {
             />
             <Box className="platzhalter" ></Box>
             <Box Class-Name="ButtonBox">
-            <Button className="buttonInDash" label="Tickets verwalten"></Button>
+                <Button className="buttonInDash" label="Tickets verwalten"></Button>
             </Box>
         </Box>
         return Ansicht;
@@ -184,25 +188,51 @@ class ShopManagement extends React.Component {
                 { status: "Beantragt", Anzahl: 0 },
                 { status: "Stornieren", Anzahl: 0 }],
         }
+        this.Testfunction = this.Testfunction.bind(this);
+        this.changeInitializeStep = this.changeInitializeStep.bind(this);
+    }
+
+    changeInitializeStep(value){
+        this.setState({ initializeStep: value });
+
+    }
+
+    //TODO AUS KONFIG ABRUFEN und mit SHOPMANGEMENT CONFTICKETS VERKNÜPFEN
+    setMaxTicketMenge(Absolvententickets, Begleitertickets, Parkttickets) {
+        var data = [{ Tickettype: "Absolvententickets", Anzahl: Absolvententickets },
+        { Tickettype: "Begleitertickets", Anzahl: Begleitertickets },
+        { Tickettype: "Parkttickets", Anzahl: Parkttickets }]
+        this.setState(this.state.maxTicketmenge = data)
+    }
+
+    Testfunction() {
+
+        this.setMaxTicketMenge(2, 3, 4);
     }
 
     render() {
         return (
             <Box className="outerBoxOverview" direction="column" align="center">
-                <Box>
-                    <Text size="xxlarge" weight="bold">Hallo das ist die Übersicht der Shop Verwaltung</Text>
-                    <Box pad="medium"></Box>
-                </Box>
-                <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
-                    <DataQuickViewTickets maxTicketmenge={this.state.maxTicketmenge}></DataQuickViewTickets>
-                    <DataQuickViewPayment konfigurierteBezahloptionen={this.state.konfigurierteBezahloptionen}></DataQuickViewPayment>
-                </Box>
-                <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
-                    <DataQuickViewBookings statusBookings={this.state.statusBookings}></DataQuickViewBookings>
-                    <DataQuickViewSalesStatistics statusSales={this.state.statusSales}></DataQuickViewSalesStatistics>
-
-
-                </Box>
+                {this.state.initializeStep === 0 && <Box>
+                    <Box>
+                        <Text size="xxlarge" weight="bold">Hallo das ist die Übersicht der Shop Verwaltung</Text>
+                        <Box pad="medium"></Box>
+                        <Button label="Testbutton" onClick={this.Testfunction}></Button>
+                    </Box>
+                    <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
+                        <DataQuickViewTickets maxTicketmenge={this.state.maxTicketmenge} changeInitializeStep={this.changeInitializeStep}></DataQuickViewTickets>
+                        <DataQuickViewPayment konfigurierteBezahloptionen={this.state.konfigurierteBezahloptionen}></DataQuickViewPayment>
+                    </Box>
+                    <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
+                        <DataQuickViewBookings statusBookings={this.state.statusBookings}></DataQuickViewBookings>
+                        <DataQuickViewSalesStatistics statusSales={this.state.statusSales}></DataQuickViewSalesStatistics>
+                    </Box>
+                </Box>}
+                {this.state.initializeStep === 1 && <ShopManagementConfTickets 
+                maxTicketmenge={this.state.maxTicketmenge} setMaxTicketMenge={this.setMaxTicketMenge} 
+                changeInitializeStep={this.changeInitializeStep}></ShopManagementConfTickets>}
+                {this.state.initializeStep === 2 }
+                
             </Box >
         );
     }

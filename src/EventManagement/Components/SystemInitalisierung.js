@@ -101,8 +101,8 @@ class AddWallet extends React.Component {
             <Box pad="medium">
                 <TextInput
                     placeholder="HTTP-Provider DNS:Port"
-                    value={this.state.textInput}
-                    onChange={(event) => { this.setState({ textInput: event.target.value }) }}
+                    value={this.state.addresse}
+                    onChange={(event) => { this.setState({ addresse: event.target.value }) }}
                 />
             </Box>
             <Button onClick={this.setValueTrue} label="Hinzufügen"></Button>
@@ -156,7 +156,7 @@ class ConfigureAdminAccount extends React.Component {
                 <TextInput
                     placeholder="E-Mail"
                     value={this.state.eMail}
-                    onChange={(event) => { this.setState({ textInput: event.target.value }) }}
+                    onChange={(event) => { this.setState({ email: event.target.value }) }}
                 />
                 </Box>
                 <Box pad="medium">
@@ -164,7 +164,7 @@ class ConfigureAdminAccount extends React.Component {
                 <TextInput
                     placeholder="Passwort"
                     value={this.state.password}
-                    onChange={(event) => { this.setState({ textInput: event.target.value }) }}
+                    onChange={(event) => { this.setState({ password: event.target.value }) }}
                 />
             </Box>
             <Button onClick={this.configureTheAdminAcc} label="Hinzufügen"></Button>
