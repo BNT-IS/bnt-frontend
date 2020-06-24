@@ -1,0 +1,25 @@
+.quickViewDatatables {
+    border-width: 2px;
+    border-style: solid;
+}
+
+.quickViewOuterBox {
+    margin: 25px 25px 25px 25px;
+    padding: 25px 25px 25px 25px;
+    border: solid 2px;
+    align-items: center;    
+}
+
+.platzhalter {
+    padding-top: 20px;
+    padding-bottom: 5px;    
+}
+
+.ButtonBox {
+    padding-bottom: 15px;
+    padding-top: 30px;
+}
+
+.buttonInDash {
+    margin-top: 500px;
+}
