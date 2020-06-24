@@ -63,7 +63,7 @@ class TicketBestellung extends React.Component {
     // Aber bitte eine extra Funktion für generieren des Ticket-Identifiers anlegen, dann können wir später gemeinsam den "echten/sicheren" Identifier-Generator programmieren
 
     onInputHandler(event, type) {
-        if (type == "forename") {
+        if (type === "forename") {
             this.setState({
                 graduate: {
                     forename: event.target.value, 
@@ -200,7 +200,7 @@ class TicketBestellung extends React.Component {
             console.log(result)
         }
         //Ticket für Absolvent in DB schreiben
-        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/ticketsBooked", {
+        response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/ticketsBooked", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -223,7 +223,7 @@ class TicketBestellung extends React.Component {
             return;
          }
 
-        var result = await response.json().catch(console.log);
+        result = await response.json().catch(console.log);
 
         if (!result) {
             this.setState({step: 100}); 

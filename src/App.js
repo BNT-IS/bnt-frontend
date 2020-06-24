@@ -40,10 +40,10 @@ class App extends React.Component {
           <Switch>
             <Route exact path="/">
               <ul>
-                <li><Link to="/guest">Gast</Link></li>
+                <li><Link to="/guest">Ticketshop</Link></li>
                 <li><Link to="/entrance">Einlass-Management</Link></li>
                 <li><Link to="/eventmgmt">Event-Management</Link></li>
-                <li><Link to="/Accountmanagement">Accountmanagement</Link></li>
+                <li><Link to="/Accountmanagement">Anmelden</Link></li>
               </ul>
             </Route>
           </Switch>

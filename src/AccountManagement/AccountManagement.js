@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Button, TextInput, Text, Menu, Header } from 'grommet';
-import Web3 from 'web3';
 import Config from '../config';
 import UserContext from '../AppContexts/UserContext';
 import { Link } from "react-router-dom";
