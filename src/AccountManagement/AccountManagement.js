@@ -159,7 +159,7 @@ class AccountManagement extends React.Component {
         //Stellt die jeweiligen Schritte für den Benutzer dar
         return (
 
-            <Box className="AccountManagement" pad="medium" gap="small">
+            <Box className="AccountManagement" gap="small">
                 <Header background="brand" justify="between" pad="10px">
                     <Link to="../">Home</Link>
                     {
@@ -168,6 +168,7 @@ class AccountManagement extends React.Component {
                         </UserContext.Consumer>
                     }
                 </Header>
+                <Box pad="small">
                 {this.state.step === 0 &&
                 //Startseite des Accountmanagements, Auswahl zwischen Neuanlage eines Áccounts und Anmeldung mit einem bestehenden Account
                     <Box gap="small">
@@ -217,6 +218,7 @@ class AccountManagement extends React.Component {
                         <Button label="Eingabe bestätigen" onClick={() => { this.setToken(this.state.access_token) }}></Button>
                     </Box>
                 }
+                </Box>
             </Box>
         ); 
     }
