@@ -11,10 +11,12 @@ class ShopManagementConfTickets extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            
+            Absolvententickets: "",
+            Begleitertickets: "",
+            Parktickets: "",            
         }
         this.changeValues = this.changeValues.bind(this);
-        this.changeStep = this.changeStep.bind(this);
+        this.setValuesAndChangeStep = this.setValuesAndChangeStep.bind(this)
     }
 
     async changeValues() {
@@ -43,9 +45,9 @@ class ShopManagementConfTickets extends React.Component {
     }
 
 
-    changeStep (){
+    setValuesAndChangeStep (){
+        this.props.setMaxTicketMenge(this.state.Absolvententickets, this.state.Begleitertickets, this.state.Parktickets)
         this.props.changeInitializeStep(0)
-
     }
 
     render() {
@@ -53,8 +55,6 @@ class ShopManagementConfTickets extends React.Component {
         return (
             Ansicht[0]=
             <Box className="outerBoxOverview" direction="column" align="center">
-
-                <Button label="TESTBUTTON" onClick={this.changeValues}></Button>
                 <Text weight="bold" size="xxlarge">Ticketkonfiguration</Text>
                 <Box pad="medium"></Box>
                 Hier können die maximalen Tickets, die ein Benutzer (Absolvent) erwerben kann, konfiguriert werden. 
@@ -82,7 +82,7 @@ class ShopManagementConfTickets extends React.Component {
                         onChange={(event) => { this.setState({ Parktickets: event.target.value }) }}
                     />
                 </Box>
-                <Button label="Bestätigen" onClick={this.changeStep}></Button>
+                <Button label="Bestätigen" onClick={this.setValuesAndChangeStep}></Button>
             </Box >
         );
     }
