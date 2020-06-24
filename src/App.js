@@ -18,12 +18,23 @@ class App extends React.Component {
     this.state = { user: { id: null, email: null, role: null, access_token: null } };
   }
 
+  componentDidMount(){
+    this.init();
+  }
+
+  init(){
+    this.setState({user: { id: localStorage.getItem('user_id'), email: localStorage.getItem('user_email'), role: localStorage.getItem('user_role'), 
+    access_token: localStorage.getItem('access_token')}});
+  }
+
   render() {
     console.log(this.state.user);
     return (
       // @Robin Hinzugefügt für globales User Objekt siehe https://reactjs.org/docs/context.html
       <UserContext.Provider value={{ user: this.state.user, logout: () => { this.setState({ user: {id: null, email: null, role: null, access_token: null}}) }, 
-      login: () => {this.setState({ user: { id: localStorage.getItem('user_id'), email: localStorage.getItem('user_email'), role: localStorage.getItem('user_role'), access_token: localStorage.getItem('access_token')}})}}}> 
+      login: () => {if(this.state.user.role === null){alert("Bitte melden Sie sich mit ihrem User an oder erstellen Sie einen Account"); window.location.assign('#/Accountmanagement/') }; 
+      if(this.state.user.role === "0"){alert("Sie wurden erfolgreich als Admin angemeldet"); window.location.assign('#/eventmgmt/') }; 
+      if(this.state.user.role === "1"){alert("Sie wurden erfolgreich als Gast angemeldet"); window.location.assign('#/guest/') };}}}> 
         
         <Grommet theme={grommet}>
           <Switch>

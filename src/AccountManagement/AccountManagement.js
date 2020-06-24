@@ -24,15 +24,6 @@ class AccountManagement extends React.Component {
         this.verifyPasswort = this.verifyPasswort.bind(this);
     }
 
-    componentDidMount() {
-        //Ruft die Initialisierung auf, nachdem die Komponente erstellt wurde
-        this.init();
-    }
-
-    init() {
-        
-    }
-
     otpInputHandler(event) {
         //Liest das eingegebene OTP aus dem Input-Feld aus und speichert es zwischen
         this.setState({ otp: event.target.value });
@@ -209,14 +200,6 @@ class AccountManagement extends React.Component {
                     <Box gap="small">
                         <Text>Sie haben sich erfolgreich angemeldet.</Text>
                         <Button label="Test123" ></Button>
-                    </Box>
-                }
-                {this.state.step === 4 &&
-                    <Box gap="small">
-                    </Box>
-                }
-                {this.state.step === 5 &&
-                    <Box gap="small">
                     </Box>
                 }
                 {this.state.step === 6 &&

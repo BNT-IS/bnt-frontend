@@ -16,7 +16,6 @@ class UserMainMenu extends React.Component {
                 <Link className="MenuLink" to="/guest/tickets">Tickets Anzeigen</Link>
                 <Link className="MenuLink" to="/guest/ticketbestellen">Tickets Bestellen</Link>
                 <Link className="MenuLink" to="/guest/bestellungsuebersicht">Bestellungen Anzeigen</Link>
-                <Link className="MenuLink" to="/guest/setup">Setup</Link>
             </Box>
         );
     }
