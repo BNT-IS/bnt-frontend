@@ -50,7 +50,7 @@ class EventManagement extends React.Component {
             // Trying to get the ticket from the IDB
             this.localTicketMirror.getTicket(identifier).then((ticket) => {
                 callback(ticket);
-            }).catch((error) => { 
+            }).catch((error) => {
                 // In case of an error, providing an error msg
                 callback(null, error);
             });
@@ -65,13 +65,13 @@ class EventManagement extends React.Component {
 
     render() {
         return (
-            
+
             <Box className="EventManagement">
                 <Header background="brand" justify="between" pad="10px">
-                    <Link to="../">Home</Link>
+                    <Link to="/eventmgmt">Home</Link>
                     {
                         <UserContext.Consumer>
-                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }, { label: 'Login', onClick: userContext.login}]} />}
+                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }]} />}
                         </UserContext.Consumer>
                     }
                 </Header>

@@ -27,29 +27,8 @@ class SingleTicketViewer extends React.Component {
     }
 
     async generateQRCode(ticket) {
-        // Fetch secretIngredient manually as it weren't provided to user context // TODO: remove when provided by usercontext
-        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/users/" + this.context.user.id, {
-            //method: 'GET', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.context.user.access_token,
-            }
-        }).catch(console.log);
-
-        if (!response.ok) {
-            this.setState({ loading: false });
-            alert('Beim Laden der Benutzer-Daten ist ein Fehler aufgetreten.');
-            return;
-        }
-
-        var user = await response.json().catch(console.log);
-
-        if (!user) return;
-
         // Generate code
-        let data = { id: ticket.identifier, sIG: user.secretIngredient }; // TODO Change to signature and so on...
+        let data = { id: ticket.identifier, sIG: this.context.user.secretIngredient }; // TODO Change to signature and so on...
         QRCode.toDataURL(JSON.stringify(data)).then((url) => {
             this.setState({ qrcode: url });
         }).catch(console.log);
@@ -102,7 +81,7 @@ class TicketOverview extends React.Component {
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.context.user.access_token,
+                'Authorization': 'Bearer ' + this.context.token,
             }
         }).catch(console.log);
 

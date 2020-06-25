@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 
-// @Robin siehe https://reactjs.org/docs/context.html
 import UserContext from './AppContexts/UserContext';
 import AccountManagement from './AccountManagement/AccountManagement'
 import Ticketshop from './Ticketshop/Ticketshop';
@@ -14,7 +13,6 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-    // @Robin Hinzugefügt für globales User Objekt
     this.state = { userContext: {} };
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
@@ -26,27 +24,30 @@ class App extends React.Component {
   }
 
   init() {
-    this.setState({ userContext: JSON.parse(localStorage.getItem('userContext')) });
-    console.log(this.state.userContext);
+    let ls = JSON.parse(localStorage.getItem('userContext'));
+    this.setState({ userContext: ls ? ls : {} }, this.login);
   }
 
   logout() {
-    this.setState({ userContext: {} }); window.location.assign('#/')
+    localStorage.clear();
+    this.setState({ userContext: {} }); 
+    window.location.assign('#/');
   }
 
   login() {
-    if (this.state.userContext === null) { alert("Bitte melden Sie sich mit ihrem User an oder erstellen Sie einen Account"); window.location.assign('#/Accountmanagement/') };
-    if (this.state.userContext.user.role === 0) { alert("Sie wurden erfolgreich als Admin angemeldet"); window.location.assign('#/eventmgmt/') };
-    if (this.state.userContext.user.role === 1) { alert("Sie wurden erfolgreich als Gast angemeldet"); window.location.assign('#/guest/') };
+    if (!this.state.userContext.user) {
+      window.location.assign('#/Accountmanagement/');
+    } else if (this.state.userContext.user.role === 0) {
+      window.location.assign('#/eventmgmt/');
+    } else if (this.state.userContext.user.role === 1) {
+      window.location.assign('#/guest/');
+    }
   }
 
   render() {
-    console.log(this.state.userContext);
-    let test = this.state.userContext;
-    test = Object.assign(test, {logout: this.logout, login: this.login, reloadLocalStorage: this.init});
     return (
       // @Robin Hinzugefügt für globales User Objekt siehe https://reactjs.org/docs/context.html
-      <UserContext.Provider value={test}>
+      <UserContext.Provider value={Object.assign(this.state.userContext, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
 
         <Grommet theme={grommet}>
           <Switch>

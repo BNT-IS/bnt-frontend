@@ -1,8 +1,7 @@
 import React from 'react';
-import { Box, Button, TextInput, Text, Menu, Header } from 'grommet';
+import { Box, Button, TextInput, Text, Header } from 'grommet';
 import Config from '../config';
 import UserContext from '../AppContexts/UserContext';
-import { Link } from "react-router-dom";
 
 class AccountManagement extends React.Component {
 
@@ -98,8 +97,7 @@ class AccountManagement extends React.Component {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
                 alert("Der Nutzer wurde erfolgreich angelegt.");
-                this.setToken('userContext', JSON.stringify(rückgabe));
-                this.handleFinalLogin();
+                this.handleFinalLogin(rückgabe);
             }
         }
     }
@@ -116,35 +114,30 @@ class AccountManagement extends React.Component {
         }).catch(console.log);
 
         if (!response.ok) {
-            alert("Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie ihre Angaben.");
             const rückgabe = await response.json().catch(console.log);
-            if (rückgabe.message) {
-                alert("Ihre Anmeldedaten scheinen nicht zu stimmen. Bitte überprüfen Sie ihre Angaben.");
-                this.setState({ step: 1 })
+            switch (response.status) {
+                case 401:
+                    alert("Ihre Anmeldedaten scheinen nicht zu stimmen. Bitte überprüfen Sie ihre Angaben.");
+                    break;
+                case 500:
+                    alert("Die Anmeldung ist aufgrund eines Server-Fehlers fehlgeschlagen. Bitte versuchen Sie es später erneut.");
+                    break;
+                default:
+                    alert(rückgabe.message);
             }
+            this.setState({ step: 6 });
             return;
         } else {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
-                this.setToken('userContext', JSON.stringify(rückgabe));
-                this.handleFinalLogin();
+                this.handleFinalLogin(rückgabe);
             }
         }
     }
 
-    handleFinalLogin(){
+    handleFinalLogin(userData) {
+        localStorage.setItem('userContext', JSON.stringify(userData));
         this.context.reloadLocalStorage();
-        this.context.login();
-    }
-
-    setToken(token_name, access_token) {
-        //Schreibt einen Token in den LocalStorage des Browsers
-        localStorage.setItem(token_name, access_token);
-    }
-
-    getToken() {
-        //Liest einen Token aus dem LocalStorage des Browsers aus
-        return localStorage.getItem('access_token');
     }
 
     setState1() {
@@ -163,56 +156,43 @@ class AccountManagement extends React.Component {
 
             <Box className="AccountManagement" gap="small">
                 <Header background="brand" justify="between" pad="10px">
-                    <Link to="../">Home</Link>
-                    {
-                        <UserContext.Consumer>
-                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }, { label: 'Login', onClick: userContext.login }]} />}
-                        </UserContext.Consumer>
-                    }
+                    <Text>BNT Ticketsystem</Text>
                 </Header>
                 <Box pad="small">
-                {this.state.step === 0 &&
-                    //Startseite des Accountmanagements, Auswahl zwischen Neuanlage eines Áccounts und Anmeldung mit einem bestehenden Account
-                    <Box gap="small">
-                        <Text>Klicke hier, um einen neuen Account anzulegen</Text>
-                        <Button label="Neuen Account anlegen" gap="small" onClick={this.setState1}></Button>
-                        <Text>Klicke hier, um dich mit einem bestehenden Account anzumelden</Text>
-                        <Button label="Mit bestehendem Account anmelden" onClick={this.setState6}></Button>
-                    </Box>
-                }
-                {this.state.step === 1 &&
-                    //Eingabe des persönlichen OTP's
-                    <Box gap="small">
-                        <Text>Bitte geben Sie das OneTime-Passwort ein, das wir an Ihre DHBW-Mailadresse versendet haben, und bestätigen Sie die Eingabe</Text>
-                        <TextInput placeholder="OTP eingeben" value={this.state.otp} onChange={this.otpInputHandler}></TextInput>
-                        <Button label="Eingabe bestätigen" onClick={this.otpBestätigen}></Button>
-                    </Box>
-                }
-                {this.state.step === 2 &&
-                    <Box classname="Passwortvergabe" direction="column" gap="small">
-                        <h1>Passwortvergabe</h1>
-                        <Text>Bitte vergeben Sie ein neues Passwort für Ihren Account</Text>
-                        <TextInput placeholder="Neues Passwort vergeben" value={this.state.pass1} onChange={this.pass1Handler}></TextInput>
-                        <TextInput placeholder="Neues Passwort bestätigen" value={this.state.pass2} onChange={this.pass2Handler}></TextInput>
-                        <Button label="Passwort bestätigen" onClick={this.verifyPasswort}></Button>
-                    </Box>
-                }
-                {this.state.step === 6 &&
-                    <Box gap="small">
-                        <h1>Anmeldung mit einem vorhandenen Account</h1>
-                        <TextInput placeholder="DHBW-Mailadresse eingeben" value={this.state.dhbw_mail} onChange={this.mailHandler}></TextInput>
-                        <TextInput placeholder="Account-Passwort eingeben" value={this.state.login_pass} onChange={this.loginPassHandler}></TextInput>
-                        <Button label="Anmelden" onClick={this.login}></Button>
-                    </Box>
-                }
-                {this.state.step === 888 &&
-                    //Test-Seite für verschiedene Funktionen, welche im Standard-Prozess nicht aufgerufen wird
-                    <Box gap="small">
-                        <h1>Willkommen bei Virgil's Testgelände</h1>
-                        <TextInput placeholder="Test-Token eingeben" value={this.state.access_token} onChange={this.tokenHandler}></TextInput>
-                        <Button label="Eingabe bestätigen" onClick={() => { this.setToken(this.state.access_token) }}></Button>
-                    </Box>
-                }
+                    {this.state.step === 0 &&
+                        //Startseite des Accountmanagements, Auswahl zwischen Neuanlage eines Áccounts und Anmeldung mit einem bestehenden Account
+                        <Box gap="small">
+                            <Text>Klicke hier, um einen neuen Account anzulegen</Text>
+                            <Button label="Neuen Account anlegen" gap="small" onClick={this.setState1}></Button>
+                            <Text>Klicke hier, um dich mit einem bestehenden Account anzumelden</Text>
+                            <Button label="Mit bestehendem Account anmelden" onClick={this.setState6}></Button>
+                        </Box>
+                    }
+                    {this.state.step === 1 &&
+                        //Eingabe des persönlichen OTP's
+                        <Box gap="small">
+                            <Text>Bitte geben Sie das OneTime-Passwort ein, das wir an Ihre DHBW-Mailadresse versendet haben, und bestätigen Sie die Eingabe</Text>
+                            <TextInput placeholder="OTP eingeben" value={this.state.otp} onChange={this.otpInputHandler}></TextInput>
+                            <Button label="Eingabe bestätigen" onClick={this.otpBestätigen}></Button>
+                        </Box>
+                    }
+                    {this.state.step === 2 &&
+                        <Box classname="Passwortvergabe" direction="column" gap="small">
+                            <h1>Passwortvergabe</h1>
+                            <Text>Bitte vergeben Sie ein neues Passwort für Ihren Account</Text>
+                            <TextInput placeholder="Neues Passwort vergeben" value={this.state.pass1} onChange={this.pass1Handler}></TextInput>
+                            <TextInput placeholder="Neues Passwort bestätigen" value={this.state.pass2} onChange={this.pass2Handler}></TextInput>
+                            <Button label="Passwort bestätigen" onClick={this.verifyPasswort}></Button>
+                        </Box>
+                    }
+                    {this.state.step === 6 &&
+                        <Box gap="small">
+                            <h1>Anmeldung mit einem vorhandenen Account</h1>
+                            <TextInput placeholder="DHBW-Mailadresse eingeben" value={this.state.dhbw_mail} onChange={this.mailHandler}></TextInput>
+                            <TextInput placeholder="Account-Passwort eingeben" value={this.state.login_pass} onChange={this.loginPassHandler}></TextInput>
+                            <Button label="Anmelden" onClick={this.login}></Button>
+                        </Box>
+                    }
                 </Box>
             </Box>
         );
