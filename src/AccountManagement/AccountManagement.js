@@ -98,10 +98,7 @@ class AccountManagement extends React.Component {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
                 alert("Der Nutzer wurde erfolgreich angelegt.");
-                this.setToken('access_token', rückgabe.token);
-                this.setToken('user_id', rückgabe.user.id);
-                this.setToken('user_email', rückgabe.user.email);
-                this.setToken('user_role', rückgabe.user.role);
+                this.setToken('userContext', JSON.stringify(rückgabe));
                 this.handleFinalLogin();
             }
         }
@@ -129,10 +126,7 @@ class AccountManagement extends React.Component {
         } else {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
-                this.setToken('access_token', rückgabe.token);
-                this.setToken('user_id', rückgabe.user.id);
-                this.setToken('user_email', rückgabe.user.email);
-                this.setToken('user_role', rückgabe.user.role);
+                this.setToken('userContext', JSON.stringify(rückgabe));
                 this.handleFinalLogin();
             }
         }
