@@ -104,6 +104,43 @@ Die empfangenen Daten zu den Buchungen und Tickets werden von der Klasse Booking
 
 ## Eventmanagament
 
+### EventManagement
+
+### ShopManagament
+Die Komponente ShopManagament ist für die Anzeige von Statistiken und Einstellungen während des Verkaufs der Tickets zuständig.
+Die Komponente besteht aus den Klassen:
+- DataQuickViewMaxTickets
+- DataQuickViewPayment
+- DataQuickViewBookings
+- DataQuickViewSalesStatistics
+- DataQuickViewManageSales
+- ShopManagement
+-
+-
+
+und interagiert mit den Komponenten
+- ShopManagamentConfMaxTickets
+- ShopManagamenetSalesStatistics
+- ShopManagamentViewBookings
+-
+-
+
+Die Klasse ShopManagament ist für die Anzeige der entsprechenden Klassen und Komponenten sowie die Verwaltung der zentralen Daten für die Anzeigen verantwortlich. Die Klasse stellt Setter-Funktionen für die entsprechenden Werte bereit, die die einzelnen (DataQuickView)-Klassen aufrufen um die Werte in der Klasse ShopManagamenet zu ändern.
+
+Die Klasse DataQuickViewMaxTickets zeigt die Anzahl der Tickets an, die ein Absolvent mit der derzeitigen Konfiguration erwerben kann. Mit dem Button der Klasse wird der Administrator zur Komponente ShopManagementConfMaxTickets weitergeleitet.
+
+Die Komponente ShopManagamentConfMaxTickets stellt Textfelder zur Verüfung mit denen die maximalen Tickets, die ein Absolvent erwerben kann, konfiguriert werden können. Die Konfigurationen werden im Backend in der Konfigurationsdatei gespeichert. Hierfür verwendet die Komponente die Route
+```
+ROUTE
+```
+```
+{
+    Absolvententickets: String,
+    Begleitertickets: String,
+    Parktickets: String,   
+}
+```
+
 ### SystemInitialisierung
 Die Komponente Systeminitialisierung ist für die erstmalige Konfiguration im Backend verantwortlich.
 Die Komponente besteht aus den Klassen:
@@ -160,10 +197,10 @@ Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Ei
 }
 ```
 
-Die Klasse AbsolventenListe stellt ein CSV-Reader Feld zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
+Die Klasse AbsolventenListe stellt ein CSV-Reader Feld der Komponente "react-papaparse" zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
 ```
 E-Mail;Name
-Beispiel@beispiel.de;Max Mustermann
+Beispiel@web.de; Mustermann, Max
                 .
                 .
                 .

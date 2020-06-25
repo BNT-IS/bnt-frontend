@@ -3,7 +3,6 @@ import React from 'react';
 import { Box, Button, Select, Text, List, TextInput } from 'grommet';
 import Config from '../../config';
 import { CSVReader } from 'react-papaparse';
-import { ThemeProvider } from 'styled-components';
 
 class Hauptansicht extends React.Component {
 
@@ -433,9 +432,6 @@ class AbsolventenListe extends React.Component {
         this.props.changeValueOfmapTest("AL");
         this.props.changeStep();
     }
-
-
-    //FUNKTIONEN FÜR CSV-Reader
 
     //Eingelesene Daten entgegennehmen und in den State schreiben
     handleOnDrop = (data) => {
