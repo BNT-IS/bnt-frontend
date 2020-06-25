@@ -83,6 +83,24 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 ## Gast
 
+### BookingOverview
+Die Komponente BookingOverview zeigt die Buchungen und die in den Buchungen enthaltenen Tickets für den aktuell angemeldeten Benutzer an.
+Die Komponente besteht aus den Klassen:
+- BestellungsItem
+- BookingOverview
+
+Die Klasse BookingOverview ruft für den aktuell angemeldeten Benuzter über die Route 
+```
+"/api/v2/users/{ID des aktuell angemeldeten Benutzers}/bookings"
+```
+die für den Benutzer in der Datenbank gespeicherten Buchungen ab.
+Anhand der erhaltenen Buchungen werden die in der Buchung enthaltenen Tickets über die Route
+``` 
+"/api/v2/bookings/{Buchungs-ID}/ticketsBooked"
+```
+abgerufen.
+Die empfangenen Daten zu den Buchungen und Tickets werden von der Klasse BookingOverview an die Klasse BestellungsItem übergeben. Die Klasse BestellungsItem erstellt aus den Daten AccoridionPanels, die anschließend im Accordion der Klasse BookingOverview angezeigt werden. 
+
 
 ## Eventmanagament
 
@@ -154,4 +172,4 @@ kann eine Liste mit E-Mail-Adressen eingelesen werden. Die eingelesene Liste wir
 ```
 
 ```
-aufgerufen und ein One Time Passwort in der Datenbank erstellt sowie eine E-Mail mit dem erstellten One Time Passwort versendet.
+aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet.
