@@ -99,9 +99,8 @@ class DataQuickViewBookings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-
         };
-        this.callShopManagementViewBookings = this.callShopManagementViewBookings.bind(this)
+        this.callShopManagementViewBookings = this.callShopManagementViewBookings.bind(this);
     }
 
     callShopManagementViewBookings() {
@@ -141,10 +140,11 @@ class DataQuickViewSalesStatistics extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-
         };
+
         this.callShopManagementSalesStatistics = this.callShopManagementSalesStatistics.bind(this)
     }
+
     callShopManagementSalesStatistics() {
         var value = 4;
         this.props.changeInitializeStep(value);
@@ -230,7 +230,7 @@ class ShopManagement extends React.Component {
                         <DataQuickViewPayment konfigurierteBezahloptionen={this.state.konfigurierteBezahloptionen}></DataQuickViewPayment>
                     </Box>
                     <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
-                        <DataQuickViewBookings statusBookings={this.state.statusBookings}></DataQuickViewBookings>
+                        <DataQuickViewBookings statusBookings={this.state.statusBookings} changeInitializeStep={this.changeInitializeStep}></DataQuickViewBookings>
                         <DataQuickViewSalesStatistics statusSales={this.state.statusSales} changeInitializeStep={this.changeInitializeStep}></DataQuickViewSalesStatistics>
                     </Box>
                 </Box>}
@@ -239,12 +239,9 @@ class ShopManagement extends React.Component {
                     changeInitializeStep={this.changeInitializeStep}></ShopManagementConfTickets>}
 
                 {this.state.initializeStep === 3 && <ShopManagementViewBookings
-                    //Einfügen, was hier gemacht werden muss
-                    changeInitializeStep={this.changeInitializeStep}
-                ></ShopManagementViewBookings>}
+                    changeInitializeStep={this.changeInitializeStep}></ShopManagementViewBookings>}
                 {this.state.initializeStep === 4 && <ShopManagementSalesStatistics changeInitializeStep={this.changeInitializeStep}>
                 </ShopManagementSalesStatistics>}
-
             </Box>
         );
     }

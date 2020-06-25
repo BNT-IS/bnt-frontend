@@ -16,10 +16,9 @@ class ShopManagementViewBookings extends React.Component{
     }
 
     render(){
+        var Ansicht = []
         return(
-            <box className="outerBoxOverview" direction="column" align="center">
-                <Button label="test"></Button>
-            </box>
+            Ansicht[0] = <Box> Hallo </Box>
         );
     }
 
