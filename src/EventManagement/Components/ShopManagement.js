@@ -5,6 +5,7 @@ import './ShopManagement.css';
 import { Switch, Route, Link } from "react-router-dom";
 import ShopManagementConfTickets from './ShopManagementConfTickets';
 import ShopManagementSalesStatistics from './ShopManagementSalesStatistics'
+import ShopManagementViewBookings from './ShopManagementViewBookings'
 
 class DataQuickViewTickets extends React.Component {
     constructor(props) {
@@ -100,7 +101,12 @@ class DataQuickViewBookings extends React.Component {
         this.state = {
 
         };
+        this.callShopManagementViewBookings = this.callShopManagementViewBookings.bind(this)
+    }
 
+    callShopManagementViewBookings() {
+        var value = 3;
+        this.props.changeInitializeStep(value);
     }
 
     render() {
@@ -124,7 +130,7 @@ class DataQuickViewBookings extends React.Component {
             />
             <Box className="platzhalter" ></Box>
             <Box className="ButtonBox">
-                <Button className="buttonInDash" label="Buchungen "></Button>
+                <Button className="buttonInDash" label="Buchungen " onClick={this.callShopManagementViewBookings}></Button>
             </Box>
         </Box>
         return Ansicht;
@@ -225,13 +231,17 @@ class ShopManagement extends React.Component {
                     </Box>
                     <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
                         <DataQuickViewBookings statusBookings={this.state.statusBookings}></DataQuickViewBookings>
-                        <DataQuickViewSalesStatistics statusSales={this.state.statusSales}changeInitializeStep={this.changeInitializeStep}></DataQuickViewSalesStatistics>
+                        <DataQuickViewSalesStatistics statusSales={this.state.statusSales} changeInitializeStep={this.changeInitializeStep}></DataQuickViewSalesStatistics>
                     </Box>
                 </Box>}
                 {this.state.initializeStep === 1 && <ShopManagementConfTickets
                     maxTicketmenge={this.state.maxTicketmenge} setMaxTicketMenge={this.setMaxTicketMenge}
                     changeInitializeStep={this.changeInitializeStep}></ShopManagementConfTickets>}
 
+                {this.state.initializeStep === 3 && <ShopManagementViewBookings
+                    //Einfügen, was hier gemacht werden muss
+                    changeInitializeStep={this.changeInitializeStep}
+                ></ShopManagementViewBookings>}
                 {this.state.initializeStep === 4 && <ShopManagementSalesStatistics changeInitializeStep={this.changeInitializeStep}>
                 </ShopManagementSalesStatistics>}
 
