@@ -77,3 +77,149 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+# Auflistung der Komponenten
+
+## Gast
+
+### BookingOverview
+Die Komponente BookingOverview zeigt die Buchungen und die in den Buchungen enthaltenen Tickets für den aktuell angemeldeten Benutzer an.
+Die Komponente besteht aus den Klassen:
+- BestellungsItem
+- BookingOverview
+
+Die Klasse BookingOverview ruft für den aktuell angemeldeten Benuzter über die Route 
+```
+"/api/v2/users/{ID des aktuell angemeldeten Benutzers}/bookings"
+```
+die für den Benutzer in der Datenbank gespeicherten Buchungen ab.
+Anhand der erhaltenen Buchungen werden die in der Buchung enthaltenen Tickets über die Route
+``` 
+"/api/v2/bookings/{Buchungs-ID}/ticketsBooked"
+```
+abgerufen.
+Die empfangenen Daten zu den Buchungen und Tickets werden von der Klasse BookingOverview an die Klasse BestellungsItem übergeben. Die Klasse BestellungsItem erstellt aus den Daten AccoridionPanels, die anschließend im Accordion der Klasse BookingOverview angezeigt werden. 
+
+
+## Eventmanagament
+
+### EventManagement
+
+### ShopManagament
+Die Komponente ShopManagament ist für die Anzeige von Statistiken und Einstellungen während des Verkaufs der Tickets zuständig.
+Die Komponente besteht aus den Klassen:
+- DataQuickViewMaxTickets
+- DataQuickViewPayment
+- DataQuickViewBookings
+- DataQuickViewSalesStatistics
+- DataQuickViewManageSales
+- ShopManagement
+-
+-
+
+und interagiert mit den Komponenten
+- ShopManagamentConfMaxTickets
+- ShopManagamenetSalesStatistics
+- ShopManagamentViewBookings
+-
+-
+
+Die Klasse ShopManagament ist für die Anzeige der entsprechenden Klassen und Komponenten sowie die Verwaltung der zentralen Daten für die Anzeigen verantwortlich. Die Klasse stellt Setter-Funktionen für die entsprechenden Werte bereit, die die einzelnen (DataQuickView)-Klassen aufrufen um die Werte in der Klasse ShopManagamenet zu ändern.
+
+Die Klasse DataQuickViewMaxTickets zeigt die Anzahl der Tickets an, die ein Absolvent mit der derzeitigen Konfiguration erwerben kann. Mit dem Button der Klasse wird der Administrator zur Komponente ShopManagementConfMaxTickets weitergeleitet.
+
+Die Komponente ShopManagamentConfMaxTickets stellt Textfelder zur Verüfung mit denen die maximalen Tickets, die ein Absolvent erwerben kann, konfiguriert werden können. Die Konfigurationen werden im Backend in der Konfigurationsdatei gespeichert. Hierfür verwendet die Komponente die Route
+```
+ROUTE
+```
+```
+{
+    Absolvententickets: String,
+    Begleitertickets: String,
+    Parktickets: String,   
+}
+```
+
+Die Klasse DataQuickViewPayment zeigt die Konfigurierten Bezahloptionen an.!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!
+!!!!
+
+Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert werden. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente **** weiter.
+In der Komponente **** kann der Status des Verkaufs mit der Route
+```
+ROUTE
+```
+aktiviert oder deaktiviert werden. Die Route ändert den Wert hierfür in der Konfigurationsdatei des Backends.
+
+
+
+### SystemInitialisierung
+Die Komponente Systeminitialisierung ist für die erstmalige Konfiguration im Backend verantwortlich.
+Die Komponente besteht aus den Klassen:
+- Hauptansicht
+- AddWallet
+- ConfigureAdminAccount
+- ConfigureDatabase
+- ConfigureMailserver
+- AbsolventenListe
+- SystemInitalisierung
+
+Die Klasse SystemInitalisierung verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
+
+Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 6) des Einrichtungsvorgangs angezeigt.
+
+Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route "setup/generateWallet" an das Backend. Das Backend erstellt ein Wallet für den Admin.
+
+```
+{
+    httpProvider: String
+}
+DNS-Name des http-Providers:Port
+```
+
+Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Mail-Adresse und ein Passwort für den Administratorbenuzter zur Verfügung. Über die Route "/setup/adminUser" im Backend wird der Administratorbenutzer (Rolle 0) erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
+```
+{
+    email: String, 
+    Passwort: String    
+}
+```
+
+Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route "/setup/database" werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
+```
+{ 
+    host: String, 
+    user: String, 
+    password: String, 
+    db: String, 
+    port: String
+}
+```
+
+Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route "/setup/mailserver" werden die Einstellungen in die Konfiguration im Backend gespeichert.
+```
+{
+     host: String, 
+     port: String, 
+     conncetion: Boolean, 
+     user: String, 
+     password: String, 
+     standardMail: String,
+     standardPrefix: String
+}
+```
+
+Die Klasse AbsolventenListe stellt ein CSV-Reader Feld der Komponente "react-papaparse" zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
+```
+E-Mail;Name
+Beispiel@web.de; Mustermann, Max
+                .
+                .
+                .
+```
+kann eine Liste mit E-Mail-Adressen eingelesen werden. Die eingelesene Liste wird in der Komponente in einer Liste angezeigt. Durch die Bestätigung der eingelesen Liste mit dem Button Abschließen wird für jeden Datensatz in der Liste die Route
+```
+
+```
+aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet.
