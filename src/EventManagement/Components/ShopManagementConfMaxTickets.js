@@ -6,7 +6,7 @@ import './ShopManagement.js';
 
 
 
-class ShopManagementConfTickets extends React.Component {
+class ShopManagementConfMaxTickets extends React.Component {
 
     constructor(props) {
         super(props);
@@ -87,4 +87,4 @@ class ShopManagementConfTickets extends React.Component {
         );
     }
 }
-export default ShopManagementConfTickets;
+export default ShopManagementConfMaxTickets;

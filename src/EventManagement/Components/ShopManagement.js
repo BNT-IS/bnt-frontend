@@ -1,13 +1,12 @@
 import React from 'react';
-import { Box, Button, Select, Text, List, TextInput, DataTable, Meter } from 'grommet';
+import { Box, Button, Text, DataTable } from 'grommet';
 import Config from '../../config';
 import './ShopManagement.css';
-import { Switch, Route, Link } from "react-router-dom";
-import ShopManagementConfTickets from './ShopManagementConfTickets';
+import ShopManagementConfMaxTickets from './ShopManagementConfMaxTickets';
 import ShopManagementSalesStatistics from './ShopManagementSalesStatistics'
 import ShopManagementViewBookings from './ShopManagementViewBookings'
 
-class DataQuickViewTickets extends React.Component {
+class DataQuickViewMaxTickets extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -179,6 +178,52 @@ class DataQuickViewSalesStatistics extends React.Component {
     }
 }
 
+class DataQuickViewManageSales extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+    }
+
+    callShopManagementManageSales() {
+        var value = 5;
+        this.props.changeInitializeStep(value);
+    }
+
+
+    render() {
+        var salesStatus;
+        if(this.props.salesStatus){salesStatus = {Beschreibung: "Ticketverkauf", Status: "Aktiv"};};
+        if(!this.props.salesStatus){salesStatus= {Beschreibung: "Ticketverkauf", Status: "Deaktiviert"};};
+
+        var Ansicht = [];
+        Ansicht[1] = <Box name="boxManageSales" className="quickViewOuterBox">
+            <Text>Anzeige für den Status und das aktivieren und 
+                deaktivieren des Ticketverkaufs</Text>
+            <Box pad="small"></Box>
+            <DataTable className="quickViewDatatables"
+                columns={[
+                    {
+                        property: 'Beschreibung',
+                        header: <Text weight="bold">Status</Text>,
+                        primary: true,
+                    },
+                    {
+                        property: 'Status',
+                        header: <Text weight="bold">Anzahl</Text>,
+                    },
+                ]}
+                data={salesStatus}
+            />
+            <Box className="platzhalter" ></Box>
+            <Box Class-Name="ButtonBox">
+                <Button className="buttonInDash" label="Status ändern" onClick={this.callShopManagementManageSales}></Button>
+            </Box>
+        </Box>
+        return Ansicht;
+    }
+}
+
 class ShopManagement extends React.Component {
 
     constructor(props) {
@@ -186,6 +231,7 @@ class ShopManagement extends React.Component {
         this.state = {
             initializeStep: 0,
             openBookings: 0,
+            salesStatus: true,
             maxTicketmenge: [{ Tickettype: "Absolvententickets", Anzahl: 1 },
             { Tickettype: "Begleitertickets", Anzahl: 2 },
             { Tickettype: "Parkttickets", Anzahl: 1 }],
@@ -216,6 +262,9 @@ class ShopManagement extends React.Component {
         { Tickettype: "Parkttickets", Anzahl: Parkttickets }]
         this.setState(this.state.maxTicketmenge = data)
     }
+    setSalesStatus(status){
+        this.setState({salesStatus: status});
+    }
 
     render() {
         return (
@@ -226,20 +275,25 @@ class ShopManagement extends React.Component {
                         <Box pad="medium"></Box>
                     </Box>
                     <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
-                        <DataQuickViewTickets maxTicketmenge={this.state.maxTicketmenge} changeInitializeStep={this.changeInitializeStep}></DataQuickViewTickets>
+                        <DataQuickViewMaxTickets maxTicketmenge={this.state.maxTicketmenge} changeInitializeStep={this.changeInitializeStep}></DataQuickViewMaxTickets>
                         <DataQuickViewPayment konfigurierteBezahloptionen={this.state.konfigurierteBezahloptionen}></DataQuickViewPayment>
                     </Box>
                     <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
                         <DataQuickViewBookings statusBookings={this.state.statusBookings} changeInitializeStep={this.changeInitializeStep}></DataQuickViewBookings>
                         <DataQuickViewSalesStatistics statusSales={this.state.statusSales} changeInitializeStep={this.changeInitializeStep}></DataQuickViewSalesStatistics>
                     </Box>
+                    <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
+                        <DataQuickViewManageSales salesStatus={this.state.salesStatus} setSalesStatus={this.setSalesStatus} changeInitializeStep={this.changeInitializeStep}></DataQuickViewManageSales>
+
+                    </Box>
                 </Box>}
-                {this.state.initializeStep === 1 && <ShopManagementConfTickets
+                {this.state.initializeStep === 1 && <ShopManagementConfMaxTickets
                     maxTicketmenge={this.state.maxTicketmenge} setMaxTicketMenge={this.setMaxTicketMenge}
-                    changeInitializeStep={this.changeInitializeStep}></ShopManagementConfTickets>}
+                    changeInitializeStep={this.changeInitializeStep}></ShopManagementConfMaxTickets>}
 
                 {this.state.initializeStep === 3 && <ShopManagementViewBookings
                     changeInitializeStep={this.changeInitializeStep}></ShopManagementViewBookings>}
+
                 {this.state.initializeStep === 4 && <ShopManagementSalesStatistics changeInitializeStep={this.changeInitializeStep}>
                 </ShopManagementSalesStatistics>}
             </Box>
