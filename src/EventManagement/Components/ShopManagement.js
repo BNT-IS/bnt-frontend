@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button, Text, DataTable } from 'grommet';
 import Config from '../../config';
 import './ShopManagement.css';
-import ShopManagementConfTickets from './ShopManagementConfMaxTickets';
+import ShopManagementConfMaxTickets from './ShopManagementConfMaxTickets';
 import ShopManagementSalesStatistics from './ShopManagementSalesStatistics'
 import ShopManagementViewBookings from './ShopManagementViewBookings'
 
