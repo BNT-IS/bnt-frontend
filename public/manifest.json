@@ -1,11 +1,12 @@
 {
-  "short_name": "Example TBN Client",
-  "name": "Example TBN Client",
+  "short_name": "DHBW BNT Eventapp",
+  "name": "DHBW Bachelors Night Event-Applikation",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "sizes": "144x144 64x64 32x32 24x24 16x16",
+      "type": "image/x-icon",
+      "purpose": "maskable"
     }
   ],
   "start_url": ".",

@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 
-// @Robin siehe https://reactjs.org/docs/context.html
 import UserContext from './AppContexts/UserContext';
 import AccountManagement from './AccountManagement/AccountManagement'
 import Ticketshop from './Ticketshop/Ticketshop';
@@ -14,25 +13,50 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-    // @Robin Hinzugefügt für globales User Objekt
-    this.state = { user: { id: null, email: null, role: null, access_token: null } };
+    this.state = { userContext: {} };
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+    this.init = this.init.bind(this);
+  }
+
+  componentDidMount() {
+    this.init();
+  }
+
+  init() {
+    let ls = JSON.parse(localStorage.getItem('userContext'));
+    this.setState({ userContext: ls ? ls : {} }, this.login);
+  }
+
+  logout() {
+    localStorage.clear();
+    this.setState({ userContext: {} }); 
+    window.location.assign('#/');
+  }
+
+  login() {
+    if (!this.state.userContext.user) {
+      window.location.assign('#/Accountmanagement/');
+    } else if (this.state.userContext.user.role === 0) {
+      window.location.assign('#/eventmgmt/');
+    } else if (this.state.userContext.user.role === 1) {
+      window.location.assign('#/guest/');
+    }
   }
 
   render() {
-    console.log(this.state.user);
     return (
       // @Robin Hinzugefügt für globales User Objekt siehe https://reactjs.org/docs/context.html
-      <UserContext.Provider value={{ user: this.state.user, logout: () => { this.setState({ user: {id: null, email: null, role: null, access_token: null}}) }, 
-      login: () => {this.setState({ user: { id: localStorage.getItem('user_id'), email: localStorage.getItem('user_email'), role: localStorage.getItem('user_role'), access_token: localStorage.getItem('access_token')}})}}}> 
-        
+      <UserContext.Provider value={Object.assign(this.state.userContext, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
+
         <Grommet theme={grommet}>
           <Switch>
             <Route exact path="/">
               <ul>
-                <li><Link to="/guest">Gast</Link></li>
+                <li><Link to="/guest">Ticketshop</Link></li>
                 <li><Link to="/entrance">Einlass-Management</Link></li>
                 <li><Link to="/eventmgmt">Event-Management</Link></li>
-                <li><Link to="/Accountmanagement">Accountmanagement</Link></li>
+                <li><Link to="/Accountmanagement">Anmelden</Link></li>
               </ul>
             </Route>
           </Switch>

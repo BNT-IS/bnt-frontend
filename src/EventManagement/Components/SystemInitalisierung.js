@@ -3,6 +3,7 @@ import React from 'react';
 import { Box, Button, Select, Text, List, TextInput } from 'grommet';
 import Config from '../../config';
 import { CSVReader } from 'react-papaparse';
+import { ThemeProvider } from 'styled-components';
 
 class Hauptansicht extends React.Component {
 
@@ -24,9 +25,10 @@ class Hauptansicht extends React.Component {
         var Ansicht = [];
         if (this.props.initializeStep === 0) {
             Ansicht[0] = <Box pad="medium" key="start">
-                <Text textAlign="center">
+                <Text textAlign="center" weight="bold" size="xxlarge">
                     Guten Tag und Herzlich Wilkommen zum Ticketsystem.
                 </Text>
+                <Box pad="medium"></Box>
                 <Text>
                     Die nächsten Schritte dienen zur Initalisierung des Systems.
                     Sie werden durch die notwendigen Vorbereitungsschritte geführt.
@@ -36,10 +38,11 @@ class Hauptansicht extends React.Component {
                 </Text>
             </Box>
         }
-        if (this.props.initializeStep === 5) {
+        if (this.props.initializeStep === 6) {
             Ansicht[0] = <Box pad="medium" key="end">
                 <Text textAlign="center">
                     Herzlich Glückwunsch Sie haben das Ticketsystem erfolgreich konfiguriert!
+                    Mit Zurück gelangen Sie wieder zur ersten Ansicht und können erneut durch die Konfiguration navigieren.
                 </Text>
             </Box>
         }
@@ -67,7 +70,7 @@ class AddWallet extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { addresse: "", };
+        this.state = { httpProvider: "" };
         this.configureTheAdminWallet = this.configureTheAdminWallet.bind(this);
     }
 
@@ -78,18 +81,29 @@ class AddWallet extends React.Component {
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer f1df51e1835233014368105514f07a70e9f2255b279e5535810d7fbf2d565cc1d692d8b06d53f6157423bb3c63b97e5a42adfbe6277e48dc028d8043683acca13b1b9f83773015ff5f3533e9ad08943bac2eb003f24fc3e6c910d2e83e69f39ec1d3e3ac98d4d2965312670810aab8ec152338654bcab32e7c82cbe83545b0b5f307feed1976239fbe2718c97abab76768e6dcdb3e243fcead76ef2bc2ca72045f748da22dee9881a3aefe0b18ce9dd6d34eb4032ed56e1cb4d8bf11d2ff0d663b65f3ee2b2da04af8bc3b0473c4046fdc53248905d3499955f635c6ed9bb7e2defb03b54414ac617e4f73c96e6639bf1b89111458f5d830387f0c51e2c5a5d6',
-            }
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                http_provider: this.state.httpProvider,
+            })
+
         }).catch(console.log)
 
-        if (!response) return
+        if (!response.ok) {
+            const rückgabe = await response.json().catch(console.log);
+            switch (response.status) {
+                case 400: alert(rückgabe.message); break;
+                case 410: alert(rückgabe.message); break;
+                case 500: alert(rückgabe.message); break;
+                default:
+                    alert(rückgabe.message)
+            }
+        }
 
-        var data = await response.json().catch(console.log)
-
-        if (!data.message) return
-
-        this.props.changeValueOfmapTest("AW");
+        if (response.ok) {
+            this.props.changeValueOfmapTest("AW");
+            this.props.changeStep();
+        }
     }
 
     render() {
@@ -101,11 +115,11 @@ class AddWallet extends React.Component {
             <Box pad="medium">
                 <TextInput
                     placeholder="HTTP-Provider DNS:Port"
-                    value={this.state.textInput}
-                    onChange={(event) => { this.setState({ textInput: event.target.value }) }}
+                    value={this.state.httpProvider}
+                    onChange={(event) => { this.setState({ httpProvider: event.target.value }) }}
                 />
             </Box>
-            <Button onClick={this.setValueTrue} label="Hinzufügen"></Button>
+            <Button onClick={this.configureTheAdminWallet} label="Hinzufügen"></Button>
         </Box>
         return Ansicht;
     }
@@ -115,34 +129,40 @@ class ConfigureAdminAccount extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {eMail:"", password: "", role: 0 };
+        this.state = { email: "", password: "" };
         this.configureTheAdminAcc = this.configureTheAdminAcc.bind(this);
-        }
+    }
 
     //TODO: CONFIUGRE WALLET ANPASSEN AUF URI 
     async configureTheAdminAcc() {
-        var response = await fetch(Config.BACKEND_BASE_URI + "/setup/admin", {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/setup/adminUser", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer f1df51e1835233014368105514f07a70e9f2255b279e5535810d7fbf2d565cc1d692d8b06d53f6157423bb3c63b97e5a42adfbe6277e48dc028d8043683acca13b1b9f83773015ff5f3533e9ad08943bac2eb003f24fc3e6c910d2e83e69f39ec1d3e3ac98d4d2965312670810aab8ec152338654bcab32e7c82cbe83545b0b5f307feed1976239fbe2718c97abab76768e6dcdb3e243fcead76ef2bc2ca72045f748da22dee9881a3aefe0b18ce9dd6d34eb4032ed56e1cb4d8bf11d2ff0d663b65f3ee2b2da04af8bc3b0473c4046fdc53248905d3499955f635c6ed9bb7e2defb03b54414ac617e4f73c96e6639bf1b89111458f5d830387f0c51e2c5a5d6',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 email: this.state.email,
                 password: this.state.password,
-                role: this.state.role,
             })
         }).catch(console.log)
 
-        if (!response) return
+        if (!response.ok) {
+            const rückgabe = await response.json().catch(console.log);
+            switch (response.status) {
+                case 400: alert(rückgabe.message); break;
+                case 410: alert(rückgabe.message); break;
+                case 500: alert(rückgabe.message); break;
+                default:
+                    alert(rückgabe.message)
+            }
+        }
 
-        var data = await response.json().catch(console.log)
-
-        if (!data.message) return
-
-        this.props.changeValueOfmapTest("AA");
+        if (response.ok) {
+            this.props.changeValueOfmapTest("AA");
+            this.props.changeStep();
+        }
     }
 
     render() {
@@ -155,16 +175,16 @@ class ConfigureAdminAccount extends React.Component {
                 <Text weight="bold">E-Mail-Adresse</Text>
                 <TextInput
                     placeholder="E-Mail"
-                    value={this.state.eMail}
-                    onChange={(event) => { this.setState({ textInput: event.target.value }) }}
+                    value={this.state.email}
+                    onChange={(event) => { this.setState({ email: event.target.value }) }}
                 />
-                </Box>
-                <Box pad="medium">
+            </Box>
+            <Box pad="medium">
                 <Text weight="bold">Passwort:</Text>
                 <TextInput
                     placeholder="Passwort"
                     value={this.state.password}
-                    onChange={(event) => { this.setState({ textInput: event.target.value }) }}
+                    onChange={(event) => { this.setState({ password: event.target.value }) }}
                 />
             </Box>
             <Button onClick={this.configureTheAdminAcc} label="Hinzufügen"></Button>
@@ -177,7 +197,7 @@ class ConfigureDatabase extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { host: "", user: "", password: "", db: "" };
+        this.state = { host: "", user: "", password: "", db: "", port: "" };
         this.configureTheDatabase = this.configureTheDatabase.bind(this);
     }
 
@@ -188,24 +208,30 @@ class ConfigureDatabase extends React.Component {
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer f1df51e1835233014368105514f07a70e9f2255b279e5535810d7fbf2d565cc1d692d8b06d53f6157423bb3c63b97e5a42adfbe6277e48dc028d8043683acca13b1b9f83773015ff5f3533e9ad08943bac2eb003f24fc3e6c910d2e83e69f39ec1d3e3ac98d4d2965312670810aab8ec152338654bcab32e7c82cbe83545b0b5f307feed1976239fbe2718c97abab76768e6dcdb3e243fcead76ef2bc2ca72045f748da22dee9881a3aefe0b18ce9dd6d34eb4032ed56e1cb4d8bf11d2ff0d663b65f3ee2b2da04af8bc3b0473c4046fdc53248905d3499955f635c6ed9bb7e2defb03b54414ac617e4f73c96e6639bf1b89111458f5d830387f0c51e2c5a5d6',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                HOST: this.state.host,
-                USER: this.state.user,
-                PASSWORD: this.state.password,
-                DB: this.state.db,
+                host: this.state.host,
+                user: this.state.user,
+                password: this.state.password,
+                database: this.state.db,
+                port: this.state.port,
             })
         }).catch(console.log)
-
-        if (!response) return
-
-        var data = await response.json().catch(console.log)
-
-        if (!data.message) return
-
-        this.props.changeValueOfmapTest("DB");
+        if (!response.ok) {
+            const rückgabe = await response.json().catch(console.log);
+            switch (response.status) {
+                case 400: alert(rückgabe.message); break;
+                case 410: alert(rückgabe.message); break;
+                case 500: alert(rückgabe.message); break;
+                default:
+                    alert(rückgabe.message)
+            }
+        }
+        if (response.ok) {
+            this.props.changeValueOfmapTest("DB");
+            this.props.changeStep();
+        }
     }
 
     render() {
@@ -220,6 +246,14 @@ class ConfigureDatabase extends React.Component {
                     placeholder="Hier bitte den Datenbank-Host eingeben"
                     value={this.state.host}
                     onChange={(event) => { this.setState({ host: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="medium">
+                <Text weight="bold">Port:</Text>
+                <TextInput
+                    placeholder="Hier bitte den Port eingeben"
+                    value={this.state.port}
+                    onChange={(event) => { this.setState({ port: event.target.value }) }}
                 />
             </Box>
             <Box pad="small">
@@ -261,35 +295,41 @@ class ConfigureMailserver extends React.Component {
         this.state = { host: "", port: null, conncetion: true, user: "", password: "", standardMail: "", standardPrefix: "" };
         this.configureTheMailserver = this.configureTheMailserver.bind(this);
     }
-
-    //TODO: Problem bei body ? 
     async configureTheMailserver() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/mailserver", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer f1df51e1835233014368105514f07a70e9f2255b279e5535810d7fbf2d565cc1d692d8b06d53f6157423bb3c63b97e5a42adfbe6277e48dc028d8043683acca13b1b9f83773015ff5f3533e9ad08943bac2eb003f24fc3e6c910d2e83e69f39ec1d3e3ac98d4d2965312670810aab8ec152338654bcab32e7c82cbe83545b0b5f307feed1976239fbe2718c97abab76768e6dcdb3e243fcead76ef2bc2ca72045f748da22dee9881a3aefe0b18ce9dd6d34eb4032ed56e1cb4d8bf11d2ff0d663b65f3ee2b2da04af8bc3b0473c4046fdc53248905d3499955f635c6ed9bb7e2defb03b54414ac617e4f73c96e6639bf1b89111458f5d830387f0c51e2c5a5d6',
+                'Content-Type': 'application/json'
             },
+
             body: JSON.stringify({
-                HOST: this.state.host,
-                PORT: this.state.port,
-                SECURE: this.state.conncetion,
-                USER: this.state.user,
-                PASSWORD: this.state.password,
-                DEFAULT_FROM: this.state.standardMail,
-                DEFAULT_SUBJECT_PREFIX: this.state.standardPrefix,
+                host: this.state.host,
+                port: this.state.port,
+                secure: this.state.conncetion,
+                user: this.state.user,
+                password: this.state.password,
+                default_from: this.state.standardMail,
+                default_subject_prefix: this.state.standardPrefix,
             })
         }).catch(console.log)
 
-        if (!response) return
+        if (!response.ok) {
+            const rückgabe = await response.json().catch(console.log);
+            switch (response.status) {
+                case 400: alert(rückgabe.message); break;
+                case 410: alert(rückgabe.message); break;
+                case 500: alert(rückgabe.message); break;
+                default:
+                    alert(rückgabe.message)
+            }
+        }
 
-        var data = await response.json().catch(console.log)
-
-        if (!data.message) return
-
-        this.props.changeValueOfmapTest("MS");
+        if (response.ok) {
+            this.props.changeValueOfmapTest("MS");
+            this.props.changeStep();
+        }
     }
 
     render() {
@@ -391,6 +431,7 @@ class AbsolventenListe extends React.Component {
 
         this.setState({ finished: true })
         this.props.changeValueOfmapTest("AL");
+        this.props.changeStep();
     }
 
 
@@ -492,21 +533,43 @@ class SystemInitalisierung extends React.Component {
     }
 
     changeStep() {
-        this.setState({ initializeStep: 1 + this.state.initializeStep });
+        var value;
+        if (this.state.initializeStep > 5) {
+            value = 0;
+        }
+        if (this.state.initializeStep < 6) {
+            value = 1 + this.state.initializeStep;
+        }
+        this.setState({ initializeStep: value });
+
     }
 
     render() {
         return (
             <Box className="SystemInitalisierung" direction="column" gap="medium" pad="medium" align="center">
                 {this.state.initializeStep === 0 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}></Hauptansicht>}
-                {this.state.initializeStep === 1 && <ConfigureDatabase changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}></ConfigureDatabase>}
-                {this.state.initializeStep === 2 && <ConfigureAdminAccount changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}></ConfigureAdminAccount>}
-                {this.state.initializeStep === 3 && <ConfigureMailserver changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}></ConfigureMailserver>}
-                {this.state.initializeStep === 4 && <AddWallet changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}></AddWallet>}
-                {this.state.initializeStep === 5 && <AbsolventenListe changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}></AbsolventenListe>}
-                {this.state.initializeStep === 6 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}></Hauptansicht>}
-                {this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Nächster Schritt"></Button>}
-                {this.state.initializeStep === 6 && <Box pad="medium"> <Button label="Zurück"></Button> <Button label="Konfigurationen anzeigen"></Button></Box>}
+
+                {this.state.initializeStep === 1 && <ConfigureDatabase changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                    changeStep={this.changeStep.bind(this)}></ConfigureDatabase>}
+
+                {this.state.initializeStep === 2 && <ConfigureAdminAccount changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                    changeStep={this.changeStep.bind(this)}></ConfigureAdminAccount>}
+
+                {this.state.initializeStep === 3 && <ConfigureMailserver changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                    changeStep={this.changeStep.bind(this)}></ConfigureMailserver>}
+
+                {this.state.initializeStep === 4 && <AddWallet changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                    changeStep={this.changeStep.bind(this)}></AddWallet>}
+
+                {this.state.initializeStep === 5 && <AbsolventenListe changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                    changeStep={this.changeStep.bind(this)}></AbsolventenListe>}
+
+                {this.state.initializeStep === 6 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}
+                    changeStep={this.changeStep.bind(this)}></Hauptansicht>}
+
+                {this.state.initializeStep === 0 && <Button onClick={this.changeStep} label="Nächster Schritt"></Button>}
+                {this.state.initializeStep != 0 && this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Schritt Überspringen"></Button>}
+                {this.state.initializeStep === 6 && <Box pad="medium"> <Button label="Zurück" onClick={this.changeStep}></Button></Box>}
             </Box>
         );
     }

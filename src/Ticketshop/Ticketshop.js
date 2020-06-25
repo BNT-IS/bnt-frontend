@@ -1,11 +1,9 @@
 import React from 'react';
 
-// @Robin Hier mal eine externe js Datei für so Kontext kram...
 import UserContext from '../AppContexts/UserContext';
 
 import { Menu, Header, Box } from 'grommet';
 import { Switch, Route, Link } from "react-router-dom";
-import WalletSetup from './Components/WalletSetup';
 import UserMainMenu from './Components/UserMainMenu';
 import TicketOverview from './Components/TicketOverview';
 import BookingOverview from './Components/BookingOverview';
@@ -18,31 +16,25 @@ class Ticketshop extends React.Component {
         this.state = {};
     }
 
-    // @Robin Nutze Usercontext so: static contextType = UserContext;
-
     render() {
         return (
             <Box className="Guest">
                 <Header background="brand" justify="between" pad="10px">
-                    <Link to="../">Home</Link>
+                    <Link to="/guest">Home</Link>
                     {
-                        // @Robin Nutze Usercontext oder so:
                         <UserContext.Consumer>
-                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }, { label: 'Login', onClick: userContext.login}]} />}
+                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }]} />}
                         </UserContext.Consumer>
                     }
                 </Header>
                 <Switch>
-                    <Route path="/guest/ticketbestellen">
+                    <Route path="/guest/buy">
                         <TicketBestellung></TicketBestellung>
                     </Route>
                     <Route path="/guest/tickets/">
                         <TicketOverview></TicketOverview>
                     </Route>
-                    <Route path="/guest/demosetup">
-                        <WalletSetup></WalletSetup>
-                    </Route>
-                    <Route path="/guest/bestellungsuebersicht">
+                    <Route path="/guest/bookings">
                         <BookingOverview></BookingOverview>
                     </Route>
                     <Route path="/guest/">

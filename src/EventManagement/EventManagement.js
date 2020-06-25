@@ -4,6 +4,7 @@ import { Switch, Route, Link } from "react-router-dom";
 import IndexedDBExample from './Components/IndexedDBExample';
 import TicketReaderManager from './Components/TicketReaderManager';
 import SystemInitalisierung from './Components/SystemInitalisierung';
+import ShopManagement from './Components/ShopManagement';
 import UserContext from '../AppContexts/UserContext';
 
 import LocalTicketMirror from './Classes/LocalTicketMirror';
@@ -49,7 +50,7 @@ class EventManagement extends React.Component {
             // Trying to get the ticket from the IDB
             this.localTicketMirror.getTicket(identifier).then((ticket) => {
                 callback(ticket);
-            }).catch((error) => { 
+            }).catch((error) => {
                 // In case of an error, providing an error msg
                 callback(null, error);
             });
@@ -64,13 +65,13 @@ class EventManagement extends React.Component {
 
     render() {
         return (
-            
+
             <Box className="EventManagement">
                 <Header background="brand" justify="between" pad="10px">
-                    <Link to="../">Home</Link>
+                    <Link to="/eventmgmt">Home</Link>
                     {
                         <UserContext.Consumer>
-                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }, { label: 'Login', onClick: userContext.login}]} />}
+                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }]} />}
                         </UserContext.Consumer>
                     }
                 </Header>
@@ -79,6 +80,7 @@ class EventManagement extends React.Component {
                     <li><Link to="/eventmgmt/entrancedb">Show Entrance Dashboard</Link></li>
                     <li><Link to="/eventmgmt/ticketshop">Manage Ticketshop</Link></li>
                     <li><Link to="/eventmgmt/SystemInitalisierung">System Initalisieren</Link></li>
+                    <li><Link to="/eventmgmt/ShopManagement">Shop Management</Link></li>
                 </ul>
                 <Switch>
                     <Route path="/eventmgmt/rtrm">
@@ -86,6 +88,9 @@ class EventManagement extends React.Component {
                     </Route>
                     <Route path="/eventmgmt/entrancedb">
                         <IndexedDBExample localTicketMirror={this.localTicketMirror}></IndexedDBExample>
+                    </Route>
+                    <Route path="/eventmgmt/ShopManagement">
+                        <ShopManagement></ShopManagement>
                     </Route>
                     <Route path="/eventmgmt/SystemInitalisierung">
                         <SystemInitalisierung></SystemInitalisierung>

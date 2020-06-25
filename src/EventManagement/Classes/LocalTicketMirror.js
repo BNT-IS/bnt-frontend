@@ -1,3 +1,5 @@
+import Web3 from 'web3';
+
 /**
  * Class for basic operations and preparations for the local caching of ticket data
  */
@@ -179,6 +181,7 @@ class LocalTicketMirror {
                 if (!ticket) return reject("Ticket does not exist.");
 
                 // TODO: Check signature and identifier hash
+                
 
                 // Check validity and if it was not used before
                 if (!ticket.isValid) return reject("Ticket is not valid.");
