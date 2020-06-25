@@ -202,11 +202,42 @@ class ShopManagement extends React.Component {
         }
         this.changeInitializeStep = this.changeInitializeStep.bind(this);
         this.setMaxTicketMenge = this.setMaxTicketMenge.bind(this);
+        this.getBookings = this.getBookings.bind(this);
     }
 
     changeInitializeStep(value) {
         this.setState({ initializeStep: value });
+    }
 
+    async getBookings(){
+        const response = await fetch(Config.BACKEND_BASE_URI + '/bookings/', {
+            method: 'GET',
+            mose: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).catch(console.log);
+
+        if (!response.ok) {
+            const rückgabe = await response.json().catch(console.log);
+            switch (response.status) {
+                case 500:
+                    alert("Die Anmeldung ist aufgrund eines Server-Fehlers fehlgeschlagen. Bitte versuchen Sie es später erneut.");
+                    break;
+                case 501:
+                    alert("Der Server kann die gewünschte Anfrage nicht ausführen.");
+                    break;
+                default:
+                    alert(rückgabe.message);
+            }
+            return;
+        } else {
+            const rückgabe = await response.json().catch(console.log);
+            if (rückgabe) {
+                console.log(rückgabe);
+            }
+        }
     }
 
     //TODO AUS KONFIG ABRUFEN und mit SHOPMANGEMENT CONFTICKETS VERKNÜPFEN
@@ -230,7 +261,7 @@ class ShopManagement extends React.Component {
                         <DataQuickViewPayment konfigurierteBezahloptionen={this.state.konfigurierteBezahloptionen}></DataQuickViewPayment>
                     </Box>
                     <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
-                        <DataQuickViewBookings statusBookings={this.state.statusBookings}></DataQuickViewBookings>
+                        <DataQuickViewBookings statusBookings={this.state.statusBookings} changeInitializeStep={this.changeInitializeStep}></DataQuickViewBookings>
                         <DataQuickViewSalesStatistics statusSales={this.state.statusSales} changeInitializeStep={this.changeInitializeStep}></DataQuickViewSalesStatistics>
                     </Box>
                 </Box>}
@@ -239,7 +270,6 @@ class ShopManagement extends React.Component {
                     changeInitializeStep={this.changeInitializeStep}></ShopManagementConfTickets>}
 
                 {this.state.initializeStep === 3 && <ShopManagementViewBookings
-                    //Einfügen, was hier gemacht werden muss
                     changeInitializeStep={this.changeInitializeStep}
                 ></ShopManagementViewBookings>}
                 {this.state.initializeStep === 4 && <ShopManagementSalesStatistics changeInitializeStep={this.changeInitializeStep}>
