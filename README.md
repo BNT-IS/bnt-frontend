@@ -113,7 +113,45 @@ DNS-Name des http-Providers:Port
 Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Mail-Adresse und ein Passwort für den Administratorbenuzter zur Verfügung. Über die Route "/setup/adminUser" im Backend wird der Administratorbenutzer (Rolle 0) erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
 ```
 {
-    email: String 
+    email: String, 
     Passwort: String    
 }
 ```
+
+Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route "/setup/database" werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
+```
+{ 
+    host: String, 
+    user: String, 
+    password: String, 
+    db: String, 
+    port: String
+}
+```
+
+Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route "/setup/mailserver" werden die Einstellungen in die Konfiguration im Backend gespeichert.
+```
+{
+     host: String, 
+     port: String, 
+     conncetion: Boolean, 
+     user: String, 
+     password: String, 
+     standardMail: String,
+     standardPrefix: String
+}
+```
+
+Die Klasse AbsolventenListe stellt ein CSV-Reader Feld zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
+```
+E-Mail;Name
+Beispiel@beispiel.de;Max Mustermann
+                .
+                .
+                .
+```
+kann eine Liste mit E-Mail-Adressen eingelesen werden. Die eingelesene Liste wird in der Komponente in einer Liste angezeigt. Durch die Bestätigung der eingelesen Liste mit dem Button Abschließen wird für jeden Datensatz in der Liste die Route
+```
+
+```
+aufgerufen und ein One Time Passwort in der Datenbank erstellt sowie eine E-Mail mit dem erstellten One Time Passwort versendet.
