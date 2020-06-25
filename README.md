@@ -141,6 +141,19 @@ ROUTE
 }
 ```
 
+Die Klasse DataQuickViewPayment zeigt die Konfigurierten Bezahloptionen an.!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!
+!!!!
+
+Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert werden. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente **** weiter.
+In der Komponente **** kann der Status des Verkaufs mit der Route
+```
+ROUTE
+```
+aktiviert oder deaktiviert werden. Die Route ändert den Wert hierfür in der Konfigurationsdatei des Backends.
+
+
+
 ### SystemInitialisierung
 Die Komponente Systeminitialisierung ist für die erstmalige Konfiguration im Backend verantwortlich.
 Die Komponente besteht aus den Klassen:
