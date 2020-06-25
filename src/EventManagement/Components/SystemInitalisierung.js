@@ -295,8 +295,6 @@ class ConfigureMailserver extends React.Component {
         this.state = { host: "", port: null, conncetion: true, user: "", password: "", standardMail: "", standardPrefix: "" };
         this.configureTheMailserver = this.configureTheMailserver.bind(this);
     }
-
-    //TODO: Problem bei body ? 
     async configureTheMailserver() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/mailserver", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.

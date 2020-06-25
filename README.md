@@ -77,3 +77,34 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+# Auflistung der Komponenten
+
+## Gast
+
+
+## Eventmanagament
+
+### SystemInitialisierung
+Die Komponente Systeminitialisierung ist für die erstmalige Konfiguration im Backend verantwortlich.
+Die Komponente besteht aus den Klassen:
+- Hauptansicht
+- AddWallet
+- ConfigureAdminAccount
+- ConfigureDatabase
+- ConfigureMailserver
+- AbsolventenListe
+- SystemInitalisierung
+
+Die Klasse SystemInitalisierung verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
+
+Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 6) Angezeigt.
+
+Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route "setup/generateWallet" an das Backend, dass ein Wallet für den Admin erstellt.
+
+```
+{httpProvider: String}
+DNS-Name des httpProvider:Port
+```
+
