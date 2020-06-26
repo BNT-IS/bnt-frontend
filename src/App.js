@@ -4,10 +4,12 @@ import './App.css';
 import UserContext from './AppContexts/UserContext';
 import AccountManagement from './AccountManagement/AccountManagement'
 import Ticketshop from './Ticketshop/Ticketshop';
-import EntranceManagement from './EntranceManagement/EntranceManagement';
+import Entrance from './Entrance/Entrance';
 import EventManagement from './EventManagement/EventManagement';
 import { Grommet, grommet } from 'grommet';
 import { Switch, Route, Link } from "react-router-dom";
+
+import config from './config';
 
 class App extends React.Component {
 
@@ -30,23 +32,26 @@ class App extends React.Component {
 
   logout() {
     localStorage.clear();
-    this.setState({ userContext: {} }); 
-    window.location.assign('#/');
+    window.indexedDB.deleteDatabase(config.IDB_NAME);
+    this.setState({ userContext: {} });
+    window.location.assign('#/login');
   }
 
   login() {
     if (!this.state.userContext.user) {
-      window.location.assign('#/Accountmanagement/');
-    } else if (this.state.userContext.user.role === 0) {
-      window.location.assign('#/eventmgmt/');
-    } else if (this.state.userContext.user.role === 1) {
-      window.location.assign('#/guest/');
+      window.location.assign('#/login/');
+    } else {
+      if (this.state.userContext.user.role === 0 && (window.location.hash === "" || window.location.hash.includes('login'))) {
+        window.location.assign('#/eventmgmt/');
+      }
+      if (this.state.userContext.user.role === 1 && (window.location.hash === "" || !window.location.hash.includes('guest') || window.location.hash.includes("login"))) {
+        window.location.assign('#/guest/');
+      }
     }
   }
 
   render() {
     return (
-      // @Robin Hinzugefügt für globales User Objekt siehe https://reactjs.org/docs/context.html
       <UserContext.Provider value={Object.assign(this.state.userContext, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
 
         <Grommet theme={grommet}>
@@ -56,7 +61,7 @@ class App extends React.Component {
                 <li><Link to="/guest">Ticketshop</Link></li>
                 <li><Link to="/entrance">Einlass-Management</Link></li>
                 <li><Link to="/eventmgmt">Event-Management</Link></li>
-                <li><Link to="/Accountmanagement">Anmelden</Link></li>
+                <li><Link to="/login">Anmelden</Link></li>
               </ul>
             </Route>
           </Switch>
@@ -65,12 +70,12 @@ class App extends React.Component {
               <Ticketshop eigenschaft1="test"></Ticketshop>
             </Route>
             <Route path="/entrance">
-              <EntranceManagement></EntranceManagement>
+              <Entrance></Entrance>
             </Route>
             <Route path="/eventmgmt">
               <EventManagement></EventManagement>
             </Route>
-            <Route path="/Accountmanagement">
+            <Route path="/login">
               <AccountManagement></AccountManagement>
             </Route>
           </Switch>
