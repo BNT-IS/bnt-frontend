@@ -3,7 +3,6 @@ import React from 'react';
 import { Box, Button, Select, Text, List, TextInput } from 'grommet';
 import Config from '../../config';
 import { CSVReader } from 'react-papaparse';
-import Web3 from 'web3';
 
 class Hauptansicht extends React.Component {
 
@@ -688,7 +687,7 @@ class SystemInitalisierung extends React.Component {
                     changeStep={this.changeStep.bind(this)}></Hauptansicht>}
 
                 {this.state.initializeStep === 0 && <Button onClick={this.changeStep} label="Konfiguration Beginnen"></Button>}
-                {this.state.initializeStep != 0 && this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Schritt Überspringen"></Button>}
+                {this.state.initializeStep !== 0 && this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Schritt Überspringen"></Button>}
                 {this.state.initializeStep === 6 && <Box pad="medium"> <Button label="Zurück" onClick={this.changeStep}></Button></Box>}
             </Box>
         );
