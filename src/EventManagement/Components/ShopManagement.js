@@ -6,6 +6,8 @@ import ShopManagementConfMaxTickets from './ShopManagementConfMaxTickets';
 import ShopManagementSalesStatistics from './ShopManagementSalesStatistics'
 import ShopManagementViewBookings from './ShopManagementViewBookings'
 
+import UserContext from '../../AppContexts/UserContext'
+
 class DataQuickViewMaxTickets extends React.Component {
     constructor(props) {
         super(props);
@@ -184,6 +186,7 @@ class DataQuickViewManageSales extends React.Component {
         this.state = {
         };
     }
+    
 
     callShopManagementManageSales() {
         var value = 5;
@@ -226,6 +229,8 @@ class DataQuickViewManageSales extends React.Component {
 
 class ShopManagement extends React.Component {
 
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -249,24 +254,29 @@ class ShopManagement extends React.Component {
         this.changeInitializeStep = this.changeInitializeStep.bind(this);
         this.setMaxTicketMenge = this.setMaxTicketMenge.bind(this);
         this.getBookings = this.getBookings.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
     }
 
     changeInitializeStep(value) {
         this.setState({ initializeStep: value });
     }
 
+    componentDidMount(){
+        this.getBookings();
+    }
+
     async getBookings(){
-        const response = await fetch(Config.BACKEND_BASE_URI + '/bookings/', {
+        const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/', {
             method: 'GET',
             mose: 'cors',
             cache: 'no-cache',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
             },
         }).catch(console.log);
 
         if (!response.ok) {
-            const rückgabe = await response.json().catch(console.log);
             switch (response.status) {
                 case 500:
                     alert("Die Anmeldung ist aufgrund eines Server-Fehlers fehlgeschlagen. Bitte versuchen Sie es später erneut.");
@@ -275,15 +285,33 @@ class ShopManagement extends React.Component {
                     alert("Der Server kann die gewünschte Anfrage nicht ausführen.");
                     break;
                 default:
-                    alert(rückgabe.message);
+                    alert(response.message);
             }
             return;
         } else {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
-                console.log(rückgabe);
+                console.log(rückgabe.length);
+                var bezahlt = 0;
+                var unbezahlt = 0;
+                for(var test = 0; test < rückgabe.length; test++){
+                    if(rückgabe[test].paidAt !== null){
+                        bezahlt = bezahlt + 1;
+                    }
+                    if(rückgabe[test].paidAt === null){
+                        unbezahlt = unbezahlt + 1;
+                    }
+                }
+                this.setBookings(bezahlt, unbezahlt);
             }
         }
+    }
+
+    setBookings(bezahlt, unbezahlt){
+        var data = [{ status: "Gebucht", Anzahl: bezahlt },
+        { status: "Offen", Anzahl: unbezahlt },
+        { status: "Stornieren", Anzahl: 0 }];
+        this.setState({statusBookings: data});
     }
 
     //TODO AUS KONFIG ABRUFEN und mit SHOPMANGEMENT CONFTICKETS VERKNÜPFEN
@@ -291,7 +319,7 @@ class ShopManagement extends React.Component {
         var data = [{ Tickettype: "Absolvententickets", Anzahl: Absolvententickets },
         { Tickettype: "Begleitertickets", Anzahl: Begleitertickets },
         { Tickettype: "Parkttickets", Anzahl: Parkttickets }]
-        this.setState(this.state.maxTicketmenge = data)
+        this.setState({maxTicketmenge: data});
     }
     setSalesStatus(status){
         this.setState({salesStatus: status});
@@ -304,6 +332,7 @@ class ShopManagement extends React.Component {
                     <Box>
                         <Text size="xxlarge" weight="bold">Hallo das ist die Übersicht der Shop Verwaltung</Text>
                         <Box pad="medium"></Box>
+                        <Button label="QuickView aktualisieren" onClick={this.componentDidMount}></Button>
                     </Box>
                     <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
                         <DataQuickViewMaxTickets maxTicketmenge={this.state.maxTicketmenge} changeInitializeStep={this.changeInitializeStep}></DataQuickViewMaxTickets>
