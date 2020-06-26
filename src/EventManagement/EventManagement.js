@@ -37,7 +37,6 @@ class EventManagement extends React.Component {
 
         // In case the rtr is dicsonnected, it should be removed from the list in the view state
         remoteTicketReader.onConnectionChanged = (connectionState) => {
-            console.log(connectionState);
             switch (connectionState) {
                 case "connected":
                     // The connection has become fully connected
@@ -46,11 +45,7 @@ class EventManagement extends React.Component {
                     break;
                 case "failed":
                     // One or more transports has terminated unexpectedly or in an error
-                    console.debug("Attempting to remove closed remote ticket reader");
-                    let RTRList = this.state.RTRList;
-                    let idx = RTRList.indexOf(remoteTicketReader);
-                    RTRList.splice(idx, 1);
-                    this.setState({ RTRList: RTRList });
+                    this.removeRTR(remoteTicketReader);
                     break;
                 case "closed":
                     // The connection has been closed
@@ -58,6 +53,7 @@ class EventManagement extends React.Component {
                 default:
                     break;
             }
+            this.forceUpdate();
         }
 
         // Setting eventhandler for reading a ticket
@@ -79,6 +75,14 @@ class EventManagement extends React.Component {
                 callback(null, error)
             });
         }
+    }
+
+    removeRTR(remoteTicketReader) {
+        console.debug("Attempting to remove closed remote ticket reader");
+        let RTRList = this.state.RTRList;
+        let idx = RTRList.indexOf(remoteTicketReader);
+        RTRList.splice(idx, 1);
+        this.setState({ RTRList: RTRList });
     }
 
     render() {
@@ -105,7 +109,7 @@ class EventManagement extends React.Component {
                         <TicketReaderManager RTRList={this.state.RTRList} onRTR={this.rTRHandler}></TicketReaderManager>
                     </Route>
                     <Route path="/eventmgmt/entrancedb">
-                        <EntranceDashboard localTicketMirror={this.localTicketMirror}></EntranceDashboard>
+                        <EntranceDashboard localTicketMirror={this.localTicketMirror} onRemoveRTR={() => { }}></EntranceDashboard>
                     </Route>
                     <Route path="/eventmgmt/ShopManagement">
                         <ShopManagement></ShopManagement>

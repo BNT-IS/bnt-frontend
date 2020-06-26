@@ -15,7 +15,7 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { userContext: {} };
+    this.state = { userContext: null };
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.init = this.init.bind(this);
@@ -27,18 +27,23 @@ class App extends React.Component {
 
   init() {
     let ls = JSON.parse(localStorage.getItem('userContext'));
-    this.setState({ userContext: ls ? ls : {} }, this.login);
+    this.setState({ userContext: ls ? ls : null }, this.login);
   }
 
   logout() {
+    if (this.state.userContext.user.role === 0) {
+      let ok = window.confirm('Sollen auch eventuell lokal gespeicherten Daten für den Einlass unwiederruflich gelöscht werden?', "Nein");
+      if (ok) {
+        window.indexedDB.deleteDatabase(config.IDB_NAME);
+      }
+    }
     localStorage.clear();
-    window.indexedDB.deleteDatabase(config.IDB_NAME);
-    this.setState({ userContext: {} });
+    this.setState({ userContext: null });
     window.location.assign('#/login');
   }
 
   login() {
-    if (!this.state.userContext.user) {
+    if (this.state.userContext === null) {
       window.location.assign('#/login/');
     } else {
       if (this.state.userContext.user.role === 0 && (window.location.hash === "" || window.location.hash.includes('login'))) {
@@ -52,7 +57,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <UserContext.Provider value={Object.assign(this.state.userContext, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
+      <UserContext.Provider value={Object.assign(this.state.userContext || {}, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
 
         <Grommet theme={grommet}>
           <Switch>
