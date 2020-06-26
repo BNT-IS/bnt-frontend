@@ -2,7 +2,6 @@ import React from 'react';
 import './TicketOverview.css';
 import { Box, Text, Accordion, AccordionPanel } from 'grommet';
 import Config from '../../config';
-
 import UserContext from '../../AppContexts/UserContext';
 
 class BuchungsItem extends React.Component {
