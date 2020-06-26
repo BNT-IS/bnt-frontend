@@ -14,6 +14,7 @@ class TicketReader {
         this._dataChannelClosedHandler = this._dataChannelClosedHandler.bind(this);
         this._connectionChangeHandler = this._connectionChangeHandler.bind(this);
         this._generateAnswer = this._generateAnswer.bind(this);
+        this._messageHandler = this._messageHandler.bind(this);
 
         // Map for requests sent via datachannel. Usage is: uuid =>  { resolve: resolve, reject: reject }
         this.requestMap = new Map();
@@ -89,7 +90,19 @@ class TicketReader {
 
     _messageHandler(event) {
         console.debug(event.data);
-        alert(event.data);
+        try{
+            let response = JSON.parse(event.data);
+            if(response.reqId){
+                let callbacks = this.requestMap.get(response.reqId);
+                if(response.error){
+                    callbacks['reject'](response.error);
+                } else {
+                    callbacks['resolve'](response.result);
+                }
+            }
+        } catch(error){
+            console.error(error);
+        }
     }
 
     _receiveChannelHandler(event) {
