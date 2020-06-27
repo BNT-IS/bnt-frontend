@@ -258,8 +258,8 @@ class TicketBestellung extends React.Component {
                 body: JSON.stringify({
                     bookingId: bookingResult,
                     ticketType: 2,
-                    forename: element.forename,
-                    surname: element.surname,
+                    forename: this.state.graduate.forename,
+                    surname: this.state.graduate.surname,
                     isWheelchairUser: element.isWheelchairUser,
                 })
             }).catch(console.log);
