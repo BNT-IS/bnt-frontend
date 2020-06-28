@@ -57,7 +57,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <UserContext.Provider value={Object.assign(this.state.userContext || {}, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
+      <UserContext.Provider value={Object.assign(this.state.userContext ? this.state.userContext : {}, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
 
         <Grommet theme={grommet}>
           <Switch>
