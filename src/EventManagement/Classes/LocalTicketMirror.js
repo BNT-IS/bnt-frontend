@@ -23,6 +23,14 @@ class LocalTicketMirror {
 
         // Finally initializing DB connection
         this._initDB();
+
+        /**
+         * @public
+         * This eventlistener is called when the 
+         * ticket list were updated. Please implement externally.
+         * @param {Array} tickets - New ticket list.
+         */
+        this.onTicketListChanged = function (tickets) { };
     }
 
     /**
@@ -55,7 +63,10 @@ class LocalTicketMirror {
         this.db = event.target.result;
 
         // Create an objectStore for this database
-        this.db.createObjectStore("tickets", { keyPath: "identifier" });
+        var objectStore = this.db.createObjectStore("tickets", { keyPath: "identifier" });
+        objectStore.createIndex("forename", "forename", { unique: false });
+        objectStore.createIndex("surname", "surname", { unique: false });
+        objectStore.createIndex("ticketType", "ticketType", { unique: false });
     }
 
     /**
@@ -85,7 +96,9 @@ class LocalTicketMirror {
             tickets.forEach((ticket) => {
                 objectStore.add(ticket);
             });
-        }catch(error){
+
+            this.onTicketListChanged();
+        } catch (error) {
             console.error(error);
             alert('Es ist ein Fehler bei der Indexed DB aufgetreten');
         }
@@ -172,7 +185,10 @@ class LocalTicketMirror {
                 // Put this updated object back into the database.
                 var requestUpdate = objectStore.put(ticket);
                 requestUpdate.onerror = reject;
-                requestUpdate.onsuccess = resolve;
+                requestUpdate.onsuccess = async (event) => {
+                    resolve(event);
+                    this.onTicketListChanged();
+                };
             };
         });
     }
