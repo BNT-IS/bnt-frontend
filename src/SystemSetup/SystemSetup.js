@@ -1,7 +1,6 @@
 import React from 'react';
-//import './TicketOverview.css';
 import { Box, Button, Select, Text, List, TextInput } from 'grommet';
-import Config from '../../config';
+import Config from '../config';
 import { CSVReader } from 'react-papaparse';
 
 class Hauptansicht extends React.Component {
@@ -617,7 +616,7 @@ class AbsolventenListe extends React.Component {
     }
 }
 
-class SystemInitalisierung extends React.Component {
+class SystemSetup extends React.Component {
 
     constructor(props) {
         super(props);
@@ -662,7 +661,7 @@ class SystemInitalisierung extends React.Component {
 
     render() {
         return (
-            <Box className="SystemInitalisierung" direction="column" gap="medium" pad="medium" align="center">
+            <Box className="SystemSetup" direction="column" gap="medium" pad="medium" align="center">
                 {this.state.initializeStep === 0 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}></Hauptansicht>}
 
                 {this.state.initializeStep === 1 && <ConfigureDatabase changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
@@ -694,4 +693,4 @@ class SystemInitalisierung extends React.Component {
     }
 }
 
-export default SystemInitalisierung;
+export default SystemSetup;

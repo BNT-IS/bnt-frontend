@@ -3,7 +3,6 @@ import { Box, Header, Menu } from 'grommet';
 import { Switch, Route, Link } from "react-router-dom";
 import EntranceDashboard from './Components/EntranceDashboard';
 import TicketReaderManager from './Components/TicketReaderManager';
-import SystemInitalisierung from './Components/SystemInitalisierung';
 import ShopManagement from './Components/ShopManagement';
 import UserContext from '../AppContexts/UserContext';
 
@@ -97,30 +96,28 @@ class EventManagement extends React.Component {
                         </UserContext.Consumer>
                     }
                 </Header>
-                <ul>
-                    <li><Link to="/eventmgmt/rtrm">Manage Remote Ticket Readers</Link></li>
-                    <li><Link to="/eventmgmt/entrancedb">Show Entrance Dashboard</Link></li>
-                    <li><Link to="/eventmgmt/ticketshop">Manage Ticketshop</Link></li>
-                    <li><Link to="/eventmgmt/SystemInitalisierung">System Initalisieren</Link></li>
-                    <li><Link to="/eventmgmt/ShopManagement">Shop Management</Link></li>
-                </ul>
-                <Switch>
-                    <Route path="/eventmgmt/rtrm">
-                        <TicketReaderManager RTRList={this.state.RTRList} onRTR={this.rTRHandler}></TicketReaderManager>
-                    </Route>
-                    <Route path="/eventmgmt/entrancedb">
-                        <EntranceDashboard localTicketMirror={this.localTicketMirror} onRemoveRTR={() => { }}></EntranceDashboard>
-                    </Route>
-                    <Route path="/eventmgmt/ShopManagement">
-                        <ShopManagement></ShopManagement>
-                    </Route>
-                    <Route path="/eventmgmt/SystemInitalisierung">
-                        <SystemInitalisierung></SystemInitalisierung>
-                    </Route>
-                    <Route path="/eventmgmt/ticketshop">
-                        <Box pad="medium">Hier müsste dann sowas wie ein Ticketshop Management Dashboard hin...</Box>
-                    </Route>
-                </Switch>
+                <Box className="left-right-grid" direction="row" justify="start" wrap={true}>
+                    <Box className="sidebar">
+                        <ul>
+                            <li><Link to="/eventmgmt/rtrm">Manage Remote Ticket Readers</Link></li>
+                            <li><Link to="/eventmgmt/entrancedb">Entrance Dashboard</Link></li>
+                            <li><Link to="/eventmgmt/shop">Shop Management</Link></li>
+                        </ul>
+                    </Box>
+                    <Box className="main-content">
+                        <Switch>
+                            <Route path="/eventmgmt/rtrm">
+                                <TicketReaderManager RTRList={this.state.RTRList} onRTR={this.rTRHandler}></TicketReaderManager>
+                            </Route>
+                            <Route path="/eventmgmt/entrancedb">
+                                <EntranceDashboard localTicketMirror={this.localTicketMirror} onRemoveRTR={() => { }}></EntranceDashboard>
+                            </Route>
+                            <Route path="/eventmgmt/shop">
+                                <ShopManagement></ShopManagement>
+                            </Route>
+                        </Switch>
+                    </Box>
+                </Box>
             </Box>
         );
     }
