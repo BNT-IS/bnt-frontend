@@ -3,12 +3,12 @@
 }
 
 .UserMainMenu .MenuLink {
-    width: 100%;
+    width: 300px;
     background-color: rgb(164, 216, 20);
     justify-content: center;
     text-align: center;
-    padding-top: 10vh;
-    padding-bottom: 10vh;
+    padding: 100px;
+    margin: 10px;
     text-decoration: none;
     color: #000000;
 }
