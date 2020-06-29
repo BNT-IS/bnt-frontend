@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Button, Text } from 'grommet';
- 
+import { Box, Button, Text, List } from 'grommet';
+import Config from '../../config';
 import './ShopManagement.css';
 import './ShopManagement.js';
 import UserContext from '../../AppContexts/UserContext'
@@ -87,14 +87,19 @@ class ShopManagementViewBookings extends React.Component {
                     <Text>Hier können die Bestellungen eingesehen, freigegeben und storniert werden.</Text>
                 </Box>
                 <Box pad="medium">
+                    <Box pad="medium">
                     <Text>Offene Bestellungen: </Text>
                     <Text>Platzhalter</Text>
-                    <List primaryKey="id" secondaryKey="userId" data={this.state.offen[0]}>
+                    </Box>
+                    <List primaryKey="id" secondaryKey="userId" data={[this.state.offen]}>
                     </List>
                 </Box>
                 <Box pad="medium">
+                    <Box pad="medium">
                     <Text>Abgeschlossene Bestellungen: </Text>
                     <Text>Platzhalter</Text>
+                    </Box>
+                    <List primaryKey="id" secondaryKey="userId" data={this.state.bezahlt}></List>
                 </Box>
                 <Button label="Zurück zur Übersicht" onClick={this.changeStep}></Button>
             </box>
