@@ -242,8 +242,7 @@ class TicketBestellung extends React.Component {
             this.setState({ step: 100 });
             return;
         }
-        console.log(result)
-        this.toOrder();
+        console.log(result);
 
         //Parkticket in DB schreiben
         for (let element of this.state.parkcount) {
@@ -276,6 +275,7 @@ class TicketBestellung extends React.Component {
                 return;
             }
             console.log(result)
+            this.toPayment()
         }
 
     }
