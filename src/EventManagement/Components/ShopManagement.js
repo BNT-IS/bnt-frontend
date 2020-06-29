@@ -285,7 +285,8 @@ class ShopManagement extends React.Component {
                     alert("Der Server kann die gewünschte Anfrage nicht ausführen.");
                     break;
                 default:
-                    alert(response.message);
+                    let res = await response.json().catch(console.log);
+                    alert(res.message);
             }
             return;
         } else {
@@ -338,7 +339,7 @@ class ShopManagement extends React.Component {
                         <Box pad="medium"></Box>
                         <Button label="QuickView aktualisieren" onClick={this.componentDidMount}></Button>
                     </Box>
-                    <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
+                    <Box ClassName="twoGroupedBoards" direction="row" wrap={true} justify="center">
                         <DataQuickViewMaxTickets maxTicketmenge={this.state.maxTicketmenge} changeInitializeStep={this.changeInitializeStep}></DataQuickViewMaxTickets>
                         <DataQuickViewPayment konfigurierteBezahloptionen={this.state.konfigurierteBezahloptionen}></DataQuickViewPayment>
                     </Box>
