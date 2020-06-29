@@ -24,7 +24,7 @@ class DataQuickViewMaxTickets extends React.Component {
     render() {
         var Ansicht = [];
         Ansicht[1] = <Box name="purchaseableTicketsPerPerson" className="quickViewOuterBox" >
-            <Text>Anzahl der Tickets die ein Absolvent erwerben kann:</Text>
+            <Text>Ticketanzahl die ein Absolvent erwerben kann:</Text>
             <Box className="platzhalter" ></Box>
             <DataTable className="quickViewDatatables"
                 columns={[
@@ -35,7 +35,7 @@ class DataQuickViewMaxTickets extends React.Component {
                     },
                     {
                         property: 'Anzahl',
-                        header: <Text weight="bold">Freigebene Anzahl</Text>,
+                        header: <Text weight="bold">freigebene Anzahl</Text>,
                     },
                 ]}
                 data={this.props.maxTicketmenge}
@@ -72,7 +72,7 @@ class DataQuickViewPayment extends React.Component {
     render() {
         var Ansicht = [];
         Ansicht[0] = <Box name="paymentOptions" className="quickViewOuterBox">
-            <Text>Übersicht der Konfigurierten Bezahloptionen:</Text>
+            <Text>Übersicht der konfigurierten Bezahloptionen:</Text>
             <Box className="platzhalter" ></Box>
             <DataTable className="quickViewDatatables"
                 columns={[
@@ -83,7 +83,7 @@ class DataQuickViewPayment extends React.Component {
                     },
                     {
                         property: 'konfiguriert',
-                        header: <Text weight="bold">Ist Konfiguriert</Text>,
+                        header: <Text weight="bold">ist Konfiguriert?</Text>,
                     },
                 ]}
                 data={this.switchBooleanToString()}
@@ -244,7 +244,7 @@ class ShopManagement extends React.Component {
             statusBookings:
                 [{ status: "Gebucht", Anzahl: 0 },
                 { status: "Offen", Anzahl: 0 },
-                { status: "Stornieren", Anzahl: 0 }],
+                { status: "Storniert", Anzahl: 0 }],
             statusSales:
                 [{ status: "Verfügbar", Anzahl: 0 },
                 { status: "Verkauft", Anzahl: 0 },
@@ -294,23 +294,27 @@ class ShopManagement extends React.Component {
                 console.log(rückgabe.length);
                 var bezahlt = 0;
                 var unbezahlt = 0;
+                var storniert = 0;
                 for(var test = 0; test < rückgabe.length; test++){
-                    if(rückgabe[test].paidAt !== null){
+                    if(rückgabe[test].paidAt !== null && rückgabe[test].canceled === false){
                         bezahlt = bezahlt + 1;
                     }
-                    if(rückgabe[test].paidAt === null){
+                    if(rückgabe[test].paidAt === null && rückgabe[test].canceled === false){
                         unbezahlt = unbezahlt + 1;
                     }
+                    if(rückgabe[test].canceled === true){
+                        storniert = storniert + 1;
+                    }
                 }
-                this.setBookings(bezahlt, unbezahlt);
+                this.setBookings(bezahlt, unbezahlt, storniert);
             }
         }
     }
 
-    setBookings(bezahlt, unbezahlt){
+    setBookings(bezahlt, unbezahlt, storniert){
         var data = [{ status: "Gebucht", Anzahl: bezahlt },
         { status: "Offen", Anzahl: unbezahlt },
-        { status: "Stornieren", Anzahl: 0 }];
+        { status: "Storniert", Anzahl: storniert }];
         this.setState({statusBookings: data});
     }
 
@@ -330,7 +334,7 @@ class ShopManagement extends React.Component {
             <Box className="outerBoxOverview" direction="column" align="center">
                 {this.state.initializeStep === 0 && <Box>
                     <Box>
-                        <Text size="xxlarge" weight="bold">Hallo das ist die Übersicht der Shop Verwaltung</Text>
+                        <Text size="xxlarge" weight="bold" alignSelf="center">Willkommen in der Shop-Verwaltung</Text>
                         <Box pad="medium"></Box>
                         <Button label="QuickView aktualisieren" onClick={this.componentDidMount}></Button>
                     </Box>
