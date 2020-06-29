@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 
 import UserContext from './AppContexts/UserContext';
-import AccountManagement from './AccountManagement/AccountManagement';
+import Login from './AccountManagement/Login';
 import SystemSetup from './SystemSetup/SystemSetup';
 import Ticketshop from './Ticketshop/Ticketshop';
 import Entrance from './Entrance/Entrance';
@@ -86,7 +86,7 @@ class App extends React.Component {
               <SystemSetup></SystemSetup>
             </Route>
             <Route path="/login">
-              <AccountManagement></AccountManagement>
+              <Login></Login>
             </Route>
           </Switch>
         </Grommet>
