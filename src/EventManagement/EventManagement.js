@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Header, Menu } from 'grommet';
 import { Switch, Route, Link } from "react-router-dom";
-import IndexedDBExample from './Components/IndexedDBExample';
+import EntranceDashboard from './Components/EntranceDashboard';
 import TicketReaderManager from './Components/TicketReaderManager';
 import SystemInitalisierung from './Components/SystemInitalisierung';
 import ShopManagement from './Components/ShopManagement';
@@ -37,12 +37,23 @@ class EventManagement extends React.Component {
 
         // In case the rtr is dicsonnected, it should be removed from the list in the view state
         remoteTicketReader.onConnectionChanged = (connectionState) => {
-            console.log(connectionState);
-            /**console.debug("Attempting to remove closed remote ticket reader");
-            let RTRList = this.state.RTRList;
-            let idx = RTRList.indexOf(remoteTicketReader);
-            RTRList.splice(idx, 1);
-            this.setState({ RTRList: RTRList });*/
+            switch (connectionState) {
+                case "connected":
+                    // The connection has become fully connected
+                    break;
+                case "disconnected":
+                    break;
+                case "failed":
+                    // One or more transports has terminated unexpectedly or in an error
+                    this.removeRTR(remoteTicketReader);
+                    break;
+                case "closed":
+                    // The connection has been closed
+                    break;
+                default:
+                    break;
+            }
+            this.forceUpdate();
         }
 
         // Setting eventhandler for reading a ticket
@@ -57,10 +68,21 @@ class EventManagement extends React.Component {
         }
 
         // Setting eventhandler for obliterating a ticket
-        remoteTicketReader.onObliterateTicket = (identifier, signature, callback) => {
-            // TODO: Request localmirror 
-            callback(true);
+        remoteTicketReader.onObliterateTicket = (identifier, secretIngredient, callback) => {
+            this.localTicketMirror.obliterateTicket(identifier, secretIngredient).then((result) => {
+                callback(result);
+            }).catch((error) => {
+                callback(null, error)
+            });
         }
+    }
+
+    removeRTR(remoteTicketReader) {
+        console.debug("Attempting to remove closed remote ticket reader");
+        let RTRList = this.state.RTRList;
+        let idx = RTRList.indexOf(remoteTicketReader);
+        RTRList.splice(idx, 1);
+        this.setState({ RTRList: RTRList });
     }
 
     render() {
@@ -87,7 +109,7 @@ class EventManagement extends React.Component {
                         <TicketReaderManager RTRList={this.state.RTRList} onRTR={this.rTRHandler}></TicketReaderManager>
                     </Route>
                     <Route path="/eventmgmt/entrancedb">
-                        <IndexedDBExample localTicketMirror={this.localTicketMirror}></IndexedDBExample>
+                        <EntranceDashboard localTicketMirror={this.localTicketMirror} onRemoveRTR={() => { }}></EntranceDashboard>
                     </Route>
                     <Route path="/eventmgmt/ShopManagement">
                         <ShopManagement></ShopManagement>

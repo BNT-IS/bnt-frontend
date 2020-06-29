@@ -70,14 +70,14 @@ class RemoteTicketReader {
 
         /**
          * @public
-         * This eventlistener requires identifier and signature and a callback 
+         * This eventlistener requires identifier and the secret ingredient and a callback 
          * that needs to be called with true or false depending if successfully obliterated or not. 
          * Please implement externally.
          * @param {String} identifier - Identifier of the ticket.
-         * @param {String} signature - Signature used for generating the identifier of the ticket.
+         * @param {String} secretIngredient - Secret ingredient used for generating the identifier of the ticket.
          * @param {onObliterateTicketCallback} callback - Callback that should be called with a ticket Object.
          */
-        this.onObliterateTicket = function (identifier, signature, callback) { };
+        this.onObliterateTicket = function (identifier, secretIngredient, callback) { };
 
         // Initializing the RTC connection
         this.initConnection();
@@ -201,7 +201,8 @@ class RemoteTicketReader {
         * msg = {
                type: "Answer",
                reqId: Unique String,
-               result: Any
+               result: Any,
+               error: String
            }
         */
 
@@ -212,7 +213,8 @@ class RemoteTicketReader {
                     this.onGetTicket(msg.params[0], (ticket, errorMsg) => {
                         let answerMsg = {
                             reqId: msg.reqId,
-                            result: { ticket: ticket, errorMessage: errorMsg }
+                            result: ticket,
+                            error: errorMsg
                         }
                         try {
                             this.dataChannel.send(JSON.stringify(answerMsg));
@@ -224,7 +226,8 @@ class RemoteTicketReader {
                     this.onObliterateTicket(msg.params[0], msg.params[1], (success, errorMsg) => {
                         let answerMsg = {
                             reqId: msg.reqId,
-                            result: { success: success, errorMessage: errorMsg }
+                            result: success,
+                            error: errorMsg
                         }
                         try {
                             this.dataChannel.send(JSON.stringify(answerMsg));

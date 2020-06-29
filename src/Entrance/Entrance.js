@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box, Button } from 'grommet';
-import { Switch, Route } from "react-router-dom";
+import { Box, Button, Text } from 'grommet';
 import QRScanner from '../Utilities/Components/QRScanner';
 import Dialog from '../Utilities/Components/Dialog';
 
@@ -9,17 +8,29 @@ import TicketReader from '../EventManagement/Classes/TicketReader';
 import QRCode from 'qrcode';
 import pako from 'pako';
 
-class EntranceManagement extends React.Component {
+class Entrance extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { connected: null };
+        this.state = { connected: null, currentTicket: null };
         this.connectTicketReader = this.connectTicketReader.bind(this);
         this.scanDoneHandler = this.scanDoneHandler.bind(this);
+        this.capturedTicketHandler = this.capturedTicketHandler.bind(this);
+        this.obliterateTicketHandler = this.obliterateTicketHandler.bind(this);
+        this.closeTicketViewHandler = this.closeTicketViewHandler.bind(this);
         /**
          * @type {TicketReader}
          */
         this.ticketReader = null;
+    }
+
+    translateTicketType(ticketType){
+        switch (ticketType) {
+            case "0": return "Absolvent";
+            case "1": return "Begleitperson";
+            case "2": return "Parkticket";
+            default: break;
+        }
     }
 
     connectTicketReader() {
@@ -64,9 +75,47 @@ class EntranceManagement extends React.Component {
         this.state.connectTR.setMasterConfig(obj);
     }
 
+    /**
+     * @typedef TicketCodeData
+     * @property {String} id - Hex string of the identifier
+     * @property {String} sIG - Secret ingredient of the user to calculate the hash 
+     */
+
+    /**
+     * Handler for the scanner when the ticket was scanned
+     * @param {TicketCodeData} data - The data from the QR-Code of the ticket
+     */
+    async capturedTicketHandler(data) {
+        try {
+            let ticketData = JSON.parse(data);
+            if (!ticketData.id || !ticketData.sIG) throw Error("Fehlende Angaben im Ticket-QR-Code. Möglicherweise liegt eine Fälschung vor.");
+            let ticket = await this.ticketReader.readTicketRemote(ticketData.id);
+            this.setState({ currentTicket: ticket, currentSecretIngredient: ticketData.sIG });
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    /**
+     * Obliterates a ticket in the IDB
+     */
+    async obliterateTicketHandler() {
+        try {
+            await this.ticketReader.obliterateTicketRemote(this.state.currentTicket.identifier, this.state.currentSecretIngredient);
+            alert('Erfolgreich entwertet!');
+            this.closeTicketViewHandler();
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    closeTicketViewHandler() {
+        this.setState({ currentTicket: null, currentSecretIngredient: null });
+    }
+
     render() {
         return (
-            <Box className="EntranceManagement" pad="medium">
+            <Box className="Entrance" pad="medium">
                 {!this.state.connected &&
                     <Box>
                         <p>Wenn Sie dieses Gerät als Ticket Leser verwenden möchten, müssen Sie es erst mit dem Event-Manager verbinden.</p>
@@ -100,36 +149,39 @@ class EntranceManagement extends React.Component {
                     </Box>
                 }
                 {this.state.connected === 'connected' &&
-                    <Switch>
-                        <Route path="/entrance/">
-                            <p>Wunderbar, Sie sind verbunden...</p>
-                            <p>In Zukunft sollten hier Funktionen zum Ticket-Scan stehen...</p>
-                            <Button label="Lese ein Beispiel Ticket" onClick={() => { this.ticketReader.readTicketRemote("2537f4c1-2bfa-416f-9098-9b61fe4bb59d") }}></Button>
-                            <Button label="Entwerte Ticket" onClick={() => { this.ticketReader.obliterateTicketRemote(123, "signature") }}></Button>
-                            <Button label="Beispiel Funktion 3"></Button>
-                        </Route>
-                    </Switch>
+                    <Box>
+                        <p>Sie sind verbunden</p>
+                        {this.state.currentTicket === null && <QRScanner onDone={this.capturedTicketHandler} label="Scanvorgang starten"></QRScanner>}
+                        {this.state.currentTicket &&
+                            <Box>
+                                <h1>{this.state.currentTicket.surname}, {this.state.currentTicket.forename}</h1>
+                                <Text size="2em" pad="small">{this.translateTicketType(this.state.currentTicket.ticketType)}</Text>
+                                <Text size="2em" pad="small">{(this.state.currentTicket.isValid && !this.state.currentTicket.isUsed) ? 'OK' : 'Ungültiges Ticket!'}</Text>
+                                <Box gap="small">
+                                    <Button label="Entwerte Ticket" onClick={this.obliterateTicketHandler}></Button>
+                                    <Button label="Schließen" onClick={this.closeTicketViewHandler}></Button>
+                                </Box>
+                            </Box>
+                        }
+                    </Box>
                 }
                 {this.state.connected === 'disconnected' &&
-                    <Switch>
-                        <Route path="/entrance/">
-                            <p>Die Verbindung wurde unterbrochen!</p>
-                            <p>Bitte warten Sie einen Moment...</p>
-                        </Route>
-                    </Switch>
+                    <Box>
+                        <p>Die Verbindung wurde unterbrochen!</p>
+                        <p>Bitte warten Sie einen Moment...</p>
+                        <p className="loader"></p>
+                    </Box>
                 }
                 {this.state.connected === 'failed' &&
-                    <Switch>
-                        <Route path="/entrance/">
-                            <p>Die Verbindung wurde unterbrochen!</p>
-                            <p>Bitte aktivieren Sie den Reader erneut.</p>
-                            <Button onClick={() => { this.setState({ connected: null }); this.connectTicketReader() }} label="Ticket Reader Aktivieren"></Button>
-                        </Route>
-                    </Switch>
+                    <Box>
+                        <p>Die Verbindung wurde unterbrochen!</p>
+                        <p>Bitte aktivieren Sie den Reader erneut.</p>
+                        <Button onClick={() => { this.setState({ connected: null }); this.connectTicketReader() }} label="Ticket Reader Aktivieren"></Button>
+                    </Box>
                 }
             </Box>
         );
     }
 }
 
-export default EntranceManagement;
+export default Entrance;

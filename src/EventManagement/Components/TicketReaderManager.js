@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button } from 'grommet';
+import { Box, Button, List } from 'grommet';
 import QRScanner from '../../Utilities/Components/QRScanner';
 import Dialog from '../../Utilities/Components/Dialog';
 
@@ -45,20 +45,18 @@ class TicketReaderManager extends React.Component {
         this.setState({ connectRTR: remoteTicketReader, addRTRStep: 0 });
     }
 
-    disconnectRemoteTicketReader(remoteTicketReader) {
-
-    }
-
-    disconnectAll() {
-
-    }
-
     render() {
         return (
             <Box className="TicketReaderManager" pad="medium">
                 <p>
                     Derzeit sind {this.props.RTRList.length} Ticket Leser verbunden.
                 </p>
+                <List
+                    primaryKey={(rtr) => { return <b key={rtr.uuid + 't'}> {rtr.uuid} - {rtr.localPeerConnection.connectionState} </b> }}
+                    secondaryKey={(rtr) => { return <span key={rtr.uuid + 's'}> Click to remove </span> }}
+                    onClickItem={this.props.onRemoveRTR}
+                    data={this.props.RTRList}
+                />
                 <Button onClick={this.connectRemoteTicketReader} label="Ticket Leser Hinzufügen"></Button>
                 {this.state.connectRTR &&
                     <Dialog title="Remote Ticket Reader Hinzufügen" onAbort={() => { this.setState({ connectRTR: null }); }}>

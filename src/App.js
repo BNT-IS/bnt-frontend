@@ -4,16 +4,18 @@ import './App.css';
 import UserContext from './AppContexts/UserContext';
 import AccountManagement from './AccountManagement/AccountManagement'
 import Ticketshop from './Ticketshop/Ticketshop';
-import EntranceManagement from './EntranceManagement/EntranceManagement';
+import Entrance from './Entrance/Entrance';
 import EventManagement from './EventManagement/EventManagement';
 import { Grommet, grommet } from 'grommet';
 import { Switch, Route, Link } from "react-router-dom";
+
+import config from './config';
 
 class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { userContext: {} };
+    this.state = { userContext: null };
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.init = this.init.bind(this);
@@ -25,29 +27,37 @@ class App extends React.Component {
 
   init() {
     let ls = JSON.parse(localStorage.getItem('userContext'));
-    this.setState({ userContext: ls ? ls : {} }, this.login);
+    this.setState({ userContext: ls ? ls : null }, this.login);
   }
 
   logout() {
+    if (this.state.userContext.user.role === 0) {
+      let ok = window.confirm('Sollen auch eventuell lokal gespeicherten Daten für den Einlass unwiederruflich gelöscht werden?', "Nein");
+      if (ok) {
+        window.indexedDB.deleteDatabase(config.IDB_NAME);
+      }
+    }
     localStorage.clear();
-    this.setState({ userContext: {} }); 
-    window.location.assign('#/');
+    this.setState({ userContext: null });
+    window.location.assign('#/login');
   }
 
   login() {
-    if (!this.state.userContext.user) {
-      window.location.assign('#/Accountmanagement/');
-    } else if (this.state.userContext.user.role === 0) {
-      window.location.assign('#/eventmgmt/');
-    } else if (this.state.userContext.user.role === 1) {
-      window.location.assign('#/guest/');
+    if (this.state.userContext === null) {
+      window.location.assign('#/login/');
+    } else {
+      if (this.state.userContext.user.role === 0 && (window.location.hash === "" || window.location.hash.includes('login'))) {
+        window.location.assign('#/eventmgmt/');
+      }
+      if (this.state.userContext.user.role === 1 && (window.location.hash === "" || !window.location.hash.includes('guest') || window.location.hash.includes("login"))) {
+        window.location.assign('#/guest/');
+      }
     }
   }
 
   render() {
     return (
-      // @Robin Hinzugefügt für globales User Objekt siehe https://reactjs.org/docs/context.html
-      <UserContext.Provider value={Object.assign(this.state.userContext, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
+      <UserContext.Provider value={Object.assign(this.state.userContext ? this.state.userContext : {}, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
 
         <Grommet theme={grommet}>
           <Switch>
@@ -56,7 +66,7 @@ class App extends React.Component {
                 <li><Link to="/guest">Ticketshop</Link></li>
                 <li><Link to="/entrance">Einlass-Management</Link></li>
                 <li><Link to="/eventmgmt">Event-Management</Link></li>
-                <li><Link to="/Accountmanagement">Anmelden</Link></li>
+                <li><Link to="/login">Anmelden</Link></li>
               </ul>
             </Route>
           </Switch>
@@ -65,12 +75,12 @@ class App extends React.Component {
               <Ticketshop eigenschaft1="test"></Ticketshop>
             </Route>
             <Route path="/entrance">
-              <EntranceManagement></EntranceManagement>
+              <Entrance></Entrance>
             </Route>
             <Route path="/eventmgmt">
               <EventManagement></EventManagement>
             </Route>
-            <Route path="/Accountmanagement">
+            <Route path="/login">
               <AccountManagement></AccountManagement>
             </Route>
           </Switch>

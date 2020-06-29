@@ -56,7 +56,7 @@ class Hauptansicht extends React.Component {
                         { initializeStep: <Text weight="normal" key="StatusDB"> Initalisieren der Datenbank</Text>, doneSteps: this.getConfigured("DB") },
                         { initializeStep: <Text weight="normal" key="StatusAdminAccount">Hinzufügen eines Administratorbenutzers</Text>, doneSteps: this.getConfigured("AA") },
                         { initializeStep: <Text weight="normal" key="StatusMS">Initialisieren des Mailservers</Text>, doneSteps: this.getConfigured("MS") },
-                        { initializeStep: <Text weight="normal" key="StatusAdminWallet">Hinzufügen eines Wallets für den Master-User</Text>, doneSteps: this.getConfigured("AW") },
+                        { initializeStep: <Text weight="normal" key="StatusAdminWallet">Einrichten des Master-Wallets</Text>, doneSteps: this.getConfigured("AW") },
                         { initializeStep: <Text weight="normal" key="StatusListe">Einlesen der Absolventen-Liste und Erstellung der One Time Passwörter</Text>, doneSteps: this.getConfigured("AL") },
                     ]}
                 />
@@ -100,6 +100,8 @@ class AddWallet extends React.Component {
         }
 
         if (response.ok) {
+            var address = response.json().catch(console.log)
+            this.props.setWalletAddress(address.wallet_address);
             this.props.changeValueOfmapTest("AW");
             this.props.changeStep();
         }
@@ -123,6 +125,112 @@ class AddWallet extends React.Component {
         return Ansicht;
     }
 }
+
+class DeploySmartContract extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = { walletBalance: "", neededBalance: "" };
+        this.deploySmartContract = this.deploySmartContract.bind(this);
+        this.getBalanceFromWallet = this.getBalanceFromWallet.bind(this);
+        this.getPriceOfContract = this.getPriceOfContract.bind(this);
+    }
+
+    async getPriceOfContract() {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/shopConfig", {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token
+            }
+        }).catch(console.log)
+
+        if (!response.ok) {
+            const rückgabe = await response.json().catch(console.log);
+                    alert(rückgabe.message)
+        }
+
+        var data = await response.json().catch(console.log)
+
+        if (!data) return
+
+        console.log(data)
+
+    }
+
+    async getBalanceFromWallet() {
+        var Web3 = require('web3');
+        var web3 = new Web3(new Web3.providers.HttpProvider(this.props.httpProvider));
+        web3.eth.getBalance("0x6c1afA1A56d92EeFd99926636b1a1c284B0CE298", (error, response) => {
+            if (error) {
+                console.log("Fehler beim Abruf der Balance des Wallets");
+            }
+            if (!response) {
+                console.log("Fehler beim Abruf der Balance des Wallets");
+                alert(response.message);
+            }
+            console.log(response)
+
+            if (response) {
+                var balance = response;
+                console.log(balance)
+                this.setState({ walletBalance: balance });
+            }
+        });
+    }
+
+
+    //TODO: CONFIUGRE WALLET ANPASSEN AUF URI 
+    async deploySmartContract() {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/setup/deployContract", {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).catch(console.log)
+
+        if (!response.ok) {
+            const rückgabe = await response.json().catch(console.log);
+            switch (response.status) {
+                case 400: alert(rückgabe.message); break;
+                case 410: alert(rückgabe.message); break;
+                case 500: alert(rückgabe.message); break;
+                default:
+                    alert(rückgabe.message)
+            }
+        }
+
+        if (response.ok) {
+            this.props.changeValueOfmapTest("DC");
+            this.props.changeStep();
+        }
+    }
+
+    render() {
+        var Ansicht = [];
+        Ansicht = <Box>
+            <Box pad="medium">
+                <Text size="large" weight="bold">Smart Contract auf der Blockchain veröffentlichen:</Text>
+            </Box>
+            <Box pad="medium">
+                <TextInput
+                    placeholder="HTTP-Provider DNS:Port"
+                    value={this.state.httpProvider}
+                    onChange={(event) => { this.setState({ httpProvider: event.target.value }) }}
+                />
+                <Button label="TEST" onClick={this.getPriceOfContract}></Button>
+            </Box>
+            <Button onClick={this.configureTheAdminWallet} label="Hinzufügen"></Button>
+        </Box>
+        return Ansicht;
+    }
+}
+
+
 
 class ConfigureAdminAccount extends React.Component {
 
@@ -515,8 +623,12 @@ class SystemInitalisierung extends React.Component {
         super(props);
         this.changeStep = this.changeStep.bind(this);
         this.changeValueOfmapTest = this.changeValueOfmapTest.bind(this);
+        this.setWalletAddress = this.setWalletAddress.bind(this);
         this.state = {
-            initializeStep: 0, mapTest: new Map([["AW", false], ["DB", false], ["MS", false], ["AL", false], ["AA", false]])
+            initializeStep: 0,
+            mapTest: new Map([["AW", false], ["DB", false], ["MS", false], ["AL", false], ["AA", false], ["DC", false]]),
+            walletAddress: "",
+            httpProvider: "",
         };
     }
     // TODO: Step fürs Aufsetzen von Master-User mit Wallet
@@ -526,6 +638,14 @@ class SystemInitalisierung extends React.Component {
     // Function to Change the Value of the state of Configuration
     changeValueOfmapTest(key) {
         this.setState(this.state.mapTest.set(key, true));
+    }
+
+    setWalletAddress(address) {
+        this.setState({ walletAddress: address });
+    }
+
+    setHttpProvider(httpProvider) {
+        this.setState({ httpProvider: httpProvider });
     }
 
     changeStep() {
@@ -554,8 +674,11 @@ class SystemInitalisierung extends React.Component {
                 {this.state.initializeStep === 3 && <ConfigureMailserver changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
                     changeStep={this.changeStep.bind(this)}></ConfigureMailserver>}
 
-                {this.state.initializeStep === 4 && <AddWallet changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                {this.state.initializeStep === 4 && <AddWallet setWalletAddress={this.setWalletAddress.bind(this)} changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
                     changeStep={this.changeStep.bind(this)}></AddWallet>}
+
+                {this.state.initializeStep === 4 && <DeploySmartContract httpProvider={this.state.httpProvider} walletAddress={this.state.walletAddress} changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                    changeStep={this.changeStep.bind(this)}></DeploySmartContract>}
 
                 {this.state.initializeStep === 5 && <AbsolventenListe changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
                     changeStep={this.changeStep.bind(this)}></AbsolventenListe>}
@@ -563,8 +686,8 @@ class SystemInitalisierung extends React.Component {
                 {this.state.initializeStep === 6 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}
                     changeStep={this.changeStep.bind(this)}></Hauptansicht>}
 
-                {this.state.initializeStep === 0 && <Button onClick={this.changeStep} label="Nächster Schritt"></Button>}
-                {this.state.initializeStep != 0 && this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Schritt Überspringen"></Button>}
+                {this.state.initializeStep === 0 && <Button onClick={this.changeStep} label="Konfiguration Beginnen"></Button>}
+                {this.state.initializeStep !== 0 && this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Schritt Überspringen"></Button>}
                 {this.state.initializeStep === 6 && <Box pad="medium"> <Button label="Zurück" onClick={this.changeStep}></Button></Box>}
             </Box>
         );

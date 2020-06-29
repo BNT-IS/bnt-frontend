@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Button, Select, Text, List, TextInput, DataTable, Meter } from 'grommet';
-import Config from '../../config';
+import { Box, Button, Text } from 'grommet';
+ 
 import './ShopManagement.css';
 import './ShopManagement.js';
 import UserContext from '../../AppContexts/UserContext'

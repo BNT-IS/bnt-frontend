@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import Config from '../../config';
 
 /**
  * Class for basic operations and preparations for the local caching of ticket data
@@ -9,7 +10,7 @@ class LocalTicketMirror {
 
         // Binding "this" to methods that get called from other contexts
         this._createDB = this._createDB.bind(this);
-        this.dumpTicketMirror = this.dumpTicketMirror.bind(this);
+        this.saveTicketMirror = this.saveTicketMirror.bind(this);
         this.getTicketList = this.getTicketList.bind(this);
 
         // Check if Indexed DB (IDB) technology is supported in the current browser
@@ -30,7 +31,7 @@ class LocalTicketMirror {
      */
     _initDB() {
         console.debug('Initializing IDB Connection');
-        var request = window.indexedDB.open("TicketMirror", 1);
+        var request = window.indexedDB.open(Config.IDB_NAME, 1);
 
         request.addEventListener('upgradeneeded', this._createDB);
         request.addEventListener('success', (ev) => {
@@ -74,44 +75,20 @@ class LocalTicketMirror {
     /**
      * Method that writes data to the IDB datastore "tickets"
      */
-    async dumpTicketMirror() {
-        var db = await this._getIDB().catch(console.error);
-        if (!db) return;
+    async saveTicketMirror(tickets) {
+        try {
+            var db = await this._getIDB();
 
-        var objectStore = db.transaction("tickets", "readwrite").objectStore("tickets");
+            var objectStore = db.transaction("tickets", "readwrite").objectStore("tickets");
+            objectStore.clear();
 
-        // TODO: Fetch real data from the blockchain when online
-        const dummyData = [{
-            "identifier": "ca6c9409-0ec9-42fb-9ca7-d42a74642d7e",
-            "isValid": true,
-            "isUsed": false,
-            "ticketType": "Parken"
-        }, {
-            "identifier": "cea4b540-63a4-4abd-9a9a-499bb3879b8c",
-            "isValid": false,
-            "isUsed": true,
-            "ticketType": "Begleitperson"
-        }, {
-            "identifier": "2537f4c1-2bfa-416f-9098-9b61fe4bb59d",
-            "isValid": true,
-            "isUsed": false,
-            "ticketType": "Begleitperson"
-        }, {
-            "identifier": "c3573a44-f9e8-4772-bf80-57d1d07239c8",
-            "isValid": true,
-            "isUsed": true,
-            "ticketType": "Begleitperson"
-        }, {
-            "identifier": "5506d14d-8090-411a-897c-3f6c898ec8d2",
-            "isValid": true,
-            "isUsed": true,
-            "ticketType": "Begleitperson"
-        }]
-
-        dummyData.forEach((item) => {
-            objectStore.add(item);
-        });
-
+            tickets.forEach((ticket) => {
+                objectStore.add(ticket);
+            });
+        }catch(error){
+            console.error(error);
+            alert('Es ist ein Fehler bei der Indexed DB aufgetreten');
+        }
     }
 
     /**
@@ -163,12 +140,12 @@ class LocalTicketMirror {
 
     /**
      * Obliterates a ticket selected by its unique identifer.
-     * The signature of the owner is checked to validate the persons identity.
+     * The secretIngredient of the owner is checked to validate the persons identity.
      * @param {String} identifier - Unique identifier of the ticket
-     * @param {String} signature - Specific signature of the owner that was used to generate the identifer
+     * @param {String} secretIngredient - Specific secretIngredient of the user that was used to generate the identifer
      * @returns {Promise} Returns a promise that is resolved with null or rejected with an error message
      */
-    obliterateTicket(identifier, signature) {
+    obliterateTicket(identifier, secretIngredient) {
         return new Promise(async (resolve, reject) => {
             var db = await this._getIDB().catch(console.error);
             if (!db) return reject();
@@ -178,14 +155,17 @@ class LocalTicketMirror {
             request.onsuccess = (event) => {
                 // Get the old value that we want to update
                 var ticket = event.target.result;
-                if (!ticket) return reject("Ticket does not exist.");
+                if (!ticket) return reject("Das Ticket existiert nicht.");
 
-                // TODO: Check signature and identifier hash
-                
+                // Check secretIngredient and identifier hash
+                var valuesForHash = secretIngredient + ticket.forename + ticket.surname + ticket.ticketType;
+                var checkSum = Web3.utils.sha3(valuesForHash);
+
+                if (checkSum !== identifier) return reject("Die Identität des Tickets konnte nicht verifiziert werden.");
 
                 // Check validity and if it was not used before
-                if (!ticket.isValid) return reject("Ticket is not valid.");
-                if (ticket.isUsed) return reject("Ticket was already used.");
+                if (!ticket.isValid) return reject("Das Ticket ist nicht gültig.");
+                if (ticket.isUsed) return reject("Das Ticket wurde breits entwertet.");
 
                 ticket.isUsed = true;
 
