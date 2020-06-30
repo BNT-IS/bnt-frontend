@@ -13,16 +13,19 @@ class ShopManagementViewBookings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            offen: [], bezahlt: []
+            open: [], paid: []
         };
         this.changeStep = this.changeStep.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.getBookings = this.getBookings.bind(this);
+        this.cancel = this.cancel.bind(this);
+        this.approve = this.approve.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount(){
         this.getBookings();
     }
+
 
     async getBookings() {
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/', {
@@ -50,27 +53,39 @@ class ShopManagementViewBookings extends React.Component {
         } else {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
+                    var lauf2 = 0;
+                    var lauf3 = 0;
+                    var speicher = [];
+                    var speicher2 = [];
                 for (var lauf = 0; lauf < rückgabe.length; lauf++) {
+                    
                     if (rückgabe[lauf].paidAt !== null && rückgabe[lauf].canceled === false) {
-                        if (rückgabe[lauf] !== null) {
-                            var lauf2 = this.state.bezahlt.length;
-                            this.state.bezahlt[lauf2] = rückgabe[lauf];
+                        if (rückgabe[lauf] !== null) {                                       
+                            speicher[lauf2] = rückgabe[lauf];
                         }
+                        lauf2 = lauf2 + 1;           
                     }
                     if (rückgabe[lauf].paidAt === null && rückgabe[lauf].canceled === false) {
-                        if (rückgabe[lauf] !== null) {
-                            var lauf3 = this.state.offen.length;
-                            this.state.offen[lauf3] = rückgabe[lauf];
+                        if (rückgabe[lauf] !== null) {                 
+                            speicher2[lauf3] = rückgabe[lauf];
                         }
-                    }
+                        lauf3 = lauf3 + 1;
+                        this.setState({open: speicher2})
+                    }          
                 }
-                console.log(this.state.offen);
-                console.log(this.state.bezahlt);
             }
+            this.setState({paid: speicher})
+            this.setState({open: speicher2})
         }
     }
 
+    cancel(bookingId){
+        alert("Die Buchung mit der Buchungs-ID " + bookingId + " wurde storniert.");
+    }
 
+    approve(bookingId){
+        alert("Die Buchung mit der Buchungs-ID " + bookingId + " wurde bestätigt.");
+    }
 
     changeStep() {
         this.props.changeInitializeStep(0);
@@ -78,7 +93,6 @@ class ShopManagementViewBookings extends React.Component {
 
     render() {
         var ansicht = [];
-
         return (
             ansicht[0] =
             <box className="outerBoxOverview" direction="column" align="center">
@@ -87,19 +101,30 @@ class ShopManagementViewBookings extends React.Component {
                     <Text>Hier können die Bestellungen eingesehen, freigegeben und storniert werden.</Text>
                 </Box>
                 <Box pad="medium">
-                    <Box pad="medium">
+                    <Box pad="large">
                     <Text>Offene Bestellungen: </Text>
-                    <Text>Platzhalter</Text>
-                    </Box>
-                    <List primaryKey="id" secondaryKey="userId" data={[this.state.offen]}>
-                    </List>
+                    <Text>Buchungs-ID     |     User-ID      |     Erstellungsdatum     |     Freigabe     |     Stornieren</Text>
+                    </Box>       
+                    <List pad="medium"  
+                          alignSelf="stretch"
+                          margin="small" 
+                          primaryKey={(openBooking) => {return <b key={openBooking.id + 't'}> {openBooking.id || 'Unknown'} </b>}}
+                          secondaryKey={(openBooking) => {return <span key={openBooking.id + 's'}> {"|  " + openBooking.userId + "    |" || 'Unknown'}     {openBooking.createdAt + "    |" || 'Unknown'} <Button label="Buchung freigeben" onClick={""}></Button> | <Button label="Buchung stornieren" onClick={""}></Button></span>}} 
+                          data={this.state.open}
+                    />
                 </Box>
                 <Box pad="medium">
-                    <Box pad="medium">
+                    <Box pad="large">
                     <Text>Abgeschlossene Bestellungen: </Text>
-                    <Text>Platzhalter</Text>
+                    <Text>Buchungs-ID     |     User-ID      |     Erstellungsdatum     |     Stornieren</Text>
                     </Box>
-                    <List primaryKey="id" secondaryKey="userId" data={this.state.bezahlt}></List>
+                    <List pad="medium" 
+                          alignSelf="stretch"
+                          margin="small"  
+                          primaryKey={(finishedBooking) => {return <b key={finishedBooking.id + 't'}> {finishedBooking.id || 'Unknown'} </b>}}
+                          secondaryKey={(finishedBooking) => {return <span key={finishedBooking.id + 's'}> {"|  " + finishedBooking.userId + "    |" || 'Unknown'}     {finishedBooking.createdAt + "    |" || 'Unknown'} <Button label="Buchung stornieren" onClick={""}></Button></span>}} 
+                          data={this.state.paid}
+                    />
                 </Box>
                 <Button label="Zurück zur Übersicht" onClick={this.changeStep}></Button>
             </box>
