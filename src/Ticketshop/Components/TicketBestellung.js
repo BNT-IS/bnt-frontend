@@ -57,8 +57,12 @@ class TicketBestellung extends React.Component {
         this.createTickets = this.createTickets.bind(this);
         this.createBooking = this.createBooking.bind(this);
         this.onInputHandler = this.onInputHandler.bind(this);
+        this.ShopConfig = this.ShopConfig.bind(this);
+
 
         this.state = {
+            MaxAnzahlAbsolvententickets: 0,
+            MaxAnzahBesuchertickets: 0,
             guestcount: 0,
             parkcount: 0,
             step: 0,
@@ -118,7 +122,7 @@ class TicketBestellung extends React.Component {
 
     //Funktion für die Counter und der Namen der Gäste
     increment = (property) => {
-        if (property === "guest" && this.state.guestcount < 2) {
+        if (property === "guest" && this.state.guestcount < this.state.MaxAnzahBesuchertickets) {
 
             let personsIndex = this.state.persons.length;
             let personInput = <PersonInput key={personsIndex} onInput={(personName) => { let personsList = this.state.persons; personsList[personsIndex] = personName; this.setState({ persons: personsList }) }}></PersonInput>
@@ -145,7 +149,36 @@ class TicketBestellung extends React.Component {
         }
     }
 
+    //Abfragen Backend
+    async ShopConfig() {
+        const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/shopConfig', {
+            method: 'GET',
+            mose: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+        }).catch(console.log);
+        if (!response.ok){
+            alert (response.message);
+            //Error Handling
+        }
+        if (response.ok){
+            console.log(response);
+            var configData = await response.json();
+            console.log(configData);
+            this.state.MaxAnzahlAbsolvententickets = configData.max_TicketType_0_pro_Absolvent;
+            this.state.MaxAnzahBesuchertickets = configData.max_TicketType_1_pro_Absolvent;
+            console.log(this.state.MaxAnzahlAbsolvententickets);
+            console.log(this.state.MaxAnzahBesuchertickets);
+            
+        }
+    }
 
+
+
+    //Buchung erstellen
     async createBooking() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/bookings", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -246,8 +279,8 @@ class TicketBestellung extends React.Component {
 
         //Parkticket in DB schreiben
         let anzahlparktick = this.state.parkcount;
-        for (var i = 0; i < anzahlparktick ; i++) {
-           // console.log(element);
+        for (var i = 0; i < anzahlparktick; i++) {
+            // console.log(element);
             response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/ticketsBooked", {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, *cors, same-origin
@@ -294,7 +327,7 @@ class TicketBestellung extends React.Component {
                         <TextInput name="forename" placeholder="Vorname des Absolventen" value={this.state.graduate.forename} onChange={(event) => this.onInputHandler(event, "forename")}></TextInput>
                         <TextInput name="surname" placeholder="Nachname des Absolventen" value={this.state.graduate.surname} onChange={(event) => this.onInputHandler(event, "surname")}></TextInput>
                         <CheckBox name="isWheelchairUser" label="Rollstuhlfahrer bitte ankreuzen" value={this.state.graduate.isWheelchairUser} onChange={this.onCheckBox} checked={this.state.isWheelchairUser} />
-
+                        <Button label=" ShopConfig" onClick={this.ShopConfig} gap="small"></Button>
                         <Button label=" Ein Absolventen Ticket kaufen" onClick={this.windowGuestTicket} gap="small"></Button>
                     </Box>
                 }
