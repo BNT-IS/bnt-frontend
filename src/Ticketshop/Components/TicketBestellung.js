@@ -245,8 +245,9 @@ class TicketBestellung extends React.Component {
         console.log(result);
 
         //Parkticket in DB schreiben
-        for (let element of this.state.parkcount) {
-            console.log(element);
+        let anzahlparktick = this.state.parkcount;
+        for (var i = 0; i < anzahlparktick ; i++) {
+           // console.log(element);
             response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/ticketsBooked", {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, *cors, same-origin
@@ -258,9 +259,9 @@ class TicketBestellung extends React.Component {
                 body: JSON.stringify({
                     bookingId: bookingResult,
                     ticketType: 2,
-                    forename: this.state.graduate.forename,
+                    forename: this.state.graduate.forename + " " + i,
                     surname: this.state.graduate.surname,
-                    isWheelchairUser: element.isWheelchairUser,
+                    isWheelchairUser: false,
                 })
             }).catch(console.log);
 
@@ -279,8 +280,6 @@ class TicketBestellung extends React.Component {
         }
 
     }
-
-
 
 
     render() {
@@ -305,7 +304,7 @@ class TicketBestellung extends React.Component {
                         <Text>Bitte geben sie an, wie viele Begleitpersonen Sie mitnehmen wollen.</Text>
                         <Button onClick={() => this.increment("guest")} className="guestcount" label="+"></Button>
                         <Button onClick={() => this.decrement("guest")} className="guestcount" label="-"></Button>
-                        <h2>{this.state.guestcount}</h2>
+                        <h2>Anzahl der Begleitpersonen: {this.state.guestcount}</h2>
                         {this.state.personInputFields}
                         <Button onClick={this.windowAbsolventTicket} label="Zurück"></Button>
                         <Button onClick={this.windowParkTicket} label="Weiter"></Button>
@@ -344,7 +343,7 @@ class TicketBestellung extends React.Component {
                         <Text>Sie haben folgende Tickets bestellt: <br />
                     Absolventent: 1 <br />
                     Begleitpersonen: {this.state.guestcount} <br />
-                    Parkticket {this.state.parkcount}
+                    Parkticket: {this.state.parkcount}
                         </Text>
                     </Box>
                 }
@@ -354,7 +353,6 @@ class TicketBestellung extends React.Component {
                         <Text>Es ist ein Fehler beim Bestellvorgang aufgetreten. Bitte versuche Sie es erneut.</Text>
                     </Box>
                 }
-
 
             </Box>
         );
