@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Button, Select, Text, List, TextInput } from 'grommet';
 import Config from '../config';
-import { CSVReader } from 'react-papaparse';
 
 class Hauptansicht extends React.Component {
 
@@ -11,8 +10,9 @@ class Hauptansicht extends React.Component {
         this.getConfigured = this.getConfigured.bind(this);
     }
 
+    //Function to Switch Boolean Values from statusMap into Text
     getConfigured(key) {
-        var wert = this.props.mapTest.get(key);
+        var wert = this.props.statusMap.get(key);
         if (!wert)
             return <Text key={key}>Nicht erledigt</Text>;
         if (wert)
@@ -21,6 +21,7 @@ class Hauptansicht extends React.Component {
 
     render() {
         var Ansicht = [];
+        //Start Text
         if (this.props.initializeStep === 0) {
             Ansicht[0] = <Box pad="medium" key="start">
                 <Text textAlign="center" weight="bold" size="xxlarge">
@@ -36,6 +37,7 @@ class Hauptansicht extends React.Component {
                 </Text>
             </Box>
         }
+        // Text if Steps are Finished
         if (this.props.initializeStep === 6) {
             Ansicht[0] = <Box pad="medium" key="end">
                 <Text textAlign="center">
@@ -56,7 +58,7 @@ class Hauptansicht extends React.Component {
                         { initializeStep: <Text weight="normal" key="StatusAdminAccount">Hinzufügen eines Administratorbenutzers</Text>, doneSteps: this.getConfigured("AA") },
                         { initializeStep: <Text weight="normal" key="StatusMS">Initialisieren des Mailservers</Text>, doneSteps: this.getConfigured("MS") },
                         { initializeStep: <Text weight="normal" key="StatusAdminWallet">Einrichten des Master-Wallets</Text>, doneSteps: this.getConfigured("AW") },
-                        { initializeStep: <Text weight="normal" key="StatusListe">Einlesen der Absolventen-Liste und Erstellung der One Time Passwörter</Text>, doneSteps: this.getConfigured("AL") },
+                        { initializeStep: <Text weight="normal" key="StatusSmartContract">Veröffentlichen des Smart Contracts</Text>, doneSteps: this.getConfigured("DC") },
                     ]}
                 />
             </Box>
@@ -68,11 +70,15 @@ class AddWallet extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { httpProvider: "" };
+        this.state = {
+            httpProvider: "",
+            created: false,
+            deploymentPrice: "",
+        };
         this.configureTheAdminWallet = this.configureTheAdminWallet.bind(this);
     }
 
-    //TODO: CONFIUGRE WALLET ANPASSEN AUF URI 
+    //Function to Send the HTTP-Request to gernerate a New Wallet 
     async configureTheAdminWallet() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/generateWallet", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -93,28 +99,52 @@ class AddWallet extends React.Component {
         }
 
         if (response.ok) {
-            var address = response.json().catch(console.log)
-            this.props.setWalletAddress(address.wallet_address);
-            this.props.changeValueOfmapTest("AW");
-            this.props.changeStep();
+            console.log(response)
+            var data = await response.json().catch(console.log)
+            this.props.setWalletAddress(data.wallet_address);
+            this.props.changeValueOfStatusMap("AW");
+            this.props.changeValueOfGasprices("deployContract", data.price_deployment)
+            this.setState({ deploymentPrice: data.price_deployment })
+            this.setState({ created: true });
+            this.props.setHttpProvider(this.state.httpProvider)
         }
     }
 
     render() {
         var Ansicht = [];
-        Ansicht = <Box>
-            <Box pad="medium">
-                <Text size="large" weight="bold">Hinzufügen des Wallets für den Master-User:</Text>
+        //View if the Admin Wallet isnt created yet.
+        if (!this.state.created) {
+            Ansicht = <Box>
+                <Box pad="medium">
+                    <Text size="large" weight="bold">Hinzufügen des Wallets für den Master-User:</Text>
+                </Box>
+                <Box pad="medium">
+                    <TextInput
+                        placeholder="HTTP-Provider DNS:Port"
+                        value={this.state.httpProvider}
+                        onChange={(event) => { this.setState({ httpProvider: event.target.value }) }}
+                    />
+                </Box>
+                <Button onClick={this.configureTheAdminWallet} label="Hinzufügen"></Button>
             </Box>
-            <Box pad="medium">
-                <TextInput
-                    placeholder="HTTP-Provider DNS:Port"
-                    value={this.state.httpProvider}
-                    onChange={(event) => { this.setState({ httpProvider: event.target.value }) }}
-                />
+        }
+        //View if the Admin Wallet ist created
+        if (this.state.created) {
+            Ansicht = <Box>
+                <Box pad="medium">
+                    <Text size="large" weight="bold">Hinzufügen des Wallets für den Master-User:</Text>
+                </Box>
+                <Box pad="medium">
+                    <Text>Die Einrichtung wurde Erfolgreich abgeschlossen. Für die Veröffentlichung des Smart Contracts wird</Text>
+                    <Box pad="medium"></Box>
+                    <Text weight="bold" size="xxlarge" align="center">Ethereum: {this.state.deploymentPrice}</Text><Text>benötigt.</Text>
+                    <Box pad="medium"></Box>
+                    <Text>Im nächsten Schritt wird zusätzlich noch eine geringe Menge Ethereum für die Erstellung eines Testtickets benötigt.</Text>
+                    <Text>Laden Sie daher etwas mehr Ethereum in das Wallet!</Text>
+                </Box>
+                <Button label="Guthaben aufgeladen" onClick={this.props.changeStep}></Button>
             </Box>
-            <Button onClick={this.configureTheAdminWallet} label="Hinzufügen"></Button>
-        </Box>
+        }
         return Ansicht;
     }
 }
@@ -123,61 +153,54 @@ class DeploySmartContract extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { walletBalance: "", neededBalance: "" };
-        this.deploySmartContract = this.deploySmartContract.bind(this);
+        this.state = {
+            walletBalance: "",
+            deployed: false
+        };
         this.getBalanceFromWallet = this.getBalanceFromWallet.bind(this);
-        this.getPriceOfContract = this.getPriceOfContract.bind(this);
+        this.checkBalancesAndExecute = this.checkBalancesAndExecute.bind(this);
     }
-
-    async getPriceOfContract() {
-        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/shopConfig", {
-            method: 'GET', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.context.token
-            }
-        }).catch(console.log)
-
-        if (!response.ok) {
-            const rückgabe = await response.json().catch(console.log);
-            alert(rückgabe.message)
-        }
-
-        var data = await response.json().catch(console.log)
-
-        if (!data) return
-
-        console.log(data)
-
-    }
-
+    // Get Balance From Adrress and calculate Wei -> Ether from Response this.props.walletAddress
     async getBalanceFromWallet() {
+        if (this.props.httpProvider !== "" || this.props.walletAddress !== ""){
         var Web3 = require('web3');
         var web3 = new Web3(new Web3.providers.HttpProvider(this.props.httpProvider));
-
-        // TODO: change from hardcoded address to address that was sent from the backend
-        web3.eth.getBalance("0x6c1afA1A56d92EeFd99926636b1a1c284B0CE298", (error, response) => {
+        web3.eth.getBalance(this.props.walletAddress, (error, response) => {
             if (error) {
-                console.log("Fehler beim Abruf der Balance des Wallets");
+                console.log(error);
             }
             if (!response) {
                 console.log("Fehler beim Abruf der Balance des Wallets");
                 alert(response.message);
             }
-            console.log(response)
 
             if (response) {
-                var balance = response;
-                console.log(balance)
+                var balance = web3.utils.fromWei(response, "ether")
                 this.setState({ walletBalance: balance });
             }
         });
+    }else{
+    }
     }
 
+    //Function to Compare the Amount of Ether from the Wallet and the needed Ether to deploy the Contract -> If Enough Call the Deployment Function
+    checkBalancesAndExecute() {
+        this.getBalanceFromWallet();
+        console.log(this.state.walletBalance);
+        console.log(this.props.getValueOfGasPrices("deployContract"))
+        if (this.state.walletBalance > this.props.getValueOfGasPrices("deployContract")) {
+            this.deploySmartContract();
+            console.log("Deployment Done")
+        }
+        else if (this.state.walletBalance < this.props.getValueOfGasPrices("deployContract")) {
+            alert("Bitte zuerst das Wallet aufladen!")
+        }
+        else {
+            alert("Ein unbestimmter Fehler ist aufgetreten! Das Deployment konnte nicht durchgeführt werden!")
+        }
+    }
 
-    //TODO: CONFIUGRE WALLET ANPASSEN AUF URI 
+    //Function to publish Contract on Blockchain and get Prices 
     async deploySmartContract() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/deployContract", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -185,41 +208,55 @@ class DeploySmartContract extends React.Component {
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
                 'Content-Type': 'application/json'
-            },
+            }
         }).catch(console.log)
 
         if (!response.ok) {
+            console.log("Fehler im Deployment")
             const rückgabe = await response.json().catch(console.log);
             alert(rückgabe.message);
+            console.log(rückgabe.message)
         }
 
         if (response.ok) {
-            this.props.changeValueOfmapTest("DC");
-            this.props.changeStep();
+            var data = await response.json();
+            this.props.changeValueOfGasprices("createTicket", data.create_ticket_price);
+            this.props.changeValueOfGasprices("relinquishPlace", data.relinquish_place_price);
+            this.props.changeValueOfStatusMap("DC");
+            this.setState({ deployed: true })
+            this.getBalanceFromWallet();
         }
     }
 
     render() {
         var Ansicht = [];
-        Ansicht = <Box>
-            <Box pad="medium">
+        this.getBalanceFromWallet();
+        if (!this.state.deployed) {
+            Ansicht = <Box>
+                <Box pad="medium"></Box>
+                <Text weight="bold" size="large">Wallet-Daten</Text>
+                <Text>Die Wallet-Adresse ist: {this.props.walletAddress}</Text>
+                <Text> Das Guthaben des Wallets beträgt: {this.state.walletBalance}</Text>
+                <Box pad="medium"></Box>
                 <Text size="large" weight="bold">Smart Contract auf der Blockchain veröffentlichen:</Text>
+                <Box pad="medium"></Box>
+                <Button onClick={this.checkBalancesAndExecute} label="Hinzufügen"></Button>
             </Box>
-            <Box pad="medium">
-                <TextInput
-                    placeholder="HTTP-Provider DNS:Port"
-                    value={this.state.httpProvider}
-                    onChange={(event) => { this.setState({ httpProvider: event.target.value }) }}
-                />
-                <Button label="TEST" onClick={this.getPriceOfContract}></Button>
+        }
+
+        if (this.state.deployed) {
+            Ansicht = <Box>
+                <Text>Der Contract wurde erfolgreich deployed.</Text>
+                <Box pad="medium"></Box>
+                <Text> Das Guthaben des Wallets beträgt: {this.state.walletBalance}</Text>
+                <Text> Der Preis für die Erstellung eines Tickets beträgt: {this.props.getValueOfGasPrices("createTicket")}</Text>
+                <Text> Der Preis für die Erstellung eines Tickets beträgt: {this.props.getValueOfGasPrices("relinquishPlace")}</Text>
+                <Button onClick={this.props.changeStep} label="Weiter"></Button>
             </Box>
-            <Button onClick={this.configureTheAdminWallet} label="Hinzufügen"></Button>
-        </Box>
+        }
         return Ansicht;
     }
-}
-
-
+};
 
 class ConfigureAdminAccount extends React.Component {
 
@@ -229,7 +266,7 @@ class ConfigureAdminAccount extends React.Component {
         this.configureTheAdminAcc = this.configureTheAdminAcc.bind(this);
     }
 
-    //TODO: CONFIUGRE WALLET ANPASSEN AUF URI 
+    //Function to Confiugre Admin Account in Database 
     async configureTheAdminAcc() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/adminUser", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -246,17 +283,13 @@ class ConfigureAdminAccount extends React.Component {
 
         if (!response.ok) {
             const rückgabe = await response.json().catch(console.log);
-            switch (response.status) {
-                case 400: alert(rückgabe.message); break;
-                case 410: alert(rückgabe.message); break;
-                case 500: alert(rückgabe.message); break;
-                default:
-                    alert(rückgabe.message)
+            if (!response.ok) {
+                alert(rückgabe.message)
             }
         }
 
         if (response.ok) {
-            this.props.changeValueOfmapTest("AA");
+            this.props.changeValueOfStatusMap("AA");
             this.props.changeStep();
         }
     }
@@ -297,7 +330,7 @@ class ConfigureDatabase extends React.Component {
         this.configureTheDatabase = this.configureTheDatabase.bind(this);
     }
 
-    //TODO: Problem bei body 
+    //Function to send HTTP-Request to Configure Database
     async configureTheDatabase() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/database", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -316,16 +349,10 @@ class ConfigureDatabase extends React.Component {
         }).catch(console.log)
         if (!response.ok) {
             const rückgabe = await response.json().catch(console.log);
-            switch (response.status) {
-                case 400: alert(rückgabe.message); break;
-                case 410: alert(rückgabe.message); break;
-                case 500: alert(rückgabe.message); break;
-                default:
-                    alert(rückgabe.message)
-            }
+            alert(rückgabe.message)
         }
         if (response.ok) {
-            this.props.changeValueOfmapTest("DB");
+            this.props.changeValueOfStatusMap("DB");
             this.props.changeStep();
         }
     }
@@ -385,12 +412,13 @@ class ConfigureDatabase extends React.Component {
 }
 
 class ConfigureMailserver extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = { host: "", port: null, conncetion: true, user: "", password: "", standardMail: "", standardPrefix: "" };
         this.configureTheMailserver = this.configureTheMailserver.bind(this);
     }
+
+    //Function for HTTP-Request to Configure Mail Server
     async configureTheMailserver() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/mailserver", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -413,17 +441,13 @@ class ConfigureMailserver extends React.Component {
 
         if (!response.ok) {
             const rückgabe = await response.json().catch(console.log);
-            switch (response.status) {
-                case 400: alert(rückgabe.message); break;
-                case 410: alert(rückgabe.message); break;
-                case 500: alert(rückgabe.message); break;
-                default:
-                    alert(rückgabe.message)
+            if (!response.ok) {
+                alert(rückgabe.message)
             }
         }
 
         if (response.ok) {
-            this.props.changeValueOfmapTest("MS");
+            this.props.changeValueOfStatusMap("MS");
             this.props.changeStep();
         }
     }
@@ -495,108 +519,6 @@ class ConfigureMailserver extends React.Component {
             </Box>
         </Box>
         return Ansicht;
-        //TODO STANDARD (????)
-    }
-}
-
-// TODO: Diese Funktion sollte vielleicht eher ins Shop-Management
-class AbsolventenListe extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = { listeEingelesen: false, finished: false, initialeListe: [], dateiTyp: "CSV", path: "" };
-        this.useListAndSendMail = this.useListAndSendMail.bind(this);
-    }
-
-    //TODO FUNKTION ERSTELLEN
-    async useListAndSendMail() {
-        var response = await fetch(Config.BACKEND_BASE_URI + "", {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer f1df51e1835233014368105514f07a70e9f2255b279e5535810d7fbf2d565cc1d692d8b06d53f6157423bb3c63b97e5a42adfbe6277e48dc028d8043683acca13b1b9f83773015ff5f3533e9ad08943bac2eb003f24fc3e6c910d2e83e69f39ec1d3e3ac98d4d2965312670810aab8ec152338654bcab32e7c82cbe83545b0b5f307feed1976239fbe2718c97abab76768e6dcdb3e243fcead76ef2bc2ca72045f748da22dee9881a3aefe0b18ce9dd6d34eb4032ed56e1cb4d8bf11d2ff0d663b65f3ee2b2da04af8bc3b0473c4046fdc53248905d3499955f635c6ed9bb7e2defb03b54414ac617e4f73c96e6639bf1b89111458f5d830387f0c51e2c5a5d6',
-            }
-        }).catch(console.log)
-
-        if (!response) return
-
-        var data = await response.json().catch(console.log)
-
-        if (!data.message) return
-
-        this.setState({ finished: true })
-        this.props.changeValueOfmapTest("AL");
-        this.props.changeStep();
-    }
-
-    //Eingelesene Daten entgegennehmen und in den State schreiben
-    handleOnDrop = (data) => {
-        var liste = [];
-        data.forEach((data) => {
-            liste.push(data.data)
-        });
-
-        this.setState({ listeEingelesen: true, initialeListe: liste })
-    }
-
-    handleOnError = (err, file, inputElem, reason) => {
-        console.log(err)
-    }
-
-    handleOnRemoveFile = (data) => {
-        
-    }
-
-
-    render() {
-        var Ansicht = [];
-        var emailList = this.state.initialeListe;
-        Ansicht = <Box>
-            <Box pad="medium">
-                <Text size="large" weight="bold">Einlesen der Absolventen Liste</Text>
-            </Box>
-
-            {!this.state.listeEingelesen && !this.state.finished &&
-                <Box className="Eingaben">
-                    <Box pad="medium">
-                        <Text>Bitte eine Liste in der folgenden Darstellung einlesen:</Text>
-                        <span><Text weight="bold">Header: </Text><Text>E-Mail; Name</Text></span>
-                        <span><Text weight="bold">Datensatz 1: </Text><Text>Beispiel@web.de; Mustermann, Max</Text></span>
-                    </Box>
-                    <CSVReader
-                        onDrop={this.handleOnDrop}
-                        onError={this.handleOnError}
-                        config={{
-                            delimiter: ";",
-                            header: true
-                        }}
-                        addRemoveButton
-                        onRemoveFile={this.handleOnRemoveFile}
-                    >
-                        <span>Drop CSV file here or click to upload.</span>
-                    </CSVReader>
-                </Box>
-            }
-
-            {this.state.listeEingelesen && !this.state.finished &&
-                <List className="langeListe" pad="medium"
-                    primaryKey="E-Mail"
-                    secondaryKey="Name"
-                    data={emailList}
-                />
-            }
-            <Box pad="medium">
-                <Button onClick={this.useListAndSendMail} label="Abschließen"></Button>
-            </Box>
-
-            {this.state.listeEingelesen && this.state.finished &&
-                <Text>Bitte den Nächsten Schritt</Text>
-            }
-
-        </Box>
-        return Ansicht;
     }
 }
 
@@ -605,30 +527,45 @@ class SystemSetup extends React.Component {
     constructor(props) {
         super(props);
         this.changeStep = this.changeStep.bind(this);
-        this.changeValueOfmapTest = this.changeValueOfmapTest.bind(this);
+        this.changeValueOfStatusMap = this.changeValueOfStatusMap.bind(this);
         this.setWalletAddress = this.setWalletAddress.bind(this);
+        this.changeValueOfGasprices = this.changeValueOfGasprices.bind(this);
+        this.getValueOfGasPrices = this.getValueOfGasPrices.bind(this);
         this.state = {
             initializeStep: 0,
-            mapTest: new Map([["AW", false], ["DB", false], ["MS", false], ["AL", false], ["AA", false], ["DC", false]]),
+            statusMap: new Map([["AW", false], ["DB", false], ["MS", false], ["AL", false], ["AA", false], ["DC", false]]),
+            gasPrices: new Map([["deployContract", ""], ["createTicket", ""], ["relinquishPlace", ""]]),
             walletAddress: "",
             httpProvider: "",
         };
     }
-    // TODO: Step fürs Aufladen des Backend-Wallets mit Ether...
 
-    // Function to Change the Value of the state of Configuration
-    changeValueOfmapTest(key) {
-        this.setState(this.state.mapTest.set(key, true));
+    //Function to Set GasPrices in gasPriceMap
+    changeValueOfGasprices(key, price) {
+        this.setState(this.state.gasPrices.set(key, price));
     }
 
+    getValueOfGasPrices(key) {
+        var price = this.state.gasPrices.get(key);
+        return price;
+    }
+
+    //Function to change Value of StatusMap 
+    changeValueOfStatusMap(key) {
+        this.setState(this.state.statusMap.set(key, true));
+    }
+
+    //Function to set WalletAddress as State
     setWalletAddress(address) {
         this.setState({ walletAddress: address });
     }
 
+    //FUnction to set HTTP-Provider as State
     setHttpProvider(httpProvider) {
         this.setState({ httpProvider: httpProvider });
     }
 
+    // Function to Change the Value of the state of Configuration
     changeStep() {
         var value;
         if (this.state.initializeStep > 5) {
@@ -638,33 +575,29 @@ class SystemSetup extends React.Component {
             value = 1 + this.state.initializeStep;
         }
         this.setState({ initializeStep: value });
-
     }
 
     render() {
         return (
             <Box className="SystemSetup" direction="column" gap="medium" pad="medium" align="center">
-                {this.state.initializeStep === 0 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}></Hauptansicht>}
+                {this.state.initializeStep === 0 && <Hauptansicht statusMap={this.state.statusMap} initializeStep={this.state.initializeStep}></Hauptansicht>}
 
-                {this.state.initializeStep === 1 && <ConfigureDatabase changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                {this.state.initializeStep === 1 && <ConfigureDatabase changeValueOfStatusMap={this.changeValueOfStatusMap.bind(this)}
                     changeStep={this.changeStep.bind(this)}></ConfigureDatabase>}
 
-                {this.state.initializeStep === 2 && <ConfigureAdminAccount changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                {this.state.initializeStep === 2 && <ConfigureAdminAccount changeValueOfStatusMap={this.changeValueOfStatusMap.bind(this)}
                     changeStep={this.changeStep.bind(this)}></ConfigureAdminAccount>}
 
-                {this.state.initializeStep === 3 && <ConfigureMailserver changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
+                {this.state.initializeStep === 3 && <ConfigureMailserver changeValueOfStatusMap={this.changeValueOfStatusMap.bind(this)}
                     changeStep={this.changeStep.bind(this)}></ConfigureMailserver>}
 
-                {this.state.initializeStep === 4 && <AddWallet setWalletAddress={this.setWalletAddress.bind(this)} changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
-                    changeStep={this.changeStep.bind(this)}></AddWallet>}
+                {this.state.initializeStep === 4 && <AddWallet setWalletAddress={this.setWalletAddress.bind(this)} changeValueOfStatusMap={this.changeValueOfStatusMap.bind(this)}
+                    changeStep={this.changeStep.bind(this)} changeValueOfGasprices={this.changeValueOfGasprices.bind(this)} getValueOfGasPrices={this.getValueOfGasPrices.bind(this)} setHttpProvider={this.setHttpProvider.bind(this)}></AddWallet>}
 
-                {this.state.initializeStep === 4 && <DeploySmartContract httpProvider={this.state.httpProvider} walletAddress={this.state.walletAddress} changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
-                    changeStep={this.changeStep.bind(this)}></DeploySmartContract>}
+                {this.state.initializeStep === 5 && <DeploySmartContract httpProvider={this.state.httpProvider} walletAddress={this.state.walletAddress} changeValueOfStatusMap={this.changeValueOfStatusMap.bind(this)}
+                    changeStep={this.changeStep.bind(this)} getValueOfGasPrices={this.getValueOfGasPrices.bind(this)} changeValueOfGasprices={this.changeValueOfGasprices.bind(this)}></DeploySmartContract>}
 
-                {this.state.initializeStep === 5 && <AbsolventenListe changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
-                    changeStep={this.changeStep.bind(this)}></AbsolventenListe>}
-
-                {this.state.initializeStep === 6 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}
+                {this.state.initializeStep === 6 && <Hauptansicht statusMap={this.state.statusMap} initializeStep={this.state.initializeStep}
                     changeStep={this.changeStep.bind(this)}></Hauptansicht>}
 
                 {this.state.initializeStep === 0 && <Button onClick={this.changeStep} label="Konfiguration beginnen"></Button>}
