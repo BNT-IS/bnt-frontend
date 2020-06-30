@@ -57,8 +57,12 @@ class TicketBestellung extends React.Component {
         this.createTickets = this.createTickets.bind(this);
         this.createBooking = this.createBooking.bind(this);
         this.onInputHandler = this.onInputHandler.bind(this);
+        this.ShopConfig = this.ShopConfig.bind(this);
+
 
         this.state = {
+            MaxAnzahlAbsolvententickets: 0,
+            MaxAnzahBesuchertickets: 0,
             guestcount: 0,
             parkcount: 0,
             step: 0,
@@ -118,7 +122,7 @@ class TicketBestellung extends React.Component {
 
     //Funktion für die Counter und der Namen der Gäste
     increment = (property) => {
-        if (property === "guest" && this.state.guestcount < 2) {
+        if (property === "guest" && this.state.guestcount < this.state.MaxAnzahBesuchertickets) {
 
             let personsIndex = this.state.persons.length;
             let personInput = <PersonInput key={personsIndex} onInput={(personName) => { let personsList = this.state.persons; personsList[personsIndex] = personName; this.setState({ persons: personsList }) }}></PersonInput>
@@ -145,7 +149,36 @@ class TicketBestellung extends React.Component {
         }
     }
 
+    //Abfragen Backend
+    async ShopConfig() {
+        const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/shopConfig', {
+            method: 'GET',
+            mose: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+        }).catch(console.log);
+        if (!response.ok){
+            alert (response.message);
+            //Error Handling
+        }
+        if (response.ok){
+            console.log(response);
+            var configData = await response.json();
+            console.log(configData);
+            this.state.MaxAnzahlAbsolvententickets = configData.max_TicketType_0_pro_Absolvent;
+            this.state.MaxAnzahBesuchertickets = configData.max_TicketType_1_pro_Absolvent;
+            console.log(this.state.MaxAnzahlAbsolvententickets);
+            console.log(this.state.MaxAnzahBesuchertickets);
+            
+        }
+    }
 
+
+
+    //Buchung erstellen
     async createBooking() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/bookings", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -245,8 +278,9 @@ class TicketBestellung extends React.Component {
         console.log(result);
 
         //Parkticket in DB schreiben
-        for (let element of this.state.parkcount) {
-            console.log(element);
+        let anzahlparktick = this.state.parkcount;
+        for (var i = 0; i < anzahlparktick; i++) {
+            // console.log(element);
             response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/ticketsBooked", {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, *cors, same-origin
@@ -258,9 +292,9 @@ class TicketBestellung extends React.Component {
                 body: JSON.stringify({
                     bookingId: bookingResult,
                     ticketType: 2,
-                    forename: this.state.graduate.forename,
+                    forename: this.state.graduate.forename + " " + i,
                     surname: this.state.graduate.surname,
-                    isWheelchairUser: element.isWheelchairUser,
+                    isWheelchairUser: false,
                 })
             }).catch(console.log);
 
@@ -281,8 +315,6 @@ class TicketBestellung extends React.Component {
     }
 
 
-
-
     render() {
         console.log(this.state.persons)
 
@@ -295,7 +327,7 @@ class TicketBestellung extends React.Component {
                         <TextInput name="forename" placeholder="Vorname des Absolventen" value={this.state.graduate.forename} onChange={(event) => this.onInputHandler(event, "forename")}></TextInput>
                         <TextInput name="surname" placeholder="Nachname des Absolventen" value={this.state.graduate.surname} onChange={(event) => this.onInputHandler(event, "surname")}></TextInput>
                         <CheckBox name="isWheelchairUser" label="Rollstuhlfahrer bitte ankreuzen" value={this.state.graduate.isWheelchairUser} onChange={this.onCheckBox} checked={this.state.isWheelchairUser} />
-
+                        <Button label=" ShopConfig" onClick={this.ShopConfig} gap="small"></Button>
                         <Button label=" Ein Absolventen Ticket kaufen" onClick={this.windowGuestTicket} gap="small"></Button>
                     </Box>
                 }
@@ -305,7 +337,7 @@ class TicketBestellung extends React.Component {
                         <Text>Bitte geben sie an, wie viele Begleitpersonen Sie mitnehmen wollen.</Text>
                         <Button onClick={() => this.increment("guest")} className="guestcount" label="+"></Button>
                         <Button onClick={() => this.decrement("guest")} className="guestcount" label="-"></Button>
-                        <h2>{this.state.guestcount}</h2>
+                        <h2>Anzahl der Begleitpersonen: {this.state.guestcount}</h2>
                         {this.state.personInputFields}
                         <Button onClick={this.windowAbsolventTicket} label="Zurück"></Button>
                         <Button onClick={this.windowParkTicket} label="Weiter"></Button>
@@ -344,7 +376,7 @@ class TicketBestellung extends React.Component {
                         <Text>Sie haben folgende Tickets bestellt: <br />
                     Absolventent: 1 <br />
                     Begleitpersonen: {this.state.guestcount} <br />
-                    Parkticket {this.state.parkcount}
+                    Parkticket: {this.state.parkcount}
                         </Text>
                     </Box>
                 }
@@ -354,7 +386,6 @@ class TicketBestellung extends React.Component {
                         <Text>Es ist ein Fehler beim Bestellvorgang aufgetreten. Bitte versuche Sie es erneut.</Text>
                     </Box>
                 }
-
 
             </Box>
         );

@@ -21,6 +21,11 @@ Für die Anwendung des Bachelorsnight Ticketsystems wurden folgende "spezielle" 
 
 # Komponenten im Detail
 
+## App
+
+Übergeordnete Komponente, die zentrale App-Daten verwaltet.
+Hier wird ebenfalls der System-Status in regelmäßigen Abständen (60 Sek.) überprüft.
+
 ## Gast
 
 ### BookingOverview
@@ -41,6 +46,14 @@ Anhand der erhaltenen Buchungen werden die in der Buchung enthaltenen Tickets ü
 abgerufen.
 Die empfangenen Daten zu den Buchungen und Tickets werden von der Klasse BookingOverview an die Klasse BestellungsItem übergeben. Die Klasse BestellungsItem erstellt aus den Daten AccoridionPanels, die anschließend im Accordion der Klasse BookingOverview angezeigt werden. 
 
+### Ticket Bestellung
+Die Komponente TicketBestellung erstellt die Buchungen und Tickets für den angemeldeten Benutzer. 
+Die Koponente besteht aus den Klassen:
+- TicketBestellung
+- PersonInput
+
+Die Klasse Ticketbestellung stellt den Verkaufsprozess der Tickets dar.
+Die Klasse PersonInput ist eine Hilfsklasse für die TicketBestellung die zur Eingabe der Namen der Gäste verwendet wird.
 
 ## Eventmanagament
 
