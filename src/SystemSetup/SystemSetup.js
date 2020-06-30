@@ -1,7 +1,6 @@
 import React from 'react';
-//import './TicketOverview.css';
 import { Box, Button, Select, Text, List, TextInput } from 'grommet';
-import Config from '../../config';
+import Config from '../config';
 import { CSVReader } from 'react-papaparse';
 
 class Hauptansicht extends React.Component {
@@ -25,7 +24,7 @@ class Hauptansicht extends React.Component {
         if (this.props.initializeStep === 0) {
             Ansicht[0] = <Box pad="medium" key="start">
                 <Text textAlign="center" weight="bold" size="xxlarge">
-                    Guten Tag und Herzlich Wilkommen zum Ticketsystem.
+                    Herzlich Wilkommen zum Bachelors-Night Ticketsystem.
                 </Text>
                 <Box pad="medium"></Box>
                 <Text>
@@ -41,7 +40,7 @@ class Hauptansicht extends React.Component {
             Ansicht[0] = <Box pad="medium" key="end">
                 <Text textAlign="center">
                     Herzlich Glückwunsch Sie haben das Ticketsystem erfolgreich konfiguriert!
-                    Mit Zurück gelangen Sie wieder zur ersten Ansicht und können erneut durch die Konfiguration navigieren.
+                    Mit "Zurück" gelangen Sie wieder zur ersten Ansicht und können erneut durch die Konfiguration navigieren.
                 </Text>
             </Box>
         }
@@ -90,13 +89,7 @@ class AddWallet extends React.Component {
 
         if (!response.ok) {
             const rückgabe = await response.json().catch(console.log);
-            switch (response.status) {
-                case 400: alert(rückgabe.message); break;
-                case 410: alert(rückgabe.message); break;
-                case 500: alert(rückgabe.message); break;
-                default:
-                    alert(rückgabe.message)
-            }
+            alert(rückgabe.message);
         }
 
         if (response.ok) {
@@ -149,7 +142,7 @@ class DeploySmartContract extends React.Component {
 
         if (!response.ok) {
             const rückgabe = await response.json().catch(console.log);
-                    alert(rückgabe.message)
+            alert(rückgabe.message)
         }
 
         var data = await response.json().catch(console.log)
@@ -163,6 +156,8 @@ class DeploySmartContract extends React.Component {
     async getBalanceFromWallet() {
         var Web3 = require('web3');
         var web3 = new Web3(new Web3.providers.HttpProvider(this.props.httpProvider));
+
+        // TODO: change from hardcoded address to address that was sent from the backend
         web3.eth.getBalance("0x6c1afA1A56d92EeFd99926636b1a1c284B0CE298", (error, response) => {
             if (error) {
                 console.log("Fehler beim Abruf der Balance des Wallets");
@@ -195,13 +190,7 @@ class DeploySmartContract extends React.Component {
 
         if (!response.ok) {
             const rückgabe = await response.json().catch(console.log);
-            switch (response.status) {
-                case 400: alert(rückgabe.message); break;
-                case 410: alert(rückgabe.message); break;
-                case 500: alert(rückgabe.message); break;
-                default:
-                    alert(rückgabe.message)
-            }
+            alert(rückgabe.message);
         }
 
         if (response.ok) {
@@ -510,6 +499,7 @@ class ConfigureMailserver extends React.Component {
     }
 }
 
+// TODO: Diese Funktion sollte vielleicht eher ins Shop-Management
 class AbsolventenListe extends React.Component {
 
     constructor(props) {
@@ -544,12 +534,7 @@ class AbsolventenListe extends React.Component {
     //Eingelesene Daten entgegennehmen und in den State schreiben
     handleOnDrop = (data) => {
         var liste = [];
-        console.log('---------------------------')
-        console.log(data)
-        console.log('---------------------------')
-
         data.forEach((data) => {
-            console.log(data.data)
             liste.push(data.data)
         });
 
@@ -561,9 +546,7 @@ class AbsolventenListe extends React.Component {
     }
 
     handleOnRemoveFile = (data) => {
-        console.log('---------------------------')
-        console.log(data)
-        console.log('---------------------------')
+        
     }
 
 
@@ -617,7 +600,7 @@ class AbsolventenListe extends React.Component {
     }
 }
 
-class SystemInitalisierung extends React.Component {
+class SystemSetup extends React.Component {
 
     constructor(props) {
         super(props);
@@ -631,8 +614,6 @@ class SystemInitalisierung extends React.Component {
             httpProvider: "",
         };
     }
-    // TODO: Step fürs Aufsetzen von Master-User mit Wallet
-    // TODO: Step fürs Initialisieren der DB
     // TODO: Step fürs Aufladen des Backend-Wallets mit Ether...
 
     // Function to Change the Value of the state of Configuration
@@ -662,7 +643,7 @@ class SystemInitalisierung extends React.Component {
 
     render() {
         return (
-            <Box className="SystemInitalisierung" direction="column" gap="medium" pad="medium" align="center">
+            <Box className="SystemSetup" direction="column" gap="medium" pad="medium" align="center">
                 {this.state.initializeStep === 0 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}></Hauptansicht>}
 
                 {this.state.initializeStep === 1 && <ConfigureDatabase changeValueOfmapTest={this.changeValueOfmapTest.bind(this)}
@@ -686,12 +667,12 @@ class SystemInitalisierung extends React.Component {
                 {this.state.initializeStep === 6 && <Hauptansicht mapTest={this.state.mapTest} initializeStep={this.state.initializeStep}
                     changeStep={this.changeStep.bind(this)}></Hauptansicht>}
 
-                {this.state.initializeStep === 0 && <Button onClick={this.changeStep} label="Konfiguration Beginnen"></Button>}
-                {this.state.initializeStep !== 0 && this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Schritt Überspringen"></Button>}
+                {this.state.initializeStep === 0 && <Button onClick={this.changeStep} label="Konfiguration beginnen"></Button>}
+                {this.state.initializeStep !== 0 && this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Schritt überspringen"></Button>}
                 {this.state.initializeStep === 6 && <Box pad="medium"> <Button label="Zurück" onClick={this.changeStep}></Button></Box>}
             </Box>
         );
     }
 }
 
-export default SystemInitalisierung;
+export default SystemSetup;

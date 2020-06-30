@@ -2,7 +2,8 @@ import React from 'react';
 import './App.css';
 
 import UserContext from './AppContexts/UserContext';
-import AccountManagement from './AccountManagement/AccountManagement'
+import Login from './AccountManagement/Login';
+import SystemSetup from './SystemSetup/SystemSetup';
 import Ticketshop from './Ticketshop/Ticketshop';
 import Entrance from './Entrance/Entrance';
 import EventManagement from './EventManagement/EventManagement';
@@ -64,8 +65,9 @@ class App extends React.Component {
             <Route exact path="/">
               <ul>
                 <li><Link to="/guest">Ticketshop</Link></li>
-                <li><Link to="/entrance">Einlass-Management</Link></li>
+                <li><Link to="/entrance">Einlass</Link></li>
                 <li><Link to="/eventmgmt">Event-Management</Link></li>
+                <li><Link to="/setup">System-Setup</Link></li>
                 <li><Link to="/login">Anmelden</Link></li>
               </ul>
             </Route>
@@ -80,8 +82,11 @@ class App extends React.Component {
             <Route path="/eventmgmt">
               <EventManagement></EventManagement>
             </Route>
+            <Route path="/setup">
+              <SystemSetup></SystemSetup>
+            </Route>
             <Route path="/login">
-              <AccountManagement></AccountManagement>
+              <Login></Login>
             </Route>
           </Switch>
         </Grommet>

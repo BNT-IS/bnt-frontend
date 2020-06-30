@@ -3,7 +3,7 @@ import { Box, Button, TextInput, Text, Header } from 'grommet';
 import Config from '../config';
 import UserContext from '../AppContexts/UserContext';
 
-class AccountManagement extends React.Component {
+class Login extends React.Component {
 
     static contextType = UserContext;
 
@@ -198,6 +198,6 @@ class AccountManagement extends React.Component {
         );
     }
 }
-export default AccountManagement;
+export default Login;
 
 

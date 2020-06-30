@@ -94,8 +94,8 @@ aktiviert oder deaktiviert werden. Die Route ändert den Wert hierfür in der Ko
 
 
 
-### SystemInitialisierung
-Die Komponente Systeminitialisierung ist für die erstmalige Konfiguration im Backend verantwortlich.
+### SystemSetup
+Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich.
 Die Komponente besteht aus den Klassen:
 - Hauptansicht
 - AddWallet
@@ -103,9 +103,9 @@ Die Komponente besteht aus den Klassen:
 - ConfigureDatabase
 - ConfigureMailserver
 - AbsolventenListe
-- SystemInitalisierung
+- SystemSetup
 
-Die Klasse SystemInitalisierung verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
+Die Klasse SystemSetup verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
 
 Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 6) des Einrichtungsvorgangs angezeigt.
 

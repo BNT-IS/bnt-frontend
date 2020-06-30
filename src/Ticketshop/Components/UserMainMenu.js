@@ -12,7 +12,7 @@ class UserMainMenu extends React.Component {
 
     render() {
         return (
-            <Box className="UserMainMenu" direction="column" gap="medium" pad="medium">
+            <Box className="UserMainMenu" direction="row" pad="medium" wrap={true}>
                 <Link className="MenuLink" to="/guest/tickets">Tickets Anzeigen</Link>
                 <Link className="MenuLink" to="/guest/buy">Tickets Buchen</Link>
                 <Link className="MenuLink" to="/guest/bookings">Buchungen Anzeigen</Link>
