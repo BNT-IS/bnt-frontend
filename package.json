@@ -1,8 +1,7 @@
 {
-  "name": "example-client",
+  "name": "bnt-frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://bnt-is.github.io/bnt-frontend/",
   "devDependencies": {
     "gh-pages": "^1.0.0",
     "react-scripts": "3.4.1"
