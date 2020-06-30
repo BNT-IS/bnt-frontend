@@ -41,7 +41,7 @@ Anhand der erhaltenen Buchungen werden die in der Buchung enthaltenen Tickets ü
 abgerufen.
 Die empfangenen Daten zu den Buchungen und Tickets werden von der Klasse BookingOverview an die Klasse BestellungsItem übergeben. Die Klasse BestellungsItem erstellt aus den Daten AccoridionPanels, die anschließend im Accordion der Klasse BookingOverview angezeigt werden. 
 
-###Ticket Bestellung
+### Ticket Bestellung
 Die Komponente TicketBestellung erstellt die Buchungen und Tickets für den angemeldeten Benutzer. 
 Die Koponente besteht aus den Klassen:
 - TicketBestellung
