@@ -85,7 +85,7 @@ class EntranceDashboard extends React.Component {
                     <Button label="Ticketdaten für den Offline-Einlass herunterladen" onClick={this.handleDumpMirror} disabled={this.state.lockDataset}></Button>
                     <CheckBox label="Datensatz schützen" toggle={true} onChange={this.lockHandler} checked={this.state.lockDataset}></CheckBox>
                 </Box>
-                <List
+                <List           
                     primaryKey={(ticket) => { return <b key={ticket.identifier + 't'}>{ticket.surname || 'Unkown'}, {ticket.forename || 'Unkown'} - {this.translateTicketType(ticket.ticketType)} {ticket.isWheelchairUser ? '!Rollstuhlfahrer!' : ''}</b> }}
                     secondaryKey={(ticket) => { return <span key={ticket.identifier + 's'}>{ticket.isValid ? 'gültig' : 'ungültig'} - {ticket.isUsed ? 'benutzt' : 'unbenutzt'}</span> }}
                     data={this.state.tickets}
