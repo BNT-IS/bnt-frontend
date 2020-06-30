@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 
 import UserContext from './AppContexts/UserContext';
-import Login from './AccountManagement/Login';
+import Login from './Authentication/Login';
 import SystemSetup from './SystemSetup/SystemSetup';
 import Ticketshop from './Ticketshop/Ticketshop';
 import Entrance from './Entrance/Entrance';
@@ -17,23 +17,28 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = { userContext: null, setupMode: false };
-    this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
-    this.init = this.init.bind(this);
+    this.initUserContext = this.initUserContext.bind(this);
+    this.setUserContext = this.setUserContext.bind(this);
   }
 
-  componentDidMount() {
-
+  componentWillMount() {
     // Check system status once mounted
     this.detectSystemState();
 
     // Check system status frequently (currently every 60 seconds)
     window.setInterval(() => {
       this.detectSystemState();
+      this.detectAuthState(this.state.userContext);
     }, 60000);
 
-    // For login stuff
-    this.init();
+    // Initialize userContext
+    this.initUserContext();
+  }
+
+  componentDidUpdate() {
+    // Check if login is needed on every update
+    this.checkLoginNeeded();
   }
 
   async detectSystemState() {
@@ -53,11 +58,61 @@ class App extends React.Component {
     }
   }
 
-  init() {
-    let ls = JSON.parse(localStorage.getItem('userContext'));
-    this.setState({ userContext: ls ? ls : null }, this.login);
+  /**
+   * Tries to fetch the data of the user to check if the api token works
+   * @param {*} userData 
+   */
+  async detectAuthState(userData) {
+    // Try token
+    try {
+      var response = await fetch(config.BACKEND_BASE_URI + "/api/v2/users/" + userData.user.id, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: {
+          Authorization: 'Bearer ' + userData.token
+        }
+      })
+      if (response.status === 401) {
+        this.clearUserContext();
+        this.setState({ userContext: null });
+      } else {
+        this.setState({ userContext: userData });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
+  /**
+   * Loads the data of the user from LocalStorage into the UserContext
+   */
+  initUserContext() {
+    let userData = JSON.parse(localStorage.getItem('userContext'));
+    this.detectAuthState(userData);
+  }
+
+  /**
+   * Sets the current UserContext to new data
+   * @param {*} userData 
+   */
+  setUserContext(userData) {
+    localStorage.setItem('userContext', JSON.stringify(userData));
+    this.setState({ userContext: userData });
+  }
+
+  /**
+   * Clears LocalStorage and the UserContext object
+   */
+  clearUserContext() {
+    localStorage.clear();
+    this.setState({ userContext: null });
+  }
+
+  /**
+   * Deletes data to prevent from reuse of the token and userdata
+   * finally redirects to login
+   */
   logout() {
     if (this.state.userContext.user.role === 0) {
       let ok = window.confirm('Sollen auch eventuell lokal gespeicherten Daten für den Einlass unwiederruflich gelöscht werden?', "Nein");
@@ -65,28 +120,31 @@ class App extends React.Component {
         window.indexedDB.deleteDatabase(config.IDB_NAME);
       }
     }
-    localStorage.clear();
-    this.setState({ userContext: null });
+    this.clearUserContext();
     window.location.assign('#/login');
   }
 
-  login() {
-    if (this.state.userContext === null) {
-      window.location.assign('#/login/');
-    } else {
-      if (this.state.userContext.user.role === 0 && (window.location.hash === "" || window.location.hash.includes('login'))) {
-        window.location.assign('#/eventmgmt/');
-      }
-      if (this.state.userContext.user.role === 1 && (window.location.hash === "" || !window.location.hash.includes('guest') || window.location.hash.includes("login"))) {
-        window.location.assign('#/guest/');
+  /**
+   * Evaluates if login is required or not
+   */
+  checkLoginNeeded() {
+    if (window.location.hash === "" || window.location.hash.includes('login') || window.location.hash.includes('eventmgmt') || window.location.hash.includes('guest')) {
+      if (!this.state.userContext) {
+        window.location.assign('#/login/');
+      } else {
+        if (this.state.userContext.user.role === 0) {
+          window.location.assign('#/eventmgmt/');
+        }
+        if (this.state.userContext.user.role === 1 && !window.location.hash.includes('guest')) {
+          window.location.assign('#/guest/');
+        }
       }
     }
   }
 
   render() {
     return (
-      <UserContext.Provider value={Object.assign(this.state.userContext ? this.state.userContext : {}, { logout: this.logout, login: this.login, reloadLocalStorage: this.init })}>
-
+      <UserContext.Provider value={Object.assign(this.state.userContext ? this.state.userContext : {}, { logout: this.logout, setUserContext: this.setUserContext })}>
         <Grommet theme={grommet}>
           {!this.state.setupMode &&
             <Box>
@@ -134,7 +192,6 @@ class App extends React.Component {
             </Box>
           }
         </Grommet>
-
       </UserContext.Provider>
     );
   }

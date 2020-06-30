@@ -136,8 +136,7 @@ class Login extends React.Component {
     }
 
     handleFinalLogin(userData) {
-        localStorage.setItem('userContext', JSON.stringify(userData));
-        this.context.reloadLocalStorage();
+        this.context.setUserContext(userData);
     }
 
     setState1() {
