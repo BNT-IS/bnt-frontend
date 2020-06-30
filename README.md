@@ -21,6 +21,11 @@ Für die Anwendung des Bachelorsnight Ticketsystems wurden folgende "spezielle" 
 
 # Komponenten im Detail
 
+## App
+
+Übergeordnete Komponente, die zentrale App-Daten verwaltet.
+Hier wird ebenfalls der System-Status in regelmäßigen Abständen (60 Sek.) überprüft.
+
 ## Gast
 
 ### BookingOverview
