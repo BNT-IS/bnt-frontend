@@ -128,7 +128,7 @@ class App extends React.Component {
    * Evaluates if login is required or not
    */
   checkLoginNeeded() {
-    if (window.location.hash === "" || window.location.hash.includes('login') || window.location.hash.includes('eventmgmt') || window.location.hash.includes('guest')) {
+    if (window.location.hash === "#/" || window.location.hash.includes('login') || window.location.hash.includes('eventmgmt') || window.location.hash.includes('guest')) {
       if (!this.state.userContext) {
         window.location.assign('#/login/');
       } else {
