@@ -53,7 +53,14 @@ class DataQuickViewPayment extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
+        this.callConfiguratePaymentMethods = this.callConfiguratePaymentMethods.bind(this);
     }
+
+    callConfiguratePaymentMethods() {
+        var value = 2;
+        this.props.changeInitializeStep(value);
+    }
+
     switchBooleanToString() {
         var bezahloptionenArray = [];
         for (let [key, value] of this.props.konfigurierteBezahloptionen) {
@@ -90,7 +97,7 @@ class DataQuickViewPayment extends React.Component {
             />
             <Box className="platzhalter" ></Box>
             <Box className="ButtonBox">
-                <Button className="buttonInDash" label="Bezahloptionen konfigurieren"></Button>
+                <Button className="buttonInDash" label="Bezahloptionen konfigurieren" onClick={this.callConfiguratePaymentMethods}></Button>
             </Box>
         </Box>
         return Ansicht;
@@ -185,6 +192,7 @@ class DataQuickViewManageSales extends React.Component {
         super(props);
         this.state = {
         };
+        this.callShopManagementManageSales = this.callShopManagementManageSales.bind(this);
     }
     
 
@@ -268,7 +276,7 @@ class ShopManagement extends React.Component {
     async getBookings(){
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/', {
             method: 'GET',
-            mose: 'cors',
+            mode: 'cors',
             cache: 'no-cache',
             headers: {
                 'Content-Type': 'application/json',

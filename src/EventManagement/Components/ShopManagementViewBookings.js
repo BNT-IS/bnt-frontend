@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Text, List } from 'grommet';
+import { Box, Button, Text, List, TextInput } from 'grommet';
 import Config from '../../config';
 import './ShopManagement.css';
 import './ShopManagement.js';
@@ -13,16 +13,18 @@ class ShopManagementViewBookings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            open: [], paid: []
+            open: [], paid: [], searchOpen: "", searchPaid: ""
         };
         this.changeStep = this.changeStep.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.getBookings = this.getBookings.bind(this);
         this.cancel = this.cancel.bind(this);
         this.approve = this.approve.bind(this);
+        this.searchOpenHandler = this.searchOpenHandler.bind(this);
+        this.searchPaidHandler = this.searchPaidHandler.bind(this);
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.getBookings();
     }
 
@@ -53,42 +55,87 @@ class ShopManagementViewBookings extends React.Component {
         } else {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
-                    var lauf2 = 0;
-                    var lauf3 = 0;
-                    var speicher = [];
-                    var speicher2 = [];
+                var lauf2 = 0;
+                var lauf3 = 0;
+                var speicher = [];
+                var speicher2 = [];
                 for (var lauf = 0; lauf < rückgabe.length; lauf++) {
-                    
+
                     if (rückgabe[lauf].paidAt !== null && rückgabe[lauf].canceled === false) {
-                        if (rückgabe[lauf] !== null) {                                       
+                        if (rückgabe[lauf] !== null) {
                             speicher[lauf2] = rückgabe[lauf];
                         }
-                        lauf2 = lauf2 + 1;           
+                        lauf2 = lauf2 + 1;
                     }
                     if (rückgabe[lauf].paidAt === null && rückgabe[lauf].canceled === false) {
-                        if (rückgabe[lauf] !== null) {                 
+                        if (rückgabe[lauf] !== null) {
                             speicher2[lauf3] = rückgabe[lauf];
                         }
                         lauf3 = lauf3 + 1;
-                        this.setState({open: speicher2})
-                    }          
+                        this.setState({ open: speicher2 })
+                    }
                 }
             }
-            this.setState({paid: speicher})
-            this.setState({open: speicher2})
+            this.setState({ paid: speicher })
+            this.setState({ open: speicher2 })
         }
     }
 
-    cancel(bookingId){
-        alert("Die Buchung mit der Buchungs-ID " + bookingId + " wurde storniert.");
+    async cancel(bookingId) {
+
+        const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/' + bookingId, {
+            method: 'PUT',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+            body: JSON.stringify({ canceled: 1 })
+        }).catch(console.log);
+
+        if (!response.ok) {
+            alert("Die Stornierung ist Fehlgeschlagen");
+            return
+        } else {
+            alert("Die Buchung mit der Buchungs-ID " + bookingId + " wurde storniert.");
+            this.componentDidMount();
+        }
     }
 
-    approve(bookingId){
-        alert("Die Buchung mit der Buchungs-ID " + bookingId + " wurde bestätigt.");
+    async approve(bookingId) {
+        var today = new Date();
+        today = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + ' ' + (today.getHours() + 2) + ':' + today.getMinutes() + ':' + today.getSeconds();
+        const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/' + bookingId, {
+            method: 'PUT',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+            body: JSON.stringify({ paidAt: today })
+        }).catch(console.log);
+
+        if (!response.ok) {
+            alert("Die Bestätigung ist fehlgeschlagen");
+            return
+        } else {
+            alert("Die Buchung mit der Buchungs-ID " + bookingId + " wurde bestätigt.");
+            this.componentDidMount();
+        }
     }
 
     changeStep() {
         this.props.changeInitializeStep(0);
+    }
+
+    searchOpenHandler(event) {
+        this.setState({ searchOpen: event.target.value });
+    }
+
+    searchPaidHandler(event) {
+        this.setState({ searchPaid: event.target.value });
     }
 
     render() {
@@ -99,34 +146,40 @@ class ShopManagementViewBookings extends React.Component {
                 <Text weight="bold" size="xlarge">Bestellungsübersicht</Text>
                 <Box pad="medium">
                     <Text>Hier können die Bestellungen eingesehen, freigegeben und storniert werden.</Text>
+                    <Button label="Zurück zur Übersichtsseite" onClick={this.changeStep} pad="small"></Button>
                 </Box>
                 <Box pad="medium">
-                    <Box pad="large">
                     <Text>Offene Bestellungen: </Text>
-                    <Text>Buchungs-ID     |     User-ID      |     Erstellungsdatum     |     Freigabe     |     Stornieren</Text>
-                    </Box>       
-                    <List pad="medium"  
-                          alignSelf="stretch"
-                          margin="small" 
-                          primaryKey={(openBooking) => {return <b key={openBooking.id + 't'}> {openBooking.id || 'Unknown'} </b>}}
-                          secondaryKey={(openBooking) => {return <span key={openBooking.id + 's'}> {"|  " + openBooking.userId + "    |" || 'Unknown'}     {openBooking.createdAt + "    |" || 'Unknown'} <Button label="Buchung freigeben" onClick={""}></Button> | <Button label="Buchung stornieren" onClick={""}></Button></span>}} 
-                          data={this.state.open}
-                    />
+                    <Box pad="small">
+                        <TextInput placeholder="Zum Suchen in den offenen Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchOpen} onChange={this.searchOpenHandler}></TextInput>
+                    </Box>
+                    <Box pad="small">
+                        <Text>Buchungs-ID     |     User-Mail      |     Erstellungsdatum     |     Freigabe     |     Stornieren</Text>
+                        <List pad="medium"
+                            alignSelf="stretch"
+                            margin="small"
+                            primaryKey={(openBooking) => { return <b key={openBooking.id + 't'}> {openBooking.id || 'Unknown'} </b> }}
+                            secondaryKey={(openBooking) => { return <span key={openBooking.id + 's'}> {"|  " + openBooking.user.email + "    |" || 'Unknown'}     {(new Date(openBooking.createdAt).toLocaleDateString()) + "    |" || 'Unknown'} <Button label="Buchung freigeben" onClick={() => { this.approve(openBooking.id) }}></Button> | <Button label="Buchung stornieren" onClick={() => { this.cancel(openBooking.id) }}></Button></span> }}
+                            data={this.state.open}
+                        />
+                    </Box>
                 </Box>
                 <Box pad="medium">
-                    <Box pad="large">
                     <Text>Abgeschlossene Bestellungen: </Text>
-                    <Text>Buchungs-ID     |     User-ID      |     Erstellungsdatum     |     Stornieren</Text>
+                    <Box pad="small">
+                        <TextInput placeholder="Zum Suchen in den bezahlten Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchPaid} onChange={this.searchPaidHandler}></TextInput>
                     </Box>
-                    <List pad="medium" 
-                          alignSelf="stretch"
-                          margin="small"  
-                          primaryKey={(finishedBooking) => {return <b key={finishedBooking.id + 't'}> {finishedBooking.id || 'Unknown'} </b>}}
-                          secondaryKey={(finishedBooking) => {return <span key={finishedBooking.id + 's'}> {"|  " + finishedBooking.userId + "    |" || 'Unknown'}     {finishedBooking.createdAt + "    |" || 'Unknown'} <Button label="Buchung stornieren" onClick={""}></Button></span>}} 
-                          data={this.state.paid}
-                    />
+                    <Box pad="small">
+                    <Text>Buchungs-ID     |     User-Mail      |     Erstellungsdatum     |     Stornieren</Text>
+                        <List pad="medium"
+                            alignSelf="stretch"
+                            margin="small"
+                            primaryKey={(finishedBooking) => { return <b key={finishedBooking.id + 't'}> {finishedBooking.id || 'Unknown'} </b> }}
+                            secondaryKey={(finishedBooking, test) => { return <span key={finishedBooking.id + 's'}> {"|  " + finishedBooking.user.email + "    |" || 'Unknown'}     {(new Date(finishedBooking.createdAt).toLocaleDateString()) + "    |" || 'Unknown'} <Button label="Buchung stornieren" onClick={() => { this.cancel(finishedBooking.id) }}></Button></span> }}
+                            data={this.state.paid}
+                        />
+                    </Box>
                 </Box>
-                <Button label="Zurück zur Übersicht" onClick={this.changeStep}></Button>
             </box>
         );
     }
