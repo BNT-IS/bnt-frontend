@@ -4,6 +4,8 @@ import Config from '../../config';
 import './ShopManagement.css';
 import './ShopManagement.js';
 import UserContext from '../../AppContexts/UserContext'
+import { parseJsonText } from 'typescript';
+import { position } from 'polished';
 
 class ShopManagementViewBookings extends React.Component {
 
@@ -13,7 +15,9 @@ class ShopManagementViewBookings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            open: [], paid: [], searchOpen: "", searchPaid: ""
+            open: [], paid: [], searchOpen: "", searchPaid: "", 
+            headline1: [{id: "ID der Buchung", email: "E-Mail-Adresse des Absolventen", createdAt: "Erstellungsdatum", approve: "Buchung freigeben", cancel: "Buchung stornieren"}],
+            headline2: [{id: "ID der Buchung", email: "E-Mail-Adresse des Absolventen", createdAt: "Erstellungsdatum", cancel: "Buchung stornieren"}]
         };
         this.changeStep = this.changeStep.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -72,7 +76,6 @@ class ShopManagementViewBookings extends React.Component {
                             speicher2[lauf3] = rückgabe[lauf];
                         }
                         lauf3 = lauf3 + 1;
-                        this.setState({ open: speicher2 })
                     }
                 }
             }
@@ -137,12 +140,28 @@ class ShopManagementViewBookings extends React.Component {
     searchPaidHandler(event) {
         this.setState({ searchPaid: event.target.value });
     }
+    
 
     render() {
         var ansicht = [];
+        let open;
+        var mail = this.state.searchOpen;
+        if(mail !== ""){
+            open = this.state.open.filter((booking) => {return booking.user.email.toLowerCase().includes(mail.toLowerCase())});
+        } else {
+            open = this.state.open;
+        }
+
+        let paid;
+        var mail2 = this.state.searchPaid;
+        if(mail2 !== ""){ 
+            paid = this.state.paid.filter((booking) => {return booking.user.email.toLowerCase().includes(mail2.toLowerCase())});
+        } else {
+            paid = this.state.paid;
+        }
         return (
             ansicht[0] =
-            <box className="outerBoxOverview" direction="column" align="center">
+            <Box className="outerBoxOverview" direction="column" align="center">
                 <Text weight="bold" size="xlarge">Bestellungsübersicht</Text>
                 <Box pad="medium">
                     <Text>Hier können die Bestellungen eingesehen, freigegeben und storniert werden.</Text>
@@ -151,38 +170,52 @@ class ShopManagementViewBookings extends React.Component {
                 <Box pad="medium">
                     <Text>Offene Bestellungen: </Text>
                     <Box pad="small">
-                        <TextInput placeholder="Zum Suchen in den offenen Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchOpen} onChange={this.searchOpenHandler}></TextInput>
+                        <TextInput gap="small" placeholder="Zum Suchen in den offenen Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchOpen} onChange={this.searchOpenHandler}></TextInput>
                     </Box>
                     <Box pad="small">
-                        <Text>Buchungs-ID     |     User-Mail      |     Erstellungsdatum     |     Freigabe     |     Stornieren</Text>
-                        <List pad="medium"
+                        <List 
+                            pad="medium"
+                            alignSelf="stretch"
+                            margin="small"
+                            primaryKey={(headline1) => { return <b key={headline1.id + 't'}> {headline1.id || 'Unknown'} </b>}}
+                            secondaryKey={(headline1) => { return <span key={headline1.id + 's'}> {"|   " + headline1.email + "   |" || 'Unknown'} {headline1.createdAt + "   |" || 'Unknown'} {headline1.approve + "   |" || 'Unknown'} {headline1.cancel + "   |" || 'Unknown'} </span> }}
+                            data={this.state.headline1}
+                        />
+                        <List  
+                            pad="medium"
                             alignSelf="stretch"
                             margin="small"
                             primaryKey={(openBooking) => { return <b key={openBooking.id + 't'}> {openBooking.id || 'Unknown'} </b> }}
                             secondaryKey={(openBooking) => { return <span key={openBooking.id + 's'}> {"|  " + openBooking.user.email + "    |" || 'Unknown'}     {(new Date(openBooking.createdAt).toLocaleDateString()) + "    |" || 'Unknown'} <Button label="Buchung freigeben" onClick={() => { this.approve(openBooking.id) }}></Button> | <Button label="Buchung stornieren" onClick={() => { this.cancel(openBooking.id) }}></Button></span> }}
-                            data={this.state.open}
+                            data={open}
                         />
                     </Box>
                 </Box>
                 <Box pad="medium">
                     <Text>Abgeschlossene Bestellungen: </Text>
                     <Box pad="small">
-                        <TextInput placeholder="Zum Suchen in den bezahlten Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchPaid} onChange={this.searchPaidHandler}></TextInput>
+                        <TextInput gap="small" placeholder="Zum Suchen in den bezahlten Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchPaid} onChange={this.searchPaidHandler}></TextInput>
                     </Box>
                     <Box pad="small">
-                    <Text>Buchungs-ID     |     User-Mail      |     Erstellungsdatum     |     Stornieren</Text>
+                        <List 
+                            pad="medium"
+                            alignSelf="stretch"
+                            margin="small"
+                            primaryKey={(headline2) => { return <b key={headline2.id + 't'}> {headline2.id || 'Unknown'} </b>}}
+                            secondaryKey={(headline2) => { return <span key={headline2.id + 's'}> {"|   " + headline2.email + "   |" || 'Unknown'} {headline2.createdAt + "   |" || 'Unknown'} {headline2.cancel + "   |" || 'Unknown'} </span> }}
+                            data={this.state.headline2}
+                        />
                         <List pad="medium"
                             alignSelf="stretch"
                             margin="small"
                             primaryKey={(finishedBooking) => { return <b key={finishedBooking.id + 't'}> {finishedBooking.id || 'Unknown'} </b> }}
                             secondaryKey={(finishedBooking, test) => { return <span key={finishedBooking.id + 's'}> {"|  " + finishedBooking.user.email + "    |" || 'Unknown'}     {(new Date(finishedBooking.createdAt).toLocaleDateString()) + "    |" || 'Unknown'} <Button label="Buchung stornieren" onClick={() => { this.cancel(finishedBooking.id) }}></Button></span> }}
-                            data={this.state.paid}
+                            data={paid}
                         />
                     </Box>
                 </Box>
-            </box>
+            </Box>
         );
     }
-
 }
 export default ShopManagementViewBookings;
