@@ -101,6 +101,10 @@ class TicketBestellung extends React.Component {
 
 
     }
+
+    componentDidMount(){
+        this.ShopConfig();
+    }
     //Wechsel der Ansichtenfenster
     windowAbsolventTicket() {
         this.setState({ step: 0 })
@@ -309,7 +313,6 @@ class TicketBestellung extends React.Component {
                 return;
             }
             console.log(result)
-            this.toPayment()
         }
 
     }
@@ -317,7 +320,6 @@ class TicketBestellung extends React.Component {
 
     render() {
         console.log(this.state.persons)
-
         return (
             <Box className="TicketBestellung" direction="column" gap="medium" pad="medium">
 
@@ -327,7 +329,6 @@ class TicketBestellung extends React.Component {
                         <TextInput name="forename" placeholder="Vorname des Absolventen" value={this.state.graduate.forename} onChange={(event) => this.onInputHandler(event, "forename")}></TextInput>
                         <TextInput name="surname" placeholder="Nachname des Absolventen" value={this.state.graduate.surname} onChange={(event) => this.onInputHandler(event, "surname")}></TextInput>
                         <CheckBox name="isWheelchairUser" label="Rollstuhlfahrer bitte ankreuzen" value={this.state.graduate.isWheelchairUser} onChange={this.onCheckBox} checked={this.state.isWheelchairUser} />
-                        <Button label=" ShopConfig" onClick={this.ShopConfig} gap="small"></Button>
                         <Button label=" Ein Absolventen Ticket kaufen" onClick={this.windowGuestTicket} gap="small"></Button>
                     </Box>
                 }
