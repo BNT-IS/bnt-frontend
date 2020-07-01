@@ -98,6 +98,10 @@ Die Klasse DataQuickViewPayment zeigt die Konfigurierten Bezahloptionen an.!!!!!
 !!!!
 !!!!
 
+Die Klasse DataQuickViewBookings zeigt die aktuelle Anzahl offener, gebuchter und stornierter Buchungen im System an. Mit dem Button der Klasse wird ein Administrator zur Komponente ShopManagementViewBookings weitergeleitet.
+
+Die Komponente ShopManagementViewBookings gibt einen ausführlichen Überblick in Form einer Liste über alle Buchungen im System, welche noch als offen gekennzeichnet sind sowie über alle Buchungen im System, welche bereits als bezahlt markiert wurden. Die Komponente bietet für jede Liste die Möglichkeit, über ein Textfeld nach Buchungen mit einer spezifischen E-Mail-Adresse zu suchen. Die noch als offen markierten Buchungen können durch die Komponente freigegeben oder storniert werden, indem der zugehörige Button in der Listenzeile verwendet wird. Die als bezahlt markierten Buchungen können durch die Komponente auf die selbe Art und Weise storniert werden.
+
 Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert werden. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente **** weiter.
 In der Komponente **** kann der Status des Verkaufs mit der Route
 ```
