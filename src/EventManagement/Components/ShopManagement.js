@@ -250,10 +250,10 @@ class DataQuickViewCreateOTPS extends React.Component {
     }
 
     switchInitialList() {
-        if(this.props.initialList){
+        if (this.props.initialList) {
             return "Eingelesen"
         }
-        if (!this.props.initialList){
+        if (!this.props.initialList) {
             return "Nicht Eingelesen"
         }
 
@@ -309,7 +309,8 @@ class ShopManagement extends React.Component {
         this.getBookings = this.getBookings.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.setConfSalesStatus = this.setConfSalesStatus.bind(this);
-        this.createOTPWithEmail = this.createOTPWithEmail.bind(this);
+        this.useListAndSendMail = this.useListAndSendMail.bind(this);
+        this.setShopConfigInitialList = this.setShopConfigInitialList.bind(this);
     }
 
     changeInitializeStep(value) {
@@ -400,7 +401,13 @@ class ShopManagement extends React.Component {
             else {
                 var maxTickets = [{ Tickettype: "Absolvententickets", Anzahl: data.max_TicketType_0_pro_Absolvent },
                 { Tickettype: "Begleitertickets", Anzahl: data.max_TicketType_1_pro_Absolvent }]
-                this.setState({ salesStatus: data.salesStatus, maxTicketmenge: maxTickets, maxPersonenProEvent: data.max_Person_pro_Event, maxTicketsProEvent: data.max_Tickets_pro_Event })
+                this.setState({
+                    salesStatus: data.salesStatus,
+                    maxTicketmenge: maxTickets,
+                    maxPersonenProEvent: data.max_Person_pro_Event,
+                    maxTicketsProEvent: data.max_Tickets_pro_Event,
+                    initialList: data.initialeOPTListe
+                })
                 console.log("Die Konfiguration wurde erfolgreich eingelesen!");
             }
         }
@@ -487,39 +494,25 @@ class ShopManagement extends React.Component {
     setSalesStatus(status) {
         this.setState({ salesStatus: status });
     }
+
     //Send Each Element to create a One Time Passwort
-    async useListAndSendMail(emailList) {
-        if(!emailList){
-            console.log("Die übergebene Liste für die Erstellung der One Time Passwörter ist Leer!")
-            return;
-        }
-
-        var counter = 0;
-
-        emailList.forEach(element => {
-            this.createOTPWithEmail(element);
-        });
-        console.log(counter + " One Time Passwörter erstellt!")
-        this.setState({ initialList: true })
-    }
-
-    async createOTPWithEmail(element) {
-        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/oneTimePass", {
+    async useListAndSendMail(eMail) {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/oneTimePasses", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ',
+                'Authorization': 'Bearer ' + this.context.token,
             },
             body: JSON.stringify({
-                email: element.email,
+                email: eMail,
                 targetRole: 1
             })
         }).catch(console.log)
 
         if (!response) {
-            console.log("Keine Antwort vom Backend bei der Erstellung des One Time Passworts für die E-Mail:" + element.email)
+            console.log("Keine Antwort vom Backend bei der Erstellung des One Time Passworts für die E-Mail:" + eMail)
             return;
         }
         if (!response.ok) {
@@ -527,10 +520,39 @@ class ShopManagement extends React.Component {
             return;
         }
         if (response.ok) {
-            console.log("One Time Passwort für die E-Mail: " + element.email + " erstellt!")
+            console.log("One Time Passwort für die E-Mail: " + eMail + " erstellt!")
             return 1;
         }
-    }
+    };
+
+    async setShopConfigInitialList(intialListStatus) {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/shopConfig", {
+            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+            body: JSON.stringify({
+                initialeOPTListe: intialListStatus
+            })
+        }).catch(console.log)
+
+        if (!response) {
+            console.log("Keine Antwort beim Setzen des Wertes für die intiale OTP-Liste!")
+            return;
+        }
+        if (!response.ok) {
+            console.log("Fehler beim Setzten des Wertes für die intiale OTP-Liste: " + response.message)
+            return;
+        }
+
+        if (response.ok) {
+            if (intialListStatus) { console.log("Intiale OTP-Liste wurde eingelesen") };
+            this.setState({ initialList: true })
+        }
+    };
 
     render() {
         return (
@@ -557,7 +579,7 @@ class ShopManagement extends React.Component {
                 </Route>
 
                 <Route path="/eventmgmt/shop/createOTPs">
-                    <ShopManagamentAbsolventenListe useListAndSendMail={this.useListAndSendMail}></ShopManagamentAbsolventenListe>
+                    <ShopManagamentAbsolventenListe useListAndSendMail={this.useListAndSendMail} setShopConfigInitialList={this.setShopConfigInitialList}></ShopManagamentAbsolventenListe>
                 </Route>
 
                 <Route path="/eventmgmt/shop">
