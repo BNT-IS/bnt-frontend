@@ -44,7 +44,7 @@ class ShopManagementManageSalesStatus extends React.Component {
             window.location.assign("#/eventmgmt/shop");
             return;
         }
-        if (salesStatusBoolean != this.props.salesStatus) {
+        if (salesStatusBoolean !== this.props.salesStatus) {
             this.props.setConfSalesStatus(salesStatusBoolean);
             window.location.assign("#/eventmgmt/shop");
         }

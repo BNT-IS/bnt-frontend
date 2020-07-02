@@ -15,8 +15,7 @@ class ShopManagementSalesStatistics extends React.Component {
     }
 
     changeStep (){
-        this.props.changeInitializeStep(0)
-
+        window.location.assign('#/eventmgmt/shop');
     }
     
 
