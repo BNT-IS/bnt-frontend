@@ -9,6 +9,7 @@ import ShopManagementManageSalesStatus from './ShopManagementManageSalesStatus';
 import ShopManagamentAbsolventenListe from './ShopManagamentAbsolventenListe';
 import { Switch, Route, Link } from "react-router-dom";
 import UserContext from '../../AppContexts/UserContext';
+import ShopManagementManageOTPS from './ShopManagementManageOTPS'
 
 class DataQuickViewMaxTickets extends React.Component {
     constructor(props) {
@@ -259,19 +260,47 @@ class DataQuickViewCreateOTPS extends React.Component {
 
     }
 
+    render() {
+        var Ansicht = [];
+        Ansicht[1] =
+            <Box name="CreateOTPS" className="quickViewOuterBox">
+                <Text>Einlesen einer E-Mail Liste zum Erstellen von One Time Passwörtern:</Text>
+                <Box pad="small"></Box>
+
+                <Text>Initiale Erstellung durchgeführt: </Text><Text weight="bold">{this.switchInitialList()}</Text>
+                <Box className="platzhalter" ></Box>
+                <Box Class-Name="ButtonBox">
+                    <Button className="buttonInDash" label="Liste einlesen" onClick={this.callShopManagementCreateOTPS}></Button>
+                </Box>
+            </Box>
+        return Ansicht;
+    }
+}
+class DataQuickViewManageOTPS extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+
+        this.callShopManagementCreateOTPS = this.callShopManagementCreateOTPS.bind(this)
+    }
+
+    callShopManagementCreateOTPS() {
+        window.location.assign("#/eventmgmt/shop/ManageOTPS")
+    }
 
     render() {
         var Ansicht = [];
-        Ansicht[1] = <Box name="CreateOTPS" className="quickViewOuterBox">
-            <Text>Einlesen einer E-Mail Liste zum Erstellen von One Time Passwörtern:</Text>
-            <Box pad="small"></Box>
-
-            <Text>Initiale Erstellung durchgeführt: </Text><Text weight="bold">{this.switchInitialList()}</Text>
-            <Box className="platzhalter" ></Box>
-            <Box Class-Name="ButtonBox">
-                <Button className="buttonInDash" label="Tickets verwalten" onClick={this.callShopManagementCreateOTPS}></Button>
+        Ansicht[1] =
+            <Box name="CreateOTPS" className="quickViewOuterBox">
+                <Text weight="bold" size="large">Verwaltung der One Time Passwörter</Text>
+                <Box pad="small" align="center">
+                <Text>Zum Erstellen neuer One Time Passwörter für:</Text>
+                <Text weight="bold">- Administratoren</Text>
+                <Text weight="bold">- Absolventen</Text>
+                </Box>              
+                <Button className="buttonInDash" label="One Time Passwort verwalten" onClick={this.callShopManagementCreateOTPS}></Button>
             </Box>
-        </Box>
         return Ansicht;
     }
 }
@@ -309,7 +338,7 @@ class ShopManagement extends React.Component {
         this.getBookings = this.getBookings.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.setConfSalesStatus = this.setConfSalesStatus.bind(this);
-        this.useListAndSendMail = this.useListAndSendMail.bind(this);
+        this.createOTPwithEmailAndRole = this.createOTPwithEmailAndRole.bind(this);
         this.setShopConfigInitialList = this.setShopConfigInitialList.bind(this);
     }
 
@@ -495,8 +524,8 @@ class ShopManagement extends React.Component {
         this.setState({ salesStatus: status });
     }
 
-    //Send Each Element to create a One Time Passwort
-    async useListAndSendMail(eMail) {
+    //Send E-Mail and Role to create a One Time Passwort
+    async createOTPwithEmailAndRole(eMail, role) {
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/oneTimePasses", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -507,7 +536,7 @@ class ShopManagement extends React.Component {
             },
             body: JSON.stringify({
                 email: eMail,
-                targetRole: 1
+                targetRole: role
             })
         }).catch(console.log)
 
@@ -520,10 +549,41 @@ class ShopManagement extends React.Component {
             return;
         }
         if (response.ok) {
-            console.log("One Time Passwort für die E-Mail: " + eMail + " erstellt!")
+            console.log("One Time Passwort für die E-Mail: " + eMail + " und der Rolle: " + role + " erstellt!")
             return 1;
         }
     };
+
+    //TODO: DELETE OTPS 
+    async deleteOTPwithEmail(eMail) {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/oneTimePasses", {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+            body: JSON.stringify({
+                email: eMail
+            })
+        }).catch(console.log)
+
+        if (!response) {
+            console.log("Keine Antwort vom Backend bei der Erstellung des One Time Passworts für die E-Mail:" + eMail)
+            return;
+        }
+        if (!response.ok) {
+            console.log("Fehler bei der Erstellung eines One Time Passwortes: " + response.message)
+            return;
+        }
+        if (response.ok) {
+            console.log("One Time Passwort mit der E-Mail: " + eMail + " gelöscht")
+            return 1;
+        }
+
+
+    }
 
     async setShopConfigInitialList(intialListStatus) {
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/shopConfig", {
@@ -579,8 +639,12 @@ class ShopManagement extends React.Component {
                 </Route>
 
                 <Route path="/eventmgmt/shop/createOTPs">
-                    <ShopManagamentAbsolventenListe useListAndSendMail={this.useListAndSendMail} setShopConfigInitialList={this.setShopConfigInitialList}></ShopManagamentAbsolventenListe>
+                    <ShopManagamentAbsolventenListe createOTPwithEmailAndRole={this.createOTPwithEmailAndRole} setShopConfigInitialList={this.setShopConfigInitialList}></ShopManagamentAbsolventenListe>
                 </Route>
+                <Route path="/eventmgmt/shop/ManageOTPS">
+                    <ShopManagementManageOTPS createOTPwithEmailAndRole={this.createOTPwithEmailAndRole}></ShopManagementManageOTPS>
+                </Route>
+
 
                 <Route path="/eventmgmt/shop">
                     <Box>
@@ -600,6 +664,9 @@ class ShopManagement extends React.Component {
                         <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
                             <DataQuickViewManageSales salesStatus={this.state.salesStatus} setSalesStatus={this.setSalesStatus}></DataQuickViewManageSales>
                             <DataQuickViewCreateOTPS initialList={this.state.initialList}></DataQuickViewCreateOTPS>
+                        </Box>
+                        <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
+                            <DataQuickViewManageOTPS ></DataQuickViewManageOTPS>
                         </Box>
                     </Box>
                 </Route>

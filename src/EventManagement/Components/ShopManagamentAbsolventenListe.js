@@ -36,7 +36,7 @@ class ShopManagamentAbsolventenListe extends React.Component {
         var emailList = this.state.initialeListe;
         var counter = 0
         for (const element of emailList) {
-            var response = await this.props.useListAndSendMail(element.eMail);
+            var response = await this.props.createOTPwithEmailAndRole(element.eMail, 1);
             console.log(response);
             if (response === 1){
                 counter = counter + response   
