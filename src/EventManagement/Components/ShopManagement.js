@@ -453,7 +453,6 @@ class ShopManagement extends React.Component {
                 { Tickettype: "Begleitertickets", Anzahl: data.max_TicketType_1_pro_Absolvent }]
                 this.setState({
                     salesStatus: data.salesStatus,
-                    maxTicketsProEvent: data.max_Tickets_pro_Event,
                     maxPersonenProEvent: data.max_Person_pro_Event,
                     maxTicketsProEvent: data.max_Tickets_pro_Event,
                     initialList: data.initialeOPTListe

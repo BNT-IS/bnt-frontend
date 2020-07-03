@@ -59,6 +59,7 @@ class Hauptansicht extends React.Component {
                         { initializeStep: <Text weight="normal" key="StatusMS">Initialisieren des Mailservers</Text>, doneSteps: this.getConfigured("MS") },
                         { initializeStep: <Text weight="normal" key="StatusAdminWallet">Einrichten des Master-Wallets</Text>, doneSteps: this.getConfigured("AW") },
                         { initializeStep: <Text weight="normal" key="StatusSmartContract">Veröffentlichen des Smart Contracts</Text>, doneSteps: this.getConfigured("DC") },
+                        { initializeStep: <Text weight="normal" key="StatusShopConfig">Anzahl der Plätze, Tickets und VIP-Plätze festlegen</Text>, doneSteps: this.getConfigured("SC") },
                     ]}
                 />
             </Box>
@@ -522,6 +523,23 @@ class ConfigureMailserver extends React.Component {
     }
 }
 
+class ConfigureShopConfig extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { host: "", port: null, conncetion: true, user: "", password: "", standardMail: "", standardPrefix: "" };
+        this.configureTheMailserver = this.configureTheMailserver.bind(this);
+    }
+
+    render(){
+        var Ansicht = []
+
+
+        
+        return Ansicht; 
+    }
+
+}
+
 class SystemSetup extends React.Component {
 
     constructor(props) {
@@ -533,7 +551,7 @@ class SystemSetup extends React.Component {
         this.getValueOfGasPrices = this.getValueOfGasPrices.bind(this);
         this.state = {
             initializeStep: 0,
-            statusMap: new Map([["AW", false], ["DB", false], ["MS", false], ["AL", false], ["AA", false], ["DC", false]]),
+            statusMap: new Map([["AW", false], ["DB", false], ["MS", false], ["AL", false], ["AA", false], ["DC", false], ["SC", false]]),
             gasPrices: new Map([["deployContract", ""], ["createTicket", ""], ["relinquishPlace", ""]]),
             walletAddress: "",
             httpProvider: "",
@@ -599,6 +617,8 @@ class SystemSetup extends React.Component {
 
                 {this.state.initializeStep === 6 && <Hauptansicht statusMap={this.state.statusMap} initializeStep={this.state.initializeStep}
                     changeStep={this.changeStep.bind(this)}></Hauptansicht>}
+
+                 {this.state.initializeStep === 7 && <ConfigureShopConfig></ConfigureShopConfig>}
 
                 {this.state.initializeStep === 0 && <Button onClick={this.changeStep} label="Konfiguration beginnen"></Button>}
                 {this.state.initializeStep !== 0 && this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Schritt überspringen"></Button>}
