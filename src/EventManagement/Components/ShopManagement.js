@@ -73,7 +73,7 @@ class DataQuickViewPayment extends React.Component {
     render() { 
         var bezahl = [];
         if (this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Aktiv" }) };
-        if (!this.props.salesStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
+        if (!this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
         if (this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Aktiv" }) };
         if (!this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Deaktiviert" }) };
         var Ansicht = [];
@@ -825,7 +825,7 @@ class ShopManagement extends React.Component {
             return;
         }
         if (response2.ok) {
-            this.setBankStatus(newPayPalStatus)
+            this.setPayPalStatus(newPayPalStatus)
             if (newPayPalStatus) { console.log("Die PayPal-Verbindung wurde aktiviert!") };
             if (!newPayPalStatus) { console.log("Die PayPal-Verbindung wurde deaktiviert!") };
         }
