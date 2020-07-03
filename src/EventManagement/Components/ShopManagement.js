@@ -73,15 +73,9 @@ class DataQuickViewPayment extends React.Component {
     render() { 
         var bezahl = [];
         if (this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Aktiv" }) };
-<<<<<<< HEAD
         if (!this.props.bankStatus) { bezahl.push ({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
         if(this.props.payPalStatus) { bezahl.push ({ BezahlOption: "PayPal", Status: "Aktiv"})};
         if(!this.props.payPalStatus) { bezahl.push ({ BezahlOption: "PayPal", Status: "Deaktiviert"})};
-=======
-        if (!this.props.salesStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
-        if (this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Aktiv" }) };
-        if (!this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Deaktiviert" }) };
->>>>>>> 872b4e4ee38a0aaaf89a3467e362d8adfd53a88b
         var Ansicht = [];
         Ansicht[0] = <Box name="paymentOptions" className="quickViewOuterBox">
             <Text>Übersicht der konfigurierten Bezahloptionen:</Text>
@@ -537,7 +531,6 @@ class ShopManagement extends React.Component {
                     salesStatus: data.salesStatus,
                     maxTicketsProEvent: data.max_Tickets_pro_Event,
                     maxPersonenProEvent: data.max_Person_pro_Event,
-                    maxTicketsProEvent: data.max_Tickets_pro_Event,
                     initialList: data.initialeOPTListe
                 })
                 console.log("Die Konfiguration wurde erfolgreich eingelesen!");
@@ -774,17 +767,10 @@ class ShopManagement extends React.Component {
                 console.log("Fehler beim Schreiben der Bankverbindung auf den Backend-Server: " + response2.message);
                 return;
             }
-<<<<<<< HEAD
-            if(response2.ok){
-                this.setPayPalStatus(newPayPalStatus)
-                if (newPayPalStatus) { console.log("Die PayPal-Verbindung wurde aktiviert!") };
-                if (!newPayPalStatus) { console.log("Die PayPal-Verbindung wurde deaktiviert!") };
-=======
             if (response2.ok) {
                 this.setBankStatus(newBankStatus)
                 if (newBankStatus) { console.log("Die Bankverbindung wurde aktiviert!") };
                 if (!newBankStatus) { console.log("Die Bankverbindung wurde deaktiviert!") };
->>>>>>> 872b4e4ee38a0aaaf89a3467e362d8adfd53a88b
             }
         }
     };
@@ -852,7 +838,6 @@ class ShopManagement extends React.Component {
         this.setState({ payPalStatus: status });
     }
 
-<<<<<<< HEAD
     async getBankStatus(){
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -909,8 +894,6 @@ class ShopManagement extends React.Component {
 
 
 
-=======
->>>>>>> 872b4e4ee38a0aaaf89a3467e362d8adfd53a88b
     render() {
         return (
             <Switch>
@@ -924,13 +907,8 @@ class ShopManagement extends React.Component {
                 </Route>
 
                 <Route path="/eventmgmt/shop/paymentOptions">
-<<<<<<< HEAD
                     <ShopManagementPaymentOptions bankStatus={this.state.bankStatus} setConfBankStatus={this.setConfBankStatus}
                     payPalStatus={this.state.payPalStatus} setConfPayPalStatus={this.setConfPayPalStatus}  ></ShopManagementPaymentOptions>
-=======
-                    <ShopManagementPaymentOptions bankStatus={this.state.bankStatus} setConfBankStatus={this.setConfBankStatus} payPalStatus={this.state.payPalStatus}
-                        setConfPayPalStatus={this.setConfPayPalStatus}></ShopManagementPaymentOptions>
->>>>>>> 872b4e4ee38a0aaaf89a3467e362d8adfd53a88b
                 </Route>
 
                 <Route path="/eventmgmt/shop/SalesStatistics">
