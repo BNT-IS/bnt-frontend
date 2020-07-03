@@ -4,8 +4,7 @@ import Config from '../../config';
 import './ShopManagement.css';
 import './ShopManagement.js';
 import UserContext from '../../AppContexts/UserContext'
-import { parseJsonText } from 'typescript';
-import { position } from 'polished';
+
 
 class ShopManagementViewBookings extends React.Component {
 
@@ -15,9 +14,9 @@ class ShopManagementViewBookings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            open: [], paid: [], searchOpen: "", searchPaid: "", 
-            headline1: [{id: "ID der Buchung", email: "E-Mail-Adresse des Absolventen", createdAt: "Erstellungsdatum", approve: "Buchung freigeben", cancel: "Buchung stornieren"}],
-            headline2: [{id: "ID der Buchung", email: "E-Mail-Adresse des Absolventen", createdAt: "Erstellungsdatum", cancel: "Buchung stornieren"}]
+            open: [], paid: [], searchOpen: "", searchPaid: "",
+            headline1: [{ id: "ID der Buchung", email: "E-Mail-Adresse des Absolventen", createdAt: "Erstellungsdatum", approve: "Buchung freigeben", cancel: "Buchung stornieren" }],
+            headline2: [{ id: "ID der Buchung", email: "E-Mail-Adresse des Absolventen", createdAt: "Erstellungsdatum", cancel: "Buchung stornieren" }]
         };
         this.changeStep = this.changeStep.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -130,7 +129,7 @@ class ShopManagementViewBookings extends React.Component {
     }
 
     changeStep() {
-        this.props.changeInitializeStep(0);
+        window.location.assign('#/eventmgmt/shop');
     }
 
     searchOpenHandler(event) {
@@ -140,22 +139,22 @@ class ShopManagementViewBookings extends React.Component {
     searchPaidHandler(event) {
         this.setState({ searchPaid: event.target.value });
     }
-    
+
 
     render() {
         var ansicht = [];
         let open;
         var mail = this.state.searchOpen;
-        if(mail !== ""){
-            open = this.state.open.filter((booking) => {return booking.user.email.toLowerCase().includes(mail.toLowerCase())});
+        if (mail !== "") {
+            open = this.state.open.filter((booking) => { return booking.user.email.toLowerCase().includes(mail.toLowerCase()) });
         } else {
             open = this.state.open;
         }
 
         let paid;
         var mail2 = this.state.searchPaid;
-        if(mail2 !== ""){ 
-            paid = this.state.paid.filter((booking) => {return booking.user.email.toLowerCase().includes(mail2.toLowerCase())});
+        if (mail2 !== "") {
+            paid = this.state.paid.filter((booking) => { return booking.user.email.toLowerCase().includes(mail2.toLowerCase()) });
         } else {
             paid = this.state.paid;
         }
@@ -170,18 +169,16 @@ class ShopManagementViewBookings extends React.Component {
                 <Box pad="medium">
                     <Text>Offene Bestellungen: </Text>
                     <Box pad="small">
-                        <TextInput gap="small" placeholder="Zum Suchen in den offenen Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchOpen} onChange={this.searchOpenHandler}></TextInput>
-                    </Box>
-                    <Box pad="small">
-                        <List 
+                        <List
                             pad="medium"
                             alignSelf="stretch"
                             margin="small"
-                            primaryKey={(headline1) => { return <b key={headline1.id + 't'}> {headline1.id || 'Unknown'} </b>}}
+                            primaryKey={(headline1) => { return <b key={headline1.id + 't'}> {headline1.id || 'Unknown'} </b> }}
                             secondaryKey={(headline1) => { return <span key={headline1.id + 's'}> {"|   " + headline1.email + "   |" || 'Unknown'} {headline1.createdAt + "   |" || 'Unknown'} {headline1.approve + "   |" || 'Unknown'} {headline1.cancel + "   |" || 'Unknown'} </span> }}
                             data={this.state.headline1}
                         />
-                        <List  
+                        <TextInput gap="small" placeholder="Zum Suchen in den offenen Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchOpen} onChange={this.searchOpenHandler}></TextInput>
+                        <List
                             pad="medium"
                             alignSelf="stretch"
                             margin="small"
@@ -194,17 +191,15 @@ class ShopManagementViewBookings extends React.Component {
                 <Box pad="medium">
                     <Text>Abgeschlossene Bestellungen: </Text>
                     <Box pad="small">
-                        <TextInput gap="small" placeholder="Zum Suchen in den bezahlten Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchPaid} onChange={this.searchPaidHandler}></TextInput>
-                    </Box>
-                    <Box pad="small">
-                        <List 
+                        <List
                             pad="medium"
                             alignSelf="stretch"
                             margin="small"
-                            primaryKey={(headline2) => { return <b key={headline2.id + 't'}> {headline2.id || 'Unknown'} </b>}}
+                            primaryKey={(headline2) => { return <b key={headline2.id + 't'}> {headline2.id || 'Unknown'} </b> }}
                             secondaryKey={(headline2) => { return <span key={headline2.id + 's'}> {"|   " + headline2.email + "   |" || 'Unknown'} {headline2.createdAt + "   |" || 'Unknown'} {headline2.cancel + "   |" || 'Unknown'} </span> }}
                             data={this.state.headline2}
                         />
+                        <TextInput gap="small" placeholder="Zum Suchen in den bezahlten Buchungen bitte eine E-Mail-Adresse eingeben" value={this.state.searchPaid} onChange={this.searchPaidHandler}></TextInput>
                         <List pad="medium"
                             alignSelf="stretch"
                             margin="small"
