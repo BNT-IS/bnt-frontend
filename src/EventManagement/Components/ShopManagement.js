@@ -11,6 +11,7 @@ import ShopManagementPaymentOptions from './ShopManagementPaymentOptions';
 import { Switch, Route} from "react-router-dom";
 import UserContext from '../../AppContexts/UserContext';
 import ShopManagementManageOTPS from './ShopManagementManageOTPS'
+import ShopManagementViewOTPs from './ShopManagementViewOTPs'
 
 class DataQuickViewMaxTickets extends React.Component {
     constructor(props) {
@@ -281,13 +282,40 @@ class DataQuickViewManageOTPS extends React.Component {
         var Ansicht = [];
         Ansicht[1] =
             <Box name="CreateOTPS" className="quickViewOuterBox">
-                <Text weight="bold" size="large">Verwaltung der One Time Passwörter</Text>
+                <Text weight="bold" size="large">Erstellen neuer One Time Passwörter</Text>
                 <Box pad="small" align="center">
                     <Text>Zum Erstellen neuer One Time Passwörter für:</Text>
                     <Text weight="bold">- Administratoren</Text>
                     <Text weight="bold">- Absolventen</Text>
                 </Box>
                 <Button className="buttonInDash" label="One Time Passwort verwalten" onClick={this.callShopManagementCreateOTPS}></Button>
+            </Box>
+        return Ansicht;
+    }
+}
+
+class DataQuickViewViewOTPs extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+
+        this.callShopManagementViewOTPS = this.callShopManagementViewOTPS.bind(this)
+    }
+
+    callShopManagementViewOTPS() {
+        window.location.assign("#/eventmgmt/shop/ViewOTPs")
+    }
+
+    render() {
+        var Ansicht = [];
+        Ansicht[1] =
+            <Box name="CreateOTPS" className="quickViewOuterBox">
+                <Text weight="bold" size="large">Vorhandene One Time Passwörter</Text>
+                <Box pad="small" align="center">
+                <Text>Liste mit den existierenden One Time Passwörtern und die Möglichkeit einzelne zu löschen.</Text>
+                </Box>
+                <Button className="buttonInDash" label="One Time Passwort verwalten" onClick={this.callShopManagementViewOTPS}></Button>
             </Box>
         return Ansicht;
     }
@@ -727,8 +755,6 @@ class ShopManagement extends React.Component {
         this.setState({ payPalStatus: status });
     }
 
-
-
     render() {
         return (
             <Switch>
@@ -757,8 +783,11 @@ class ShopManagement extends React.Component {
                 <Route path="/eventmgmt/shop/createOTPs">
                     <ShopManagamentAbsolventenListe createOTPwithEmailAndRole={this.createOTPwithEmailAndRole} setShopConfigInitialList={this.setShopConfigInitialList}></ShopManagamentAbsolventenListe>
                 </Route>
-                <Route path="/eventmgmt/shop/ManageOTPS">
+                <Route path="/eventmgmt/shop/ManageOTPs">
                     <ShopManagementManageOTPS createOTPwithEmailAndRole={this.createOTPwithEmailAndRole}></ShopManagementManageOTPS>
+                </Route>
+                <Route path="/eventmgmt/shop/ViewOTPs">
+               <ShopManagementViewOTPs></ShopManagementViewOTPs>
                 </Route>
 
 
@@ -783,6 +812,7 @@ class ShopManagement extends React.Component {
                         </Box>
                         <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
                             <DataQuickViewManageOTPS ></DataQuickViewManageOTPS>
+                            <DataQuickViewViewOTPs></DataQuickViewViewOTPs>
                         </Box>
                     </Box>
                 </Route>

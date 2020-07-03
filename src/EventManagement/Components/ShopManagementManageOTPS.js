@@ -21,11 +21,6 @@ class ShopManagementManageOTPS extends React.Component {
         window.location.assign("#/eventmgmt/shop");
     }
 
-    deleteOTP() {
-
-
-    }
-
     async addOTP() {
         var role;
         if (this.state.role === "Administrator") {
@@ -67,11 +62,9 @@ class ShopManagementManageOTPS extends React.Component {
                     />
                 </Box>
                 <Box pad="medium" direction="row">
-                    <Button label="Löschen" onClick={this.deleteOTP}></Button>
-                    <Box pad="medium"></Box>
+                    <Button label="Zurück" onClick={this.changeToShopMangement}></Button>
                     <Button label="Hinzufügen" onClick={this.addOTP}></Button>
                 </Box>
-                <Button label="Zurück" onClick={this.changeToShopMangement}></Button>
             </Box >
         );
     }
