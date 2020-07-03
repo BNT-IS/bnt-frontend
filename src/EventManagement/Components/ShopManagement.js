@@ -73,9 +73,9 @@ class DataQuickViewPayment extends React.Component {
     render() { 
         var bezahl = [];
         if (this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Aktiv" }) };
-        if (!this.props.bankStatus) { bezahl.push ({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
-        if(this.props.payPalStatus) { bezahl.push ({ BezahlOption: "PayPal", Status: "Aktiv"})};
-        if(!this.props.payPalStatus) { bezahl.push ({ BezahlOption: "PayPal", Status: "Deaktiviert"})};
+        if (!this.props.salesStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
+        if (this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Aktiv" }) };
+        if (!this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Deaktiviert" }) };
         var Ansicht = [];
         Ansicht[0] = <Box name="paymentOptions" className="quickViewOuterBox">
             <Text>Übersicht der konfigurierten Bezahloptionen:</Text>
@@ -529,9 +529,10 @@ class ShopManagement extends React.Component {
                 { Tickettype: "Begleitertickets", Anzahl: data.max_TicketType_1_pro_Absolvent }]
                 this.setState({
                     salesStatus: data.salesStatus,
-                    maxTicketsProEvent: data.max_Tickets_pro_Event,
                     maxPersonenProEvent: data.max_Person_pro_Event,
-                    initialList: data.initialeOPTListe
+                    maxTicketsProEvent: data.max_Tickets_pro_Event,
+                    initialList: data.initialeOPTListe,
+                    maxTicketmenge: maxTickets
                 })
                 console.log("Die Konfiguration wurde erfolgreich eingelesen!");
             }
@@ -907,8 +908,8 @@ class ShopManagement extends React.Component {
                 </Route>
 
                 <Route path="/eventmgmt/shop/paymentOptions">
-                    <ShopManagementPaymentOptions bankStatus={this.state.bankStatus} setConfBankStatus={this.setConfBankStatus}
-                    payPalStatus={this.state.payPalStatus} setConfPayPalStatus={this.setConfPayPalStatus}  ></ShopManagementPaymentOptions>
+                    <ShopManagementPaymentOptions bankStatus={this.state.bankStatus} setConfBankStatus={this.setConfBankStatus} payPalStatus={this.state.payPalStatus}
+                        setConfPayPalStatus={this.setConfPayPalStatus}></ShopManagementPaymentOptions>
                 </Route>
 
                 <Route path="/eventmgmt/shop/SalesStatistics">
