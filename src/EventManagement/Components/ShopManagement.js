@@ -8,8 +8,10 @@ import ShopManagementViewBookings from './ShopManagementViewBookings';
 import ShopManagementManageSalesStatus from './ShopManagementManageSalesStatus';
 import ShopManagamentAbsolventenListe from './ShopManagamentAbsolventenListe';
 import ShopManagementPaymentOptions from './ShopManagementPaymentOptions';
-import { Switch, Route, Link } from "react-router-dom";
+import { Switch, Route} from "react-router-dom";
 import UserContext from '../../AppContexts/UserContext';
+import ShopManagementManageOTPS from './ShopManagementManageOTPS'
+import ShopManagementViewOTPs from './ShopManagementViewOTPs'
 
 class DataQuickViewMaxTickets extends React.Component {
     constructor(props) {
@@ -71,9 +73,15 @@ class DataQuickViewPayment extends React.Component {
     render() { 
         var bezahl = [];
         if (this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Aktiv" }) };
+<<<<<<< HEAD
         if (!this.props.bankStatus) { bezahl.push ({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
         if(this.props.payPalStatus) { bezahl.push ({ BezahlOption: "PayPal", Status: "Aktiv"})};
         if(!this.props.payPalStatus) { bezahl.push ({ BezahlOption: "PayPal", Status: "Deaktiviert"})};
+=======
+        if (!this.props.salesStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
+        if (this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Aktiv" }) };
+        if (!this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Deaktiviert" }) };
+>>>>>>> 872b4e4ee38a0aaaf89a3467e362d8adfd53a88b
         var Ansicht = [];
         Ansicht[0] = <Box name="paymentOptions" className="quickViewOuterBox">
             <Text>Übersicht der konfigurierten Bezahloptionen:</Text>
@@ -243,28 +251,83 @@ class DataQuickViewCreateOTPS extends React.Component {
     }
 
     switchInitialList() {
-        if(this.props.initialList){
+        if (this.props.initialList) {
             return "Eingelesen"
         }
-        if (!this.props.initialList){
+        if (!this.props.initialList) {
             return "Nicht Eingelesen"
         }
 
     }
 
+    render() {
+        var Ansicht = [];
+        Ansicht[1] =
+            <Box name="CreateOTPS" className="quickViewOuterBox">
+                <Text>Einlesen einer E-Mail Liste zum Erstellen von One Time Passwörtern:</Text>
+                <Box pad="small"></Box>
+
+                <Text>Initiale Erstellung durchgeführt: </Text><Text weight="bold">{this.switchInitialList()}</Text>
+                <Box className="platzhalter" ></Box>
+                <Box Class-Name="ButtonBox">
+                    <Button className="buttonInDash" label="Liste einlesen" onClick={this.callShopManagementCreateOTPS}></Button>
+                </Box>
+            </Box>
+        return Ansicht;
+    }
+}
+class DataQuickViewManageOTPS extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+
+        this.callShopManagementCreateOTPS = this.callShopManagementCreateOTPS.bind(this)
+    }
+
+    callShopManagementCreateOTPS() {
+        window.location.assign("#/eventmgmt/shop/ManageOTPS")
+    }
 
     render() {
         var Ansicht = [];
-        Ansicht[1] = <Box name="CreateOTPS" className="quickViewOuterBox">
-            <Text>Einlesen einer E-Mail Liste zum Erstellen von One Time Passwörtern:</Text>
-            <Box pad="small"></Box>
-
-            <Text>Initiale Erstellung durchgeführt: </Text><Text weight="bold">{this.switchInitialList()}</Text>
-            <Box className="platzhalter" ></Box>
-            <Box Class-Name="ButtonBox">
-                <Button className="buttonInDash" label="Tickets verwalten" onClick={this.callShopManagementCreateOTPS}></Button>
+        Ansicht[1] =
+            <Box name="CreateOTPS" className="quickViewOuterBox">
+                <Text weight="bold" size="large">Erstellen neuer One Time Passwörter</Text>
+                <Box pad="small" align="center">
+                    <Text>Zum Erstellen neuer One Time Passwörter für:</Text>
+                    <Text weight="bold">- Administratoren</Text>
+                    <Text weight="bold">- Absolventen</Text>
+                </Box>
+                <Button className="buttonInDash" label="One Time Passwort verwalten" onClick={this.callShopManagementCreateOTPS}></Button>
             </Box>
-        </Box>
+        return Ansicht;
+    }
+}
+
+class DataQuickViewViewOTPs extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+
+        this.callShopManagementViewOTPS = this.callShopManagementViewOTPS.bind(this)
+    }
+
+    callShopManagementViewOTPS() {
+        window.location.assign("#/eventmgmt/shop/ViewOTPs")
+    }
+
+    render() {
+        var Ansicht = [];
+        Ansicht[1] =
+            <Box name="CreateOTPS" className="quickViewOuterBox">
+                <Text weight="bold" size="large">Vorhandene One Time Passwörter</Text>
+                <Box pad="small" align="center">
+                <Text>Liste mit den existierenden One Time Passwörtern und die Möglichkeit einzelne zu löschen.</Text>
+                </Box>
+                <Button className="buttonInDash" label="One Time Passwort verwalten" onClick={this.callShopManagementViewOTPS}></Button>
+            </Box>
         return Ansicht;
     }
 }
@@ -303,7 +366,8 @@ class ShopManagement extends React.Component {
         this.getBookings = this.getBookings.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.setConfSalesStatus = this.setConfSalesStatus.bind(this);
-        this.createOTPWithEmail = this.createOTPWithEmail.bind(this);
+        this.createOTPwithEmailAndRole = this.createOTPwithEmailAndRole.bind(this);
+        this.setShopConfigInitialList = this.setShopConfigInitialList.bind(this);
         this.setBankStatus = this.setBankStatus.bind(this);
         this.setPayPalStatus = this.setPayPalStatus.bind(this);
         this.setConfBankStatus = this.setConfBankStatus.bind(this);
@@ -469,7 +533,13 @@ class ShopManagement extends React.Component {
             else {
                 var maxTickets = [{ Tickettype: "Absolvententickets", Anzahl: data.max_TicketType_0_pro_Absolvent },
                 { Tickettype: "Begleitertickets", Anzahl: data.max_TicketType_1_pro_Absolvent }]
-                this.setState({ salesStatus: data.salesStatus, maxTicketmenge: maxTickets, maxPersonenProEvent: data.max_Person_pro_Event, maxTicketsProEvent: data.max_Tickets_pro_Event })
+                this.setState({
+                    salesStatus: data.salesStatus,
+                    maxTicketsProEvent: data.max_Tickets_pro_Event,
+                    maxPersonenProEvent: data.max_Person_pro_Event,
+                    maxTicketsProEvent: data.max_Tickets_pro_Event,
+                    initialList: data.initialeOPTListe
+                })
                 console.log("Die Konfiguration wurde erfolgreich eingelesen!");
             }
         }
@@ -502,8 +572,7 @@ class ShopManagement extends React.Component {
 
         if (response.ok) {
             this.setMaxTicketMenge(absolvententickets, begleitertickets)
-            console.log("Die Anzahl der Maximalen Tickets pro Absolvent wurde erfolgreich auf: " + " Absolvententicket pro Absolvent: " + absolvententickets +
-                " Begleitertickets pro Absolvent: " + begleitertickets + " geändert!")
+            console.log("Die Anzahl der Maximalen Tickets pro Absolvent wurde erfolgreich geändert!")
         }
     };
 
@@ -564,39 +633,25 @@ class ShopManagement extends React.Component {
     setSalesStatus(status) {
         this.setState({ salesStatus: status });
     }
-    //Send Each Element to create a One Time Passwort
-    async useListAndSendMail(emailList) {
-        if(!emailList){
-            console.log("Die übergebene Liste für die Erstellung der One Time Passwörter ist Leer!")
-            return;
-        }
 
-        var counter = 0;
-
-        emailList.forEach(element => {
-            this.createOTPWithEmail(element)
-        });
-        console.log(counter + " One Time Passwörter erstellt!")
-        this.setState({ initialList: true })
-    }
-
-    async createOTPWithEmail(element) {
-        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/oneTimePass", {
+    //Send E-Mail and Role to create a One Time Passwort
+    async createOTPwithEmailAndRole(eMail, role) {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/oneTimePasses", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ',
+                'Authorization': 'Bearer ' + this.context.token,
             },
             body: JSON.stringify({
-                email: element.email,
-                targetRole: 1
+                email: eMail,
+                targetRole: role
             })
         }).catch(console.log)
 
         if (!response) {
-            console.log("Keine Antwort vom Backend bei der Erstellung des One Time Passworts für die E-Mail:" + element.email)
+            console.log("Keine Antwort vom Backend bei der Erstellung des One Time Passworts für die E-Mail:" + eMail)
             return;
         }
         if (!response.ok) {
@@ -604,72 +659,71 @@ class ShopManagement extends React.Component {
             return;
         }
         if (response.ok) {
-            console.log("One Time Passwort für die E-Mail: " + element.email + " erstellt!")
+            console.log("One Time Passwort für die E-Mail: " + eMail + " und der Rolle: " + role + " erstellt!")
             return 1;
         }
+    };
+
+    //TODO: DELETE OTPS 
+    async deleteOTPwithEmail(eMail) {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/oneTimePasses", {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+            body: JSON.stringify({
+                email: eMail
+            })
+        }).catch(console.log)
+
+        if (!response) {
+            console.log("Keine Antwort vom Backend bei der Erstellung des One Time Passworts für die E-Mail:" + eMail)
+            return;
+        }
+        if (!response.ok) {
+            console.log("Fehler bei der Erstellung eines One Time Passwortes: " + response.message)
+            return;
+        }
+        if (response.ok) {
+            console.log("One Time Passwort mit der E-Mail: " + eMail + " gelöscht")
+            return 1;
+        }
+
+
     }
+    //TODO CHECK
+    async setShopConfigInitialList(intialListStatus) {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/shopConfig", {
+            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+            body: JSON.stringify({
+                initialeOPTListe: intialListStatus
+            })
+        }).catch(console.log)
+
+        if (!response) {
+            console.log("Keine Antwort beim Setzen des Wertes für die intiale OTP-Liste!")
+            return;
+        }
+        if (!response.ok) {
+            console.log("Fehler beim Setzten des Wertes für die intiale OTP-Liste: " + response.message)
+        }
+
+        if (response.ok) {
+            if (intialListStatus) { console.log("Intiale OTP-Liste wurde eingelesen") };
+            this.setState({ initialList: true })
+        }
+    };
 
     async setConfBankStatus(newBankStatus) {
-            var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
-                method: 'GET', // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + this.context.token,
-                },
-            }).catch(console.log)
-    
-            if (!response) {
-                console.log("Keine Antwort beim Abrufen der Bankverbindung vom Backend-Server erhalten!")
-                return;
-            }
-            if (!response.ok) {
-                console.log("Fehler beim Abrufen der Bankverbindung vom Backendserver: " + response.message)
-                return;
-            }
-    
-            if (response.ok) {
-                var paymentOptions = await response.json();
-                paymentOptions.Bank.Aktiviert = newBankStatus;
-                var response2 = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
-                    method: 'PUT', // *GET, POST, PUT, DELETE, etc.
-                    mode: 'cors', // no-cors, *cors, same-origin
-                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + this.context.token,
-                    },
-                    body: JSON.stringify({
-                        Bank: {
-                            Empfänger: paymentOptions.Bank.Empfänger,
-                            Name_der_Bank: paymentOptions.Bank.Name_der_Bank,
-                            IBAN: paymentOptions.Bank.IBAN,
-                            BIC: paymentOptions.Bank.BIC,
-                            Verwendungszweck: paymentOptions.Bank.Verwendungszweck,
-                            Aktiviert: paymentOptions.Bank.Aktiviert
-                        }
-                    })
-                }).catch(console.log)
-
-                if(!response2){
-                    console.log("Keine Antwort beim Schreiben der Bankverbindung auf den Backend-Server!");
-                    return;
-                }
-                if(!response2.ok){
-                    console.log("Fehler beim Schreiben der Bankverbindung auf den Backend-Server: " + response2.message);
-                    return;
-                }
-                if(response2.ok){
-                    this.setBankStatus(newBankStatus)
-                    if (newBankStatus) { console.log("Die Bankverbindung wurde aktiviert!") };
-                    if (!newBankStatus) { console.log("Die Bankverbindung wurde deaktiviert!") };
-                }
-            }
-        };
-    
-
-    async setConfPayPalStatus(newPayPalStatus) {
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -681,17 +735,17 @@ class ShopManagement extends React.Component {
         }).catch(console.log)
 
         if (!response) {
-            console.log("Keine Antwort beim Abrufen der PayPal-Verbindung vom Backend-Server erhalten!")
+            console.log("Keine Antwort beim Abrufen der Bankverbindung vom Backend-Server erhalten!")
             return;
         }
         if (!response.ok) {
-            console.log("Fehler beim Abrufen der PayPal-Verbindung vom Backendserver: " + response.message)
+            console.log("Fehler beim Abrufen der Bankverbindung vom Backendserver: " + response.message)
             return;
         }
 
         if (response.ok) {
             var paymentOptions = await response.json();
-            paymentOptions.PayPal.Aktiviert = newPayPalStatus;
+            paymentOptions.Bank.Aktiviert = newBankStatus;
             var response2 = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
                 method: 'PUT', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, *cors, same-origin
@@ -700,40 +754,105 @@ class ShopManagement extends React.Component {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.context.token,
                 },
-                body: JSON.stringify({    
-                        PayPal: {
-                            PayPal_Link: paymentOptions.PayPal.PayPal_Link,
-                            PayPal_Mail: paymentOptions.PayPal.PayPal_Mail,
-                            PayPal_Verwendung: paymentOptions.PayPal.PayPal_Verwendung,
-                            Aktiviert: paymentOptions.PayPal.Aktiviert
-                        }  
+                body: JSON.stringify({
+                    Bank: {
+                        Empfänger: paymentOptions.Bank.Empfänger,
+                        Name_der_Bank: paymentOptions.Bank.Name_der_Bank,
+                        IBAN: paymentOptions.Bank.IBAN,
+                        BIC: paymentOptions.Bank.BIC,
+                        Verwendungszweck: paymentOptions.Bank.Verwendungszweck,
+                        Aktiviert: paymentOptions.Bank.Aktiviert
+                    }
                 })
             }).catch(console.log)
 
-            if(!response2){
-                console.log("Keine Antwort beim Schreiben der PayPal-Verbindung auf den Backend-Server!");
+            if (!response2) {
+                console.log("Keine Antwort beim Schreiben der Bankverbindung auf den Backend-Server!");
                 return;
             }
-            if(!response2.ok){
-                console.log("Fehler beim Schreiben der PayPal-Verbindung auf den Backend-Server: " + response2.message);
+            if (!response2.ok) {
+                console.log("Fehler beim Schreiben der Bankverbindung auf den Backend-Server: " + response2.message);
                 return;
             }
+<<<<<<< HEAD
             if(response2.ok){
                 this.setPayPalStatus(newPayPalStatus)
                 if (newPayPalStatus) { console.log("Die PayPal-Verbindung wurde aktiviert!") };
                 if (!newPayPalStatus) { console.log("Die PayPal-Verbindung wurde deaktiviert!") };
+=======
+            if (response2.ok) {
+                this.setBankStatus(newBankStatus)
+                if (newBankStatus) { console.log("Die Bankverbindung wurde aktiviert!") };
+                if (!newBankStatus) { console.log("Die Bankverbindung wurde deaktiviert!") };
+>>>>>>> 872b4e4ee38a0aaaf89a3467e362d8adfd53a88b
             }
         }
     };
 
-    setBankStatus(status){
+
+    async setConfPayPalStatus(newPayPalStatus) {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            }
+        }).catch(console.log)
+
+        if (!response) {
+            console.log("Keine Antwort beim Abrufen der PayPal-Verbindung vom Backend-Server erhalten!")
+            return;
+        }
+        if (!response.ok) {
+            console.log("Fehler beim Abrufen der PayPal-Verbindung vom Backendserver: " + response.message)
+            return;
+        }
+        var paymentOptions = await response.json();
+        paymentOptions.PayPal.Aktiviert = newPayPalStatus;
+        var response2 = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
+            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+            body: JSON.stringify({
+                PayPal: {
+                    PayPal_Link: paymentOptions.PayPal.PayPal_Link,
+                    PayPal_Mail: paymentOptions.PayPal.PayPal_Mail,
+                    PayPal_Verwendung: paymentOptions.PayPal.PayPal_Verwendung,
+                    Aktiviert: paymentOptions.PayPal.Aktiviert
+                }
+            })
+        }).catch(console.log)
+
+        if (!response2) {
+            console.log("Keine Antwort beim Schreiben der PayPal-Verbindung auf den Backend-Server!");
+            return;
+        }
+        if (!response2.ok) {
+            console.log("Fehler beim Schreiben der PayPal-Verbindung auf den Backend-Server: " + response2.message);
+            return;
+        }
+        if (response2.ok) {
+            this.setBankStatus(newPayPalStatus)
+            if (newPayPalStatus) { console.log("Die PayPal-Verbindung wurde aktiviert!") };
+            if (!newPayPalStatus) { console.log("Die PayPal-Verbindung wurde deaktiviert!") };
+        }
+    }
+
+    setBankStatus(status) {
         this.setState({ bankStatus: status });
     }
 
-    setPayPalStatus(status){
+    setPayPalStatus(status) {
         this.setState({ payPalStatus: status });
     }
 
+<<<<<<< HEAD
     async getBankStatus(){
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -790,6 +909,8 @@ class ShopManagement extends React.Component {
 
 
 
+=======
+>>>>>>> 872b4e4ee38a0aaaf89a3467e362d8adfd53a88b
     render() {
         return (
             <Switch>
@@ -803,8 +924,13 @@ class ShopManagement extends React.Component {
                 </Route>
 
                 <Route path="/eventmgmt/shop/paymentOptions">
+<<<<<<< HEAD
                     <ShopManagementPaymentOptions bankStatus={this.state.bankStatus} setConfBankStatus={this.setConfBankStatus}
                     payPalStatus={this.state.payPalStatus} setConfPayPalStatus={this.setConfPayPalStatus}  ></ShopManagementPaymentOptions>
+=======
+                    <ShopManagementPaymentOptions bankStatus={this.state.bankStatus} setConfBankStatus={this.setConfBankStatus} payPalStatus={this.state.payPalStatus}
+                        setConfPayPalStatus={this.setConfPayPalStatus}></ShopManagementPaymentOptions>
+>>>>>>> 872b4e4ee38a0aaaf89a3467e362d8adfd53a88b
                 </Route>
 
                 <Route path="/eventmgmt/shop/SalesStatistics">
@@ -816,8 +942,15 @@ class ShopManagement extends React.Component {
                 </Route>
 
                 <Route path="/eventmgmt/shop/createOTPs">
-                    <ShopManagamentAbsolventenListe useListAndSendMail={this.useListAndSendMail}></ShopManagamentAbsolventenListe>
+                    <ShopManagamentAbsolventenListe createOTPwithEmailAndRole={this.createOTPwithEmailAndRole} setShopConfigInitialList={this.setShopConfigInitialList}></ShopManagamentAbsolventenListe>
                 </Route>
+                <Route path="/eventmgmt/shop/ManageOTPs">
+                    <ShopManagementManageOTPS createOTPwithEmailAndRole={this.createOTPwithEmailAndRole}></ShopManagementManageOTPS>
+                </Route>
+                <Route path="/eventmgmt/shop/ViewOTPs">
+               <ShopManagementViewOTPs></ShopManagementViewOTPs>
+                </Route>
+
 
                 <Route path="/eventmgmt/shop">
                     <Box>
@@ -838,6 +971,10 @@ class ShopManagement extends React.Component {
                         <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
                             <DataQuickViewManageSales salesStatus={this.state.salesStatus} setSalesStatus={this.setSalesStatus}></DataQuickViewManageSales>
                             <DataQuickViewCreateOTPS initialList={this.state.initialList}></DataQuickViewCreateOTPS>
+                        </Box>
+                        <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
+                            <DataQuickViewManageOTPS ></DataQuickViewManageOTPS>
+                            <DataQuickViewViewOTPs></DataQuickViewViewOTPs>
                         </Box>
                     </Box>
                 </Route>
