@@ -1,6 +1,6 @@
 import { CSVReader } from 'react-papaparse';
 import React from 'react';
-import { Box, Button, Select, Text, List, TextInput } from 'grommet';
+import { Box, Button, Text, List} from 'grommet';
 
 class ShopManagamentAbsolventenListe extends React.Component {
 
@@ -41,7 +41,7 @@ class ShopManagamentAbsolventenListe extends React.Component {
             if (response === 1){
                 counter = counter + response   
             }
-            if(response != 1){
+            if(response !== 1){
                 console.log("Fehler beim Senden der One Time Passwörter in Unterkomponentte: " + response);
             }  
         }
@@ -59,7 +59,7 @@ class ShopManagamentAbsolventenListe extends React.Component {
         var Ansicht = [];
         var emailList = this.state.initialeListe;
         Ansicht =
-            <Box style style={{ position: 'absolute', left: '40%', top: '10%' }}>
+            <Box style={{ position: 'absolute', left: '40%', top: '10%' }}>
                 <Box pad="medium">
                     <Text size="large" weight="bold">Einlesen der Absolventen Liste</Text>
                 </Box>

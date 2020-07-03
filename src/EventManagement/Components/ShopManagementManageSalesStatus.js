@@ -1,8 +1,7 @@
 import React from 'react';
-import { Box, Button, Text, TextInput, Select } from 'grommet';
+import { Box, Button, Text, Select } from 'grommet';
 import './ShopManagement.css';
 import './ShopManagement.js';
-import Config from '../../config';
 import UserContext from '../../AppContexts/UserContext';
 
 class ShopManagementManageSalesStatus extends React.Component {

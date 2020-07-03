@@ -8,7 +8,7 @@ import ShopManagementViewBookings from './ShopManagementViewBookings';
 import ShopManagementManageSalesStatus from './ShopManagementManageSalesStatus';
 import ShopManagamentAbsolventenListe from './ShopManagamentAbsolventenListe';
 import ShopManagementPaymentOptions from './ShopManagementPaymentOptions';
-import { Switch, Route, Link } from "react-router-dom";
+import { Switch, Route} from "react-router-dom";
 import UserContext from '../../AppContexts/UserContext';
 import ShopManagementManageOTPS from './ShopManagementManageOTPS'
 
@@ -462,8 +462,7 @@ class ShopManagement extends React.Component {
 
         if (response.ok) {
             this.setMaxTicketMenge(absolvententickets, begleitertickets)
-            console.log("Die Anzahl der Maximalen Tickets pro Absolvent wurde erfolgreich auf: " + " Absolvententicket pro Absolvent: " + absolvententickets +
-                " Begleitertickets pro Absolvent: " + begleitertickets + " geändert!")
+            console.log("Die Anzahl der Maximalen Tickets pro Absolvent wurde erfolgreich geändert!")
         }
     };
 
@@ -675,7 +674,7 @@ class ShopManagement extends React.Component {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + this.context.token,
             }
-        }).catch(console.log),
+        }).catch(console.log)
 
         if (!response) {
             console.log("Keine Antwort beim Abrufen der PayPal-Verbindung vom Backend-Server erhalten!")
