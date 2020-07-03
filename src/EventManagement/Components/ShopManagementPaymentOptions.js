@@ -13,7 +13,7 @@ class ShopManagementPaymentOptions extends React.Component {
         super(props);
         this.state = {
             receiverName: "", bankName: "", iban: "", bic: "", verwendung: "", bankAktiviert: false, payPalLink: "", payPalMail: "", payPalVerwendung: "",
-            payPalAktiviert: false, bankStatus: "Deaktiviert", payPalStatus: "Deaktiviert"
+            payPalAktiviert: false, bankStatus: 'Deaktiviert', payPalStatus: 'Deaktiviert'
         }
         this.changeStep = this.changeStep.bind(this);
         this.receiverNameHandler = this.receiverNameHandler.bind(this);
@@ -34,6 +34,21 @@ class ShopManagementPaymentOptions extends React.Component {
 
     changeStep() {
         window.location.assign('#/eventmgmt/shop');
+    }
+
+    componentDidMount(){
+        if(this.props.bankStatus){
+            this.setState({ bankStatus: 'Aktiviert' });
+        }
+        if(!this.props.bankStatus){
+            this.setState({ bankStatus : 'Deaktiviert' });
+        }
+        if(this.props.payPalStatus){
+            this.setState({ payPalStatus: 'Aktiviert' });
+        }
+        if(!this.props.payPalStatus){
+            this.setState({ payPalStatus: 'Deaktiviert' });
+        }
     }
 
     receiverNameHandler(event) {
@@ -161,20 +176,18 @@ class ShopManagementPaymentOptions extends React.Component {
 
     setBankValuesAndChangeStep() {
         var bankStatusBoolean = "";
-        if (this.state.bankStatus === "Deaktiviert") {
+        if (this.state.bankStatus === 'Deaktiviert') {
             bankStatusBoolean = false;
         }
-        if (this.state.bankStatus === "Aktiviert") {
+        if (this.state.bankStatus === 'Aktiviert') {
             bankStatusBoolean = true;
         }
         if (bankStatusBoolean === this.props.bankStatus) {
-            console.log("Der Status der Bankverbindung wurde wurde nicht verändert! Es wird keine Nachricht an das Backend gesendet")
-            window.location.assign("#/eventmgmt/shop");
+            alert("Der Status der Bankverbindung wurde wurde nicht verändert! Es wird keine Nachricht an das Backend gesendet")
             return;
         }
         if (bankStatusBoolean !== this.props.bankStatus) {
             this.props.setConfBankStatus(bankStatusBoolean);
-            window.location.assign("#/eventmgmt/shop");
         }
 
     }
@@ -190,20 +203,18 @@ class ShopManagementPaymentOptions extends React.Component {
 
     setPayPalValuesAndChangeStep() {
         var payPalStatusBoolean = "";
-        if (this.state.payPalStatus === "Deaktiviert") {
+        if (this.state.payPalStatus === 'Deaktiviert') {
             payPalStatusBoolean = false;
         }
-        if (this.state.payPalStatus === "Aktiviert") {
+        if (this.state.payPalStatus === 'Aktiviert') {
             payPalStatusBoolean = true;
         }
         if (payPalStatusBoolean === this.props.payPalStatus) {
-            console.log("Der Status der Bankverbindung wurde wurde nicht verändert! Es wird keine Nachricht an das Backend gesendet")
-            window.location.assign("#/eventmgmt/shop");
+            alert("Der Status der Bankverbindung wurde wurde nicht verändert! Es wird keine Nachricht an das Backend gesendet");
             return;
         }
         if (payPalStatusBoolean !== this.props.payPalStatus) {
             this.props.setConfPayPalStatus(payPalStatusBoolean);
-            window.location.assign("#/eventmgmt/shop");
         }
 
     }

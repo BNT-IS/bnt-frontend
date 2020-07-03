@@ -62,11 +62,16 @@ class DataQuickViewPayment extends React.Component {
         window.location.assign("#/eventmgmt/shop/paymentOptions")
     }
 
+    componentDidMount(){
+        this.props.getBankStatus();
+        this.props.getPayPalStatus();
+    }
 
-    render() {
+
+    render() { 
         var bezahl = [];
         if (this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Aktiv" }) };
-        if (!this.props.salesStatus) { bezahl.push ({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
+        if (!this.props.bankStatus) { bezahl.push ({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
         if(this.props.payPalStatus) { bezahl.push ({ BezahlOption: "PayPal", Status: "Aktiv"})};
         if(!this.props.payPalStatus) { bezahl.push ({ BezahlOption: "PayPal", Status: "Deaktiviert"})};
         var Ansicht = [];
@@ -288,8 +293,8 @@ class ShopManagement extends React.Component {
             statusSales:
                 [{ status: "Verfügbar", Anzahl: 0 },
                 { status: "Verkauft", Anzahl: 0 },
-                { status: "Beantragt", Anzahl: 0 },
-                { status: "Stornieren", Anzahl: 0 }],
+                { status: "Storniert", Anzahl: 0 },
+                { status: "Rollstuhlfahrer", Anzahl: 0 }],
         }
         this.changeInitializeStep = this.changeInitializeStep.bind(this);
         this.getValuesFromConfig = this.getValuesFromConfig.bind(this);
@@ -303,6 +308,10 @@ class ShopManagement extends React.Component {
         this.setPayPalStatus = this.setPayPalStatus.bind(this);
         this.setConfBankStatus = this.setConfBankStatus.bind(this);
         this.setConfPayPalStatus = this.setConfPayPalStatus.bind(this);
+        this.getPayPalStatus = this.getPayPalStatus.bind(this);
+        this.getBankStatus = this.getBankStatus.bind(this);
+        this.getTickets = this.getTickets.bind(this);
+        this.setTickets = this.setTickets.bind(this);
     }
 
     changeInitializeStep(value) {
@@ -312,6 +321,7 @@ class ShopManagement extends React.Component {
     // Initialize Component - Execute Functions for 1. Get Bookings 2. Get Max Tickets
     componentDidMount() {
         this.getBookings();
+        this.getTickets();
         this.getValuesFromConfig();
     }
 
@@ -359,6 +369,72 @@ class ShopManagement extends React.Component {
                 }
                 this.setBookings(bezahlt, unbezahlt, storniert);
             }
+        }
+    }
+
+    async getTickets(){
+        const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/ticketsBooked', {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            }
+        }).catch(console.log)
+
+        if(!response) {
+            console.log("Keine Antwort beim Abruf der Tickets erhalten");
+            return;
+        }
+        if(!response.ok){
+            console.log("Fehler beim Abruf der Tickets: " + response.message);
+            return;
+        }
+        if(response.ok){
+            const rückgabe = await response.json().catch(console.log);
+            if(rückgabe){
+                console.log(rückgabe.length);
+                var verfügbar;
+                var verkauft = 0;
+                var storniert = 0;
+                var rollstuhlFahrer = 0;
+                const response2 = await fetch(Config.BACKEND_BASE_URI + '/api/v2/shopConfig', {
+                    method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            }
+        }).catch(console.log)
+
+            if(!response2){
+                console.log("Keine Antwort beim Abruf der verfügbaren Ticketzahl");
+                return;
+            }
+            if(!response2.ok){
+                console.log("Fehler beim Abruf der verfügbaren Ticketanzahl: " + response2.message);
+            }
+            if(response2.ok){
+                verfügbar = await response2.json().catch(console.log);
+                if(verfügbar){
+                for(var lauf=0; lauf<rückgabe.length; lauf++){
+                    if(rückgabe[lauf].createdAt && rückgabe[lauf].canceled !== true){
+                        verkauft = verkauft + 1;
+                    }
+                    if(rückgabe[lauf].createdAt && rückgabe[lauf].canceled === true){
+                        storniert = storniert + 1;
+                    }
+                    if(rückgabe[lauf].isWheelchairUser === true){
+                        rollstuhlFahrer = rollstuhlFahrer + 1;
+                    }
+                }
+                verfügbar = verfügbar - verkauft;
+                this.setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer);
+            }
+            }
+        }
         }
     }
 
@@ -443,6 +519,14 @@ class ShopManagement extends React.Component {
         { status: "Offen", Anzahl: unbezahlt },
         { status: "Storniert", Anzahl: storniert }];
         this.setState({ statusBookings: data });
+    }
+
+    setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer){
+        var data = [{ status: "Verfügbar", Anzahl: verfügbar },
+        { status: "Verkauft", Anzahl: verkauft },
+        { status: "Storniert", Anzahl: storniert },
+        { status: "Rollstuhlfahrer", Anzahl: rollstuhlFahrer }];
+        this.setState({ statusSales: data });
     }
 
     // Write Sales Status to Config 
@@ -635,7 +719,7 @@ class ShopManagement extends React.Component {
                 return;
             }
             if(response2.ok){
-                this.setBankStatus(newPayPalStatus)
+                this.setPayPalStatus(newPayPalStatus)
                 if (newPayPalStatus) { console.log("Die PayPal-Verbindung wurde aktiviert!") };
                 if (!newPayPalStatus) { console.log("Die PayPal-Verbindung wurde deaktiviert!") };
             }
@@ -648,6 +732,60 @@ class ShopManagement extends React.Component {
 
     setPayPalStatus(status){
         this.setState({ payPalStatus: status });
+    }
+
+    async getBankStatus(){
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+        }).catch(console.log)
+
+        if (!response) {
+            console.log("Keine Antwort beim Abrufen der Bankverbindung vom Backend-Server erhalten!")
+            return;
+        }
+        if (!response.ok) {
+            console.log("Fehler beim Abrufen der Bankverbindung vom Backendserver: " + response.message)
+            return;
+        }
+
+        if (response.ok) {
+            var paymentOptions = await response.json();
+            this.setState({ bankStatus: paymentOptions.Bank.Aktiviert });
+            console.log("Der aktuelle Status der Bankverbindung ist: " + this.state.bankStatus);
+        }
+    }
+
+
+    async getPayPalStatus(){
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+        }).catch(console.log)
+
+        if (!response) {
+            console.log("Keine Antwort beim Abrufen der PayPal-Verbindung vom Backend-Server erhalten!")
+            return;
+        }
+        if (!response.ok) {
+            console.log("Fehler beim Abrufen der PayPal-Verbindung vom Backendserver: " + response.message)
+            return;
+        }
+        if (response.ok) {
+            var paymentOptions = await response.json();
+            this.setState({ payPalStatus: paymentOptions.PayPal.Aktiviert });
+            console.log("Der aktuelle Status der PayPal-Verbindung ist: " + this.state.payPalStatus);
+        }
     }
 
 
@@ -665,8 +803,8 @@ class ShopManagement extends React.Component {
                 </Route>
 
                 <Route path="/eventmgmt/shop/paymentOptions">
-                    <ShopManagementPaymentOptions bankStatus={this.state.bankStatus} setConfBankStatus={this.setConfBankStatus} payPalStatus={this.state.payPalStatus} 
-                            setConfPayPalStatus={this.setConfPayPalStatus}></ShopManagementPaymentOptions>
+                    <ShopManagementPaymentOptions bankStatus={this.state.bankStatus} setConfBankStatus={this.setConfBankStatus}
+                    payPalStatus={this.state.payPalStatus} setConfPayPalStatus={this.setConfPayPalStatus}  ></ShopManagementPaymentOptions>
                 </Route>
 
                 <Route path="/eventmgmt/shop/SalesStatistics">
@@ -690,7 +828,8 @@ class ShopManagement extends React.Component {
                         </Box>
                         <Box ClassName="twoGroupedBoards" direction="row" wrap={true} justify="center">
                             <DataQuickViewMaxTickets maxTicketmenge={this.state.maxTicketmenge}></DataQuickViewMaxTickets>
-                            <DataQuickViewPayment ></DataQuickViewPayment>
+                            <DataQuickViewPayment bankStatus={this.state.bankStatus} getBankStatus={this.getBankStatus} payPalStatus={this.state.payPalStatus} 
+                            getPayPalStatus={this.getPayPalStatus}></DataQuickViewPayment>
                         </Box>
                         <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
                             <DataQuickViewBookings statusBookings={this.state.statusBookings}></DataQuickViewBookings>
