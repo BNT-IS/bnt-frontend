@@ -182,9 +182,16 @@ kann eine Liste mit E-Mail-Adressen eingelesen werden. Die eingelesene Liste wir
 ```
 aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet.
 
+### Entrance Dashboard (Event Management)
+
+### Entrance (Ticketleser)
+ 
+
 # Spezielle Funktionalitäten
 
 ## Login und Benutzer-Erstellung
+
+<img src="./assets/login1.png" width="150px" alt="Screenshot zur Anmeldung"> <img src="./assets/login2.png" width="150px" alt="Screenshot zur Anmeldung"> <img src="./assets/login3.png" width="150px" alt="Screenshot zur Anmeldung"> <img src="./assets/login4.png" width="150px" alt="Screenshot zur Anmeldung">
 
 Zum Anmelden des Benutzers existiert die Komponente Login. Hiermit kann ein neuer Account mithilfe eines Einmal-Passworts (OTP) erstellt werden. Das entsprechende OTP muss zuvor vom Admin angelegt werden und zeigt auf eine vordefinierte Rolle und eine unveränderliche E-Mailadresse.
 
@@ -214,7 +221,34 @@ Aktuelle, weitverbreitete Webbrowser unterstützen die sogenannte WebRTC API. Mi
 
 Für den Anwendungsfall "Ticketleser" wird zwischen Master und Client unterschieden. Die Master-Komponente ist im Event-Management-Bereich der Frontend-Applikation angesiedelt. Die Client-Komponente bestimmt die Nutzbarkeit der Einlass-Komponenten (Ticketleser). Es ist vorgesehen, dass die Kommunikation über ein lokales Netzwerk stattfindet. Somit ist es Voraussetzung, dass die Applikations-Teile von Master und Client bereits auf den entsprechenden Geräten als offline verfügbare Progressive-Web-App zwischengespeichert wurde. Dazu sollte mindestens einmal die entsprechende URL des Ticket-systems online aufgerufen worden sein. Der Master sollte zudem die Ticket-Daten von der Blockchain auf die lokale Indexed DB gespiegelt haben. Anschließend müssen alle Geräte, die miteinander kommunizieren sollen mit demselben Netzwerk verbunden sein. Für diesen "Offline-Betrieb" im lokalen Netzwerk ist jedoch keine Verbindung zum Internet erforderlich. Ein solch drahtloses und lokales Netzwerk könnte per Accesspoint aber auch per Handy-Hotspot errichtet werden.
 
-Die Kommunikation per RTCPeerConnection erfolgt über einen sogenannten Datachannel. Pro Ende-zu-Ende (Master->Client) Verbindung gibt es einen eigenen Datachannel. Dennoch könnten verschiedene Befehle über diesen Channel geschickt werden. Beispielsweise, um ein Ticket auszulesen oder es zu entwerten. Aber auch andere Anfragen oder Ereignisse könnten zukünftig auch vom Master aus an jeden einzelnen Ticketleser verschickt werden. Damit die Systeme die verschiedenen Nachrichtenarten (Anfragen bzw. Antworten) unterscheiden können und wissen, was sie damit anfangen sollen, wird ein einheitliches Protokoll mit definierten Datenstrukturen der Nachrichten benötigt. 
+*Hinweis: Die folgend dargestellten Klassen liegen im "Classes" Verzeichnis von EventManagement*
+
+<img src="./assets/RTCP2PVerbindungsaufbau.png" alt="Sequenzdiagramm des Verbindungsaufbaus">
+
+Die Kommunikation per RTCPeerConnection erfolgt über einen sogenannten Datachannel. Pro Ende-zu-Ende (Master->Client) Verbindung gibt es einen eigenen Datachannel. Dennoch könnten verschiedene Befehle über diesen Channel geschickt werden. Beispielsweise, um ein Ticket auszulesen oder es zu entwerten. Aber auch andere Anfragen oder Ereignisse könnten zukünftig auch vom Master aus an jeden einzelnen Ticketleser verschickt werden. Damit die Systeme die verschiedenen Nachrichtenarten (Anfragen bzw. Antworten) unterscheiden können und wissen, was sie damit anfangen sollen, wird ein einheitliches Protokoll mit definierten Datenstrukturen der Nachrichten benötigt. Im folgenden sind daher zwie Datenstrukturen definiert die zum Versenden von Anfragen oder Antworten genutzt werden.
+
+**Nachrichten-Aufbau einer Anfrage:**
+
+```
+{ 
+    type: "Request",  
+    reqId: !Unique! String, 
+    context: String, 
+    method: String, 
+    params: [Any]
+}
+```
+
+**Nachrichten-Aufbau einer Antwort:**
+
+```
+{ 
+    type: "Answer", 
+    reqId: !Unique! String, 
+    result: Any,
+    error: String
+}
+```
 
 Für das konkrete Konzept werden hauptsächlich Anfragen vom Ticket-Leser gestellt: 
 
