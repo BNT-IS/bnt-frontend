@@ -79,9 +79,6 @@ class TicketBestellung extends React.Component {
 
     }
 
-    // @Nils Für das generieren des Identifiers für das Ticket einfach erstmal eine Zufallszahl nehmen!
-    // Aber bitte eine extra Funktion für generieren des Ticket-Identifiers anlegen, dann können wir später gemeinsam den "echten/sicheren" Identifier-Generator programmieren
-
     onInputHandler(event, type) {
         if (type === "forename") {
             this.setState({
@@ -169,14 +166,13 @@ class TicketBestellung extends React.Component {
             //Error Handling
         }
         if (response.ok){
-            console.log(response);
             var configData = await response.json();
-            console.log(configData);
             this.state.MaxAnzahlAbsolvententickets = configData.max_TicketType_0_pro_Absolvent;
             this.state.MaxAnzahBesuchertickets = configData.max_TicketType_1_pro_Absolvent;
-            console.log(this.state.MaxAnzahlAbsolvententickets);
-            console.log(this.state.MaxAnzahBesuchertickets);
-            
+            if(!configData.salesStatus){
+                alert("Der Ticketverkauf ist derzeit nicht aktiv!");
+                this.context.redirectUserToHome();
+            }
         }
     }
 
@@ -202,23 +198,19 @@ class TicketBestellung extends React.Component {
 
 
         var result = await response.json().catch(console.log);
-        console.log(result)
         this.setState({ bookingResult: result });
 
         if (!result) {
             this.setState({ step: 100 });
             return;
         }
-        console.log(result);
 
         await this.createTickets();
     }
 
     async createTickets() {
-        console.log(this.state)
         let bookingResult = this.state.bookingResult.id;
         for (let element of this.state.persons) {
-            console.log(element);
             var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/ticketsBooked", {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, *cors, same-origin
@@ -246,7 +238,6 @@ class TicketBestellung extends React.Component {
                 this.setState({ step: 100 });
                 return;
             }
-            console.log(result)
         }
 
         //Ticket für Absolvent in DB schreiben
@@ -279,12 +270,10 @@ class TicketBestellung extends React.Component {
             this.setState({ step: 100 });
             return;
         }
-        console.log(result);
 
         //Parkticket in DB schreiben
         let anzahlparktick = this.state.parkcount;
         for (var i = 0; i < anzahlparktick; i++) {
-            // console.log(element);
             response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/ticketsBooked", {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, *cors, same-origin
@@ -312,14 +301,12 @@ class TicketBestellung extends React.Component {
                 this.setState({ step: 100 });
                 return;
             }
-            console.log(result)
         }
 
     }
 
 
     render() {
-        console.log(this.state.persons)
         return (
             <Box className="TicketBestellung" direction="column" gap="medium" pad="medium">
 
