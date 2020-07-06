@@ -41,22 +41,27 @@ class Login extends React.Component {
     }
 
     pass1Handler(event) {
+        //Aktualisiert das eingegebene Passwort im TextInput
         this.setState({ pass1: event.target.value });
     }
 
     pass2Handler(event) {
+        //Aktualisiert das eingegebene Passwort zur Bestätigung im TextInput
         this.setState({ pass2: event.target.value });
     }
 
     mailHandler(event) {
+        //Aktualisiert die eingegebene E-Mail-Adresse im TextInput
         this.setState({ dhbw_mail: event.target.value });
     }
 
     loginPassHandler(event) {
+        //Aktualisiert das eingegebene Passwort zur Anmeldung im TextInput
         this.setState({ login_pass: event.target.value });
     }
 
     verifyPasswort() {
+        //Überprüft, ob Passwort1 und Passwort2 übereinstimmen
         if (this.state.pass1 === this.state.pass2) {
             alert("Die angegebenen Passwörter stimmen überein!");
             this.createUser(this.state.pass2);
@@ -103,6 +108,7 @@ class Login extends React.Component {
     }
 
     async login() {
+        //Führt anhand der eingegebenen Mail-Adresse und des eingegebenen Passworts eine Anmeldung aus
         const response = await fetch(Config.BACKEND_BASE_URI + '/auth/login', {
             method: 'POST',
             mose: 'cors',
@@ -136,6 +142,7 @@ class Login extends React.Component {
     }
 
     handleFinalLogin(userData) {
+        //Schreibt nach der Anmeldung die spezifischen Userdaten in den UserContext und leitet ihn auf die Startseite weiter
         this.context.setUserContext(userData);
         this.context.redirectUserToHome();
     }
@@ -179,6 +186,7 @@ class Login extends React.Component {
                         </Box>
                     }
                     {this.state.step === 2 &&
+                        //Vergabe eines neuen Passwortes, muss durch zweifache Eingabe bestätigt werden
                         <Box classname="Passwortvergabe" direction="column" gap="small">
                             <Heading>Passwortvergabe</Heading>
                             <Text>Bitte vergeben Sie ein neues Passwort für Ihren Account</Text>
@@ -188,6 +196,7 @@ class Login extends React.Component {
                         </Box>
                     }
                     {this.state.step === 6 &&
+                        //Anmeldefenster für bestehende Accounts
                         <Box gap="small">
                             <Heading>Anmeldung mit einem vorhandenen Account</Heading>
                             <TextInput placeholder="DHBW-Mailadresse eingeben" value={this.state.dhbw_mail} onChange={this.mailHandler}></TextInput>
