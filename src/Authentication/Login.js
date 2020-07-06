@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, TextInput, Text, Header } from 'grommet';
+import { Box, Button, TextInput, Text, Header, Heading } from 'grommet';
 import Config from '../config';
 import UserContext from '../AppContexts/UserContext';
 
@@ -162,6 +162,7 @@ class Login extends React.Component {
                     {this.state.step === 0 &&
                         //Startseite des Accountmanagements, Auswahl zwischen Neuanlage eines Áccounts und Anmeldung mit einem bestehenden Account
                         <Box gap="small">
+                            <Heading>Login</Heading>
                             <Text>Klicke hier, um einen neuen Account anzulegen</Text>
                             <Button label="Neuen Account anlegen" gap="small" onClick={this.setState1}></Button>
                             <Text>Klicke hier, um dich mit einem bestehenden Account anzumelden</Text>
@@ -171,6 +172,7 @@ class Login extends React.Component {
                     {this.state.step === 1 &&
                         //Eingabe des persönlichen OTP's
                         <Box gap="small">
+                            <Heading>Angabe des Einmal-Passworts</Heading>
                             <Text>Bitte geben Sie das OneTime-Passwort ein, das wir an Ihre DHBW-Mailadresse versendet haben, und bestätigen Sie die Eingabe</Text>
                             <TextInput placeholder="OTP eingeben" value={this.state.otp} onChange={this.otpInputHandler}></TextInput>
                             <Button label="Eingabe bestätigen" onClick={this.otpBestätigen}></Button>
@@ -178,7 +180,7 @@ class Login extends React.Component {
                     }
                     {this.state.step === 2 &&
                         <Box classname="Passwortvergabe" direction="column" gap="small">
-                            <h1>Passwortvergabe</h1>
+                            <Heading>Passwortvergabe</Heading>
                             <Text>Bitte vergeben Sie ein neues Passwort für Ihren Account</Text>
                             <TextInput placeholder="Neues Passwort vergeben" value={this.state.pass1} onChange={this.pass1Handler}></TextInput>
                             <TextInput placeholder="Neues Passwort bestätigen" value={this.state.pass2} onChange={this.pass2Handler}></TextInput>
@@ -187,7 +189,7 @@ class Login extends React.Component {
                     }
                     {this.state.step === 6 &&
                         <Box gap="small">
-                            <h1>Anmeldung mit einem vorhandenen Account</h1>
+                            <Heading>Anmeldung mit einem vorhandenen Account</Heading>
                             <TextInput placeholder="DHBW-Mailadresse eingeben" value={this.state.dhbw_mail} onChange={this.mailHandler}></TextInput>
                             <TextInput placeholder="Account-Passwort eingeben" value={this.state.login_pass} onChange={this.loginPassHandler}></TextInput>
                             <Button label="Anmelden" onClick={this.login}></Button>

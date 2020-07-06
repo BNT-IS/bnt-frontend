@@ -114,7 +114,7 @@ class EventManagement extends React.Component {
                             <li><Link to="/eventmgmt/shop">Shop Management</Link></li>
                         </ul>
                     </Box>
-                    <Box className="main-content">
+                    <Box className="main-content" pad="medium">
                         <Switch>
                             <Route path="/eventmgmt/rtrm">
                                 <TicketReaderManager RTRList={this.state.RTRList} onRTR={this.rTRHandler}></TicketReaderManager>

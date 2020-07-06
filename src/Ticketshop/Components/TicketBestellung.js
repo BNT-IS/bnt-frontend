@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Text, TextInput, CheckBox } from 'grommet';
+import { Box, Button, Text, TextInput, CheckBox, Heading } from 'grommet';
 import Config from '../../config';
 
 import UserContext from '../../AppContexts/UserContext';
@@ -99,7 +99,7 @@ class TicketBestellung extends React.Component {
 
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.ShopConfig();
     }
     //Wechsel der Ansichtenfenster
@@ -161,15 +161,15 @@ class TicketBestellung extends React.Component {
                 'Authorization': 'Bearer ' + this.context.token,
             },
         }).catch(console.log);
-        if (!response.ok){
-            alert (response.message);
+        if (!response.ok) {
+            alert(response.message);
             //Error Handling
         }
-        if (response.ok){
+        if (response.ok) {
             var configData = await response.json();
             this.state.MaxAnzahlAbsolvententickets = configData.max_TicketType_0_pro_Absolvent;
             this.state.MaxAnzahBesuchertickets = configData.max_TicketType_1_pro_Absolvent;
-            if(!configData.salesStatus){
+            if (!configData.salesStatus) {
                 alert("Der Ticketverkauf ist derzeit nicht aktiv!");
                 this.context.redirectUserToHome();
             }
@@ -312,17 +312,19 @@ class TicketBestellung extends React.Component {
 
                 {this.state.step === 0 &&
                     <Box gap="small">
-                        <Text>Bitte tragen Sie ihren Namen in die Felder ein und bestätigen Sie die Eingabe mit dem Button!</Text>
+                        <Heading>Angaben zu Ihnen</Heading>
+                        <Text>Bitte tragen Sie Ihren vollständigen Namen ein.</Text>
                         <TextInput name="forename" placeholder="Vorname des Absolventen" value={this.state.graduate.forename} onChange={(event) => this.onInputHandler(event, "forename")}></TextInput>
                         <TextInput name="surname" placeholder="Nachname des Absolventen" value={this.state.graduate.surname} onChange={(event) => this.onInputHandler(event, "surname")}></TextInput>
                         <CheckBox name="isWheelchairUser" label="Rollstuhlfahrer bitte ankreuzen" value={this.state.graduate.isWheelchairUser} onChange={this.onCheckBox} checked={this.state.isWheelchairUser} />
-                        <Button label=" Ein Absolventen Ticket kaufen" onClick={this.windowGuestTicket} gap="small"></Button>
+                        <Button label="Weiter" onClick={this.windowGuestTicket} gap="small"></Button>
                     </Box>
                 }
 
                 {this.state.step === 1 &&
                     <Box gap="small">
-                        <Text>Bitte geben sie an, wie viele Begleitpersonen Sie mitnehmen wollen.</Text>
+                        <Heading>Angaben zu Begleitpersonen</Heading>
+                        <Text>Bitte geben Sie an, wie viele Begleitpersonen Sie mitnehmen wollen.</Text>
                         <Button onClick={() => this.increment("guest")} className="guestcount" label="+"></Button>
                         <Button onClick={() => this.decrement("guest")} className="guestcount" label="-"></Button>
                         <h2>Anzahl der Begleitpersonen: {this.state.guestcount}</h2>
@@ -334,7 +336,8 @@ class TicketBestellung extends React.Component {
 
                 {this.state.step === 2 &&
                     <Box gap="small">
-                        <Text>Bitte geben sie an, wie viele Parktickets Sie benötigen.</Text>
+                        <Heading>Parktickets</Heading>
+                        <Text>Bitte geben Sie an, wie viele Parktickets Sie benötigen.</Text>
                         <Button onClick={() => this.increment("park")} className="parkcount" label="+"></Button>
                         <Button onClick={() => this.decrement("park")} className="parkcount" label="-"></Button>
                         <h2>Anzahl der Parktickets: {this.state.parkcount}</h2>
@@ -346,9 +349,9 @@ class TicketBestellung extends React.Component {
                 {this.state.step === 3 &&
                     <Box gap="small">
                         <Text>Sie haben folgende Tickets bestellt: <br />
-                    Absolventent: 1 <br />
-                    Begleitpersonen: {this.state.guestcount} <br />
-                    Parkticket {this.state.parkcount}
+                            Absolventent: 1 <br />
+                            Begleitpersonen: {this.state.guestcount} <br />
+                            Parkticket: {this.state.parkcount}
                         </Text>
                         <Button onClick={this.windowParkTicket} label="Zurück"></Button>
                         <Button onClick={this.toPayment} label="Zahlungspflichtig bestellen"></Button>
@@ -357,21 +360,21 @@ class TicketBestellung extends React.Component {
                 {this.state.step === 4 &&
                     <Box gap="small">
                         <Text>Sie haben folgende Tickets Zahlungspflichtig bestellt.  <br />
-                    Bitte überweisen Sie folgenden Betrag auf das Konto: XXXXYYYYZZZZ.<br />
-                    Geben Sie ihren Namen als Verwendungszweck an.<br />
-                    Nach Rechnungseingang erhalten Sie Ihre Tickets an ihr Wallet gesendet.<br />
+                            Bitte überweisen Sie folgenden Betrag auf das Konto: XXXXYYYYZZZZ.<br />
+                            Geben Sie ihren Namen als Verwendungszweck an.<br />
+                            Nach Rechnungseingang erhalten Sie Ihre Tickets an ihr Wallet gesendet.<br />
                         </Text>
                         <Text>Sie haben folgende Tickets bestellt: <br />
-                    Absolventent: 1 <br />
-                    Begleitpersonen: {this.state.guestcount} <br />
-                    Parkticket: {this.state.parkcount}
+                            Absolventent: 1 <br />
+                            Begleitpersonen: {this.state.guestcount} <br />
+                            Parkticket: {this.state.parkcount}
                         </Text>
                     </Box>
                 }
 
                 {this.state.step === 100 &&
                     <Box gap="small">
-                        <Text>Es ist ein Fehler beim Bestellvorgang aufgetreten. Bitte versuche Sie es erneut.</Text>
+                        <Text>Es ist ein Fehler beim Bestellvorgang aufgetreten. Bitte versuche Sie es später erneut.</Text>
                     </Box>
                 }
 
