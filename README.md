@@ -184,8 +184,26 @@ aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mai
 
 ### Entrance Dashboard (Event Management)
 
+<img src="./assets/entranceDashboard1.png" width="150px" alt="Screenshot des EntranceDashboards leer"> <img src="./assets/entranceDashboard2.png" width="150px" alt="Screenshot des EntranceDashboards mit Daten-Dump">
+
+Das Einlass Dashboard ist zur Überwachung des aktuellen Einlass-Prozesses da. Es stellt die absolute Anzahl der eingelassenen Personen (Kategorie 1), sowie die Anzahl der noch nicht eingelösten Tickets dar (Kategorie 2). Grafische Darstellungen in Form von Balken-Diagrammen veranschaulichen den relativen Anteil der beiden Kategorien.
+
+Diese Komponente macht sich die Offline-Funktionalität und Indexed-DB zur Nutze. Ein Klick auf den Download Button reicht aus, um vom Backend ein Dump der Ticket-Daten aus Blockchain und interner DB anzufordern. Anschließend wird die Schaltfläche zum Schutz vor versehentlichem Überschreiben deaktiviert. Erst durch den darunterliegenden Schalter, welcher eine Warnung ausgibt, kann der Offline-Datensatz komplett nue geladen (überschrieben) werden.
+
+Für Details zur Indexed-DB siehe Kapitel "Spezielle Funktionalitäten".
+
+### Ticket Leser Management (Event Management)
+
+<img src="./assets/ticketReaderMgr1.png" width="150px" alt="Screentshot Ticket-Leser Manager"> <img src="./assets/ticketReaderMgr2.png" width="150px" alt="Screentshot Ticket-Leser Manager"> <img src="./assets/ticketReaderMgr3.png" width="150px" alt="Screentshot Ticket-Leser Manager">
+
+Diese Komponente wurde zum Hinzufügen und Entfernen von Remote-Ticketlesern für den Einlass entwickelt. Ein Remote-Ticketleser kann mithilfe eines entsprechenden Dialogs, der mithilfe von QR-Codes zwischen Ticketleser und dieser Komponente Kommunikations-Konfigurationen austauscht, angelegt werden. Für eine Detailiierte beschreibung zum Thema Peer-to-Peer Kommunikation der Ticketleser zum Master, siehe "Spezielle Fumktionalitäten".
+
+Wurde ein Remote-Ticketleser hinzugefügt (neue Instanz der Klasse RemoteTicketReader), wird der aktuelle Verbindungsstatus in der Liste auf dieser Komponente angezeigt. Wird die Verbindung kurzzeitig unterbrochen, so wird die Statusanzeige aktualisiert. Ist die Verbindung dauerhaft fehlgeschlagen, so wird der Ticketleser aus der Liste entfernt.
+
+Würde diese Komponente geschlossen, würden alle Instanzen der Remote-Ticketleser vom Garbage-Collector gelöscht werden. Um das zu verhindern, werden die Instanzen der RemoteTicketReader-Klasse in der Komponente EventManagement in einem Array gehalten. Der Ticket-Leser-Manager erhält die Liste per React-Properties. Somit kann nachdem der Administrator einige Ticketleser aktiviert hat, auf die Komponente des Entrance-Dashboard wechseln.
+
 ### Entrance (Ticketleser)
- 
+
 
 # Spezielle Funktionalitäten
 
@@ -201,7 +219,7 @@ Nach einer normalen Anmeldung mit E-Mail-Adresse und Passwort erhält das Fronte
 
 In beiden Situationen ist der Benutzer anschließend angemeldet. Der entsprechende UserContext (siehe nächster Abschnitt) hält zur Laufzeit benötigte Funktionen zur verfügung.
 
-## Globaler Benutzer Kontext (UserContext)
+## Globaler Benutzer-Kontext (UserContext)
 
 Um über die App hinweg ein global verfügbares Benutzer-Objekt zu haben und Berechtigungen zu überprüfen, wird von der Hauptkomponente (App.js) ein React-Context erzeugt. Dieser hält den angemeldeten Benutzer mit seinen Eigenschaften, den aktuellen API-Token und einige nützliche Funktionen. Die Eigenschaften und Methoden sind im Detail wie folgt aufgebaut:
 
@@ -216,7 +234,9 @@ Um über die App hinweg ein global verfügbares Benutzer-Objekt zu haben und Ber
 }
 ```
 
-## Ticketleser und Ticketmaster (Peer-to-Peer)
+## Offline-Funktionalität und Indexed DB für den Einlass
+
+## Verbindung zwischen Ticketleser und Ticketlesermaster (Peer-to-Peer)
 Aktuelle, weitverbreitete Webbrowser unterstützen die sogenannte WebRTC API. Mithilfe dieser API kann eine Peer-to-Peer Verbindung zwischen zwei unabhängigen Geräten über den Webbrowser aufgebaut werden. Voraussetzung ist eine bestehende Netzwerkverbindung, die entweder über das Internet eine Kommunikation ermöglicht oder direkt über ein lokales Netzwerk. Für detaillierte Informationen über die einzelnen Komponenten dieser API sollte die Referenz zur Rate gezogen werden.
 
 Für den Anwendungsfall "Ticketleser" wird zwischen Master und Client unterschieden. Die Master-Komponente ist im Event-Management-Bereich der Frontend-Applikation angesiedelt. Die Client-Komponente bestimmt die Nutzbarkeit der Einlass-Komponenten (Ticketleser). Es ist vorgesehen, dass die Kommunikation über ein lokales Netzwerk stattfindet. Somit ist es Voraussetzung, dass die Applikations-Teile von Master und Client bereits auf den entsprechenden Geräten als offline verfügbare Progressive-Web-App zwischengespeichert wurde. Dazu sollte mindestens einmal die entsprechende URL des Ticket-systems online aufgerufen worden sein. Der Master sollte zudem die Ticket-Daten von der Blockchain auf die lokale Indexed DB gespiegelt haben. Anschließend müssen alle Geräte, die miteinander kommunizieren sollen mit demselben Netzwerk verbunden sein. Für diesen "Offline-Betrieb" im lokalen Netzwerk ist jedoch keine Verbindung zum Internet erforderlich. Ein solch drahtloses und lokales Netzwerk könnte per Accesspoint aber auch per Handy-Hotspot errichtet werden.
