@@ -257,7 +257,7 @@ class DeploySmartContract extends React.Component {
                 <Box pad="medium"></Box>
                 <Text> Das Guthaben des Wallets beträgt: {this.state.walletBalance}</Text>
                 <Text> Der Preis für die Erstellung eines Tickets beträgt: {this.props.getValueOfGasPrices("createTicket")}</Text>
-                <Text> Der Preis für die Erstellung eines Tickets beträgt: {this.props.getValueOfGasPrices("relinquishPlace")}</Text>
+                <Text> Der Preis für die Übertragung eines Tickets beträgt: {this.props.getValueOfGasPrices("relinquishPlace")}</Text>
                 <Button onClick={this.props.changeStep} label="Weiter"></Button>
             </Box>
         }

@@ -110,63 +110,6 @@ ROUTE
 aktiviert oder deaktiviert werden. Die Route ändert den Wert hierfür in der Konfigurationsdatei des Backends.
 
 
-
-### SystemSetup
-Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich.
-Die Komponente besteht aus den Klassen:
-- Hauptansicht
-- AddWallet
-- ConfigureAdminAccount
-- ConfigureDatabase
-- ConfigureMailserver
-- AbsolventenListe
-- SystemSetup
-
-Die Klasse SystemSetup verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
-
-Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 6) des Einrichtungsvorgangs angezeigt.
-
-Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route "setup/generateWallet" an das Backend. Das Backend erstellt ein Wallet für den Admin.
-
-```
-{
-    httpProvider: String
-}
-DNS-Name des http-Providers:Port
-```
-
-Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Mail-Adresse und ein Passwort für den Administratorbenuzter zur Verfügung. Über die Route "/setup/adminUser" im Backend wird der Administratorbenutzer (Rolle 0) erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
-```
-{
-    email: String, 
-    Passwort: String    
-}
-```
-
-Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route "/setup/database" werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
-```
-{ 
-    host: String, 
-    user: String, 
-    password: String, 
-    db: String, 
-    port: String
-}
-```
-
-Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route "/setup/mailserver" werden die Einstellungen in die Konfiguration im Backend gespeichert.
-```
-{
-     host: String, 
-     port: String, 
-     conncetion: Boolean, 
-     user: String, 
-     password: String, 
-     standardMail: String,
-     standardPrefix: String
-}
-```
-
 Die Klasse AbsolventenListe stellt ein CSV-Reader Feld der Komponente "react-papaparse" zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
 ```
 E-Mail;Name
@@ -177,9 +120,98 @@ Beispiel@web.de; Mustermann, Max
 ```
 kann eine Liste mit E-Mail-Adressen eingelesen werden. Die eingelesene Liste wird in der Komponente in einer Liste angezeigt. Durch die Bestätigung der eingelesen Liste mit dem Button Abschließen wird für jeden Datensatz in der Liste die Route
 ```
-
+    Route: 
 ```
 aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet.
+
+
+### SystemSetup
+Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich.
+Die Komponente besteht aus den Klassen:
+- SystemSetup
+- Hauptansicht
+- ConfigureDatabase
+- ConfigureAdminAccount
+- ConfigureMailserver
+- AddWallet
+- DeploySmartContract
+- ConfigureShopConfig
+
+#### SystemSetup
+Die Klasse SystemSetup verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
+
+#### Hauptansicht
+Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 7) des Einrichtungsvorgangs angezeigt.
+
+#### ConfigureDatabase
+Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route 
+```
+{ 
+    Route: */setup/database
+}
+```
+werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
+
+#### ConfigureAdminAccount
+Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Mail-Adresse und ein Passwort für den Administratorbenuzter zur Verfügung. 
+
+```
+{
+    Voraussetzungen: Intitialisierte Datenbank
+}
+```
+
+Über die Route 
+```
+{
+    Route: */setup/adminUser
+}
+```
+im Backend wird der Administratorbenutzer (Rolle 0) erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
+
+#### ConfigureMailserver
+Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route  
+```
+{
+    Route: */setup/mailserver
+}
+```
+werden die Einstellungen in die Konfiguration im Backend gespeichert.
+
+#### AddWallet
+Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route 
+```
+{
+   Route: */setup/generateWallet
+}
+```
+an das Backend. Das Backend erstellt ein Wallet für den Admin. Ist die Einrichtung des Wallets erfolgreich abgeschlossen, zeigt die Ansicht der Komponente den Ethereum-Preis für die Veröffentlichung des Smart Contracts auf der Blockchain an.
+
+#### DeploySmartContract
+Die Klasse DeploySmartContract stellt ein Textfeld zur Eingabe des HTTP-Providers zur Verüfung. Im Admin-Wallet wird eine bestimmte Menge Ethereum benötigt. Dieses ist für die Veröffentlichung des Smart Contracts und die Erstellung eines Tickets.
+```
+{
+    Voraussetzungen:    - Erstelltes Wallet
+                        - Ethereum im Wallet 
+}
+```
+
+Der Smart Contract wird über die Route
+```
+{
+    Route: */setup/deployContract
+}
+```
+im Backend auf der Blockchain veröffentlicht. Nach der erfolgreichen Veröffentlichung des Smart Contracts werden in der Klasse die Preise für die Erstellung und die Übertragung eines Tickets angezeigt.
+
+#### ConfigureShopConfig
+Die Klasse ConfigureShopConfig stellt 3 Textboxen für die Eingabe der maximalen Personen pro Event, die maximale Anzahl von Tickets und die maximale Anzahl an VIP-Personen zur Verfügung. Die Werte werden über die Route
+ ```
+{
+    Route: */setup/shopConfig
+}
+```
+in die Konfigurationsdatei im Backend gespeichert. 
 
 # Spezielle Funktionalitäten
 
