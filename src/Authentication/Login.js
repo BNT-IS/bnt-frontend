@@ -137,6 +137,7 @@ class Login extends React.Component {
 
     handleFinalLogin(userData) {
         this.context.setUserContext(userData);
+        this.context.redirectUserToHome();
     }
 
     setState1() {

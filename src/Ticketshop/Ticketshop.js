@@ -11,10 +11,25 @@ import TicketBestellung from './Components/TicketBestellung';
 
 class Ticketshop extends React.Component {
 
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.state = {};
     }
+
+
+    // FOR LOGIN
+
+    componentWillMount(){
+        this.context.requireLogin(1);
+    }
+
+    componentWillUpdate(){
+        this.context.requireLogin(1);
+    }
+
+    // END: FOR LOGIN
 
     render() {
         return (
