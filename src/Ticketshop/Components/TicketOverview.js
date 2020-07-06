@@ -28,7 +28,7 @@ class SingleTicketViewer extends React.Component {
 
     async generateQRCode(ticket) {
         // Generate code
-        let data = { id: ticket.identifier, sIG: this.context.user.secretIngredient }; // TODO Change to signature and so on...
+        let data = { id: ticket.identifier, sIG: this.context.user.secretIngredient };
         QRCode.toDataURL(JSON.stringify(data)).then((url) => {
             this.setState({ qrcode: url });
         }).catch(console.log);
@@ -44,6 +44,7 @@ class SingleTicketViewer extends React.Component {
                 </Box>
                 <Box pad="small">
                     <img width="300" height="300" src={this.state.qrcode} alt="Hier sollte ein QR-Code stehen"></img>
+                    <Button onClick={window.print} label="Drucken"></Button>
                 </Box>
             </Box>
         );
