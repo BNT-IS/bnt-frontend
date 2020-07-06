@@ -33,10 +33,12 @@ class ShopManagementPaymentOptions extends React.Component {
     }
 
     changeStep() {
+        //Leitet den Besucher auf die Übersichtsseite des Eventmanagements weiter
         window.location.assign('#/eventmgmt/shop');
     }
 
     componentDidMount(){
+        //Lädt die aktuellen Stati der Zahlungsmethoden (Aktiviert / Deaktiviert)
         if(this.props.bankStatus){
             this.setState({ bankStatus: 'Aktiviert' });
         }
@@ -52,26 +54,32 @@ class ShopManagementPaymentOptions extends React.Component {
     }
 
     receiverNameHandler(event) {
+        //Aktualisiert den Wert des InputFields für den Empfänger einer Bankverbindung
         this.setState({ receiverName: event.target.value });
     }
 
     bankNameHandler(event) {
+        //Aktualisiert den Wert des InputFields für den Namen einer Bank 
         this.setState({ bankName: event.target.value });
     }
 
     ibanHandler(event) {
+        //Aktualisiert den Wert des InputFields für die IBAN einer Bank
         this.setState({ iban: event.target.value });
     }
 
     bicHandler(event) {
+        //Aktualisiert den Wert des InputFields für die BIC einer Bank
         this.setState({ bic: event.target.value });
     }
 
     verwendungHandler(event) {
+        //Aktualisiert den Wert des InputFields für den Verwendungszweck bei Banküberweisungen
         this.setState({ verwendung: event.target.value });
     }
 
     async assignBankValues() {
+        //Schreibt die festgelegten Werte für die Bankverbindung ins Backend
         var empfänger = this.state.receiverName;
         var name_der_bank = this.state.bankName;
         var iban = this.state.iban;
@@ -115,18 +123,22 @@ class ShopManagementPaymentOptions extends React.Component {
     }
 
     payPalLinkHandler(event) {
+        //Aktualisiert den Wert des InputFields für den Link zum PayPal-Konto
         this.setState({ payPalLink: event.target.value });
     }
 
     payPalMailHandler(event) {
+        //Aktualisiert den Wert des InputFields für den Mail des PayPal-Kontos
         this.setState({ payPalMail: event.target.value });
     }
 
     payPalVerwendungHandler(event) {
+        //Aktualisiert den Wert des InputFields für den Verwendungszweck, welcher bei der Zahlung über Paypal angegeben werden soll
         this.setState({ payPalVerwendung: event.target.value });
     }
 
     async assignPayPalValues() {
+        //Schreibt die festgelegten Werte für die PayPal-Verbindung ins Backend
         var payPalLink = this.state.payPalLink;
         var payPalMail = this.state.payPalMail;
         var payPalVerwendung = this.state.payPalVerwendung;
@@ -166,6 +178,7 @@ class ShopManagementPaymentOptions extends React.Component {
     }
 
     switchBankStatus() {
+        //Ändert den angezeigten Status, wenn der Status der Bankverbindung geändert wird
         if (this.props.bankStatus) {
             return <Text weight="bold"> Aktiviert </Text>
         }
@@ -175,6 +188,7 @@ class ShopManagementPaymentOptions extends React.Component {
     }
 
     setBankValuesAndChangeStep() {
+        //Setzt den Status für die QuickView der Bankverbindung in der Shopmanagement-Startseite
         var bankStatusBoolean = "";
         if (this.state.bankStatus === 'Deaktiviert') {
             bankStatusBoolean = false;
@@ -193,6 +207,7 @@ class ShopManagementPaymentOptions extends React.Component {
     }
 
     switchPayPalStatus() {
+        //Ändert den angezeigten Status, wenn der Status der PayPal-Verbindung geändert wird
         if (this.props.payPalStatus) {
             return <Text weight="bold"> Aktiviert </Text>
         }
@@ -202,6 +217,7 @@ class ShopManagementPaymentOptions extends React.Component {
     }
 
     setPayPalValuesAndChangeStep() {
+        //Setzt den Status für die QuickView der PayPal-Verbindung in der Shopmanagement-Startseite
         var payPalStatusBoolean = "";
         if (this.state.payPalStatus === 'Deaktiviert') {
             payPalStatusBoolean = false;
@@ -221,6 +237,7 @@ class ShopManagementPaymentOptions extends React.Component {
 
 
     render() {
+        //Stellt die Festlegung und Aktivierung bzw. Deaktivierung von Zahlungsmethoden im Browser dar
         var ansicht = [];
         return (
             ansicht[0] =

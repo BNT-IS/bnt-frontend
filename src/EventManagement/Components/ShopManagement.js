@@ -55,23 +55,26 @@ class DataQuickViewMaxTickets extends React.Component {
 }
 
 class DataQuickViewPayment extends React.Component {
+    //Gibt einen Schnellüberblick über die eingestellten Zahlungsmethoden und deren Status
     constructor(props) {
         super(props);
         this.state = {};
     }
 
-    //Switch to Component PaymentOptions
+    //Leitet den User zur Konfiguration der Zahlungmethoden weiter
     callConfiguratePaymentMethods() {
         window.location.assign("#/eventmgmt/shop/paymentOptions")
     }
 
     componentDidMount() {
+        //Ruft beim Laden der Komponente den Aktuellen Status der Bank- und PayPal-Verbindung ab
         this.props.getBankStatus();
         this.props.getPayPalStatus();
     }
 
 
     render() {
+        //Stellt den Schnellüberblick für die Zahlungsmethoden im Browser dar
         var bezahl = [];
         if (this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Aktiv" }) };
         if (!this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
@@ -105,6 +108,7 @@ class DataQuickViewPayment extends React.Component {
     }
 }
 class DataQuickViewBookings extends React.Component {
+    //Gibt einen Schnellüberblick über die im System vorhandenen Buchungen
     constructor(props) {
         super(props);
         this.state = {
@@ -113,10 +117,12 @@ class DataQuickViewBookings extends React.Component {
     }
 
     callShopManagementViewBookings() {
+        //Leitet den User zur detailierten Buchungsübersicht und -freigabe weiter
         window.location.assign('#/eventmgmt/shop/viewBookings')
     }
 
     render() {
+        //Stellt den Schnellüberblick für die Buchungen im Browser dar
         return (
             <Box name="statusBookings" className="quickViewOuterBox">
                 <Text>Anzahl und Status der Buchungen im System:</Text>
@@ -145,20 +151,17 @@ class DataQuickViewBookings extends React.Component {
 }
 
 class DataQuickViewSalesStatistics extends React.Component {
+    //Schnellüberblick über die Anzahl der Tickets, die Vorhanden/Verkauft/Storniert sind, sowie über die Anzahl der Rollstuhlfahrer
     constructor(props) {
         super(props);
         this.state = {
         };
 
-        this.callShopManagementSalesStatistics = this.callShopManagementSalesStatistics.bind(this)
-    }
-
-    callShopManagementSalesStatistics() {
-        window.location.assign('#/eventmgmt/shop/SalesStatistics');
     }
 
 
     render() {
+        //Stellt den Schnellüberblick über die Tickets im Browser dar
         return (
             <Box name="statusSales" className="quickViewOuterBox">
                 <Text>Anzahl und Status der Ticketbuchungen im System:</Text>
@@ -178,9 +181,6 @@ class DataQuickViewSalesStatistics extends React.Component {
                     data={this.props.statusSales}
                 />
                 <Box className="platzhalter" ></Box>
-                <Box Class-Name="ButtonBox">
-                    <Button className="buttonInDash" label="Tickets verwalten" onClick={this.callShopManagementSalesStatistics}></Button>
-                </Box>
             </Box>
         )
     }
@@ -326,7 +326,7 @@ class DataQuickViewViewOTPs extends React.Component {
 }
 
 class ShopManagement extends React.Component {
-
+    //Stellt die Übersichtsseite des Shopmanagements im Browser dar
     static contextType = UserContext;
 
     constructor(props) {
@@ -383,6 +383,7 @@ class ShopManagement extends React.Component {
     }
 
     async getBookings() {
+        //Ruft die Buchungen aus dem Backend ab, um diese in der Schnellübersicht darstellen zu können
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/', {
             method: 'GET',
             mode: 'cors',
@@ -429,6 +430,7 @@ class ShopManagement extends React.Component {
     }
 
     async getTickets() {
+        //Ruft die Tickets aus dem Backend ab, um diese in der Schnellübersicht darstellen zu können
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/ticketsBooked', {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -715,6 +717,7 @@ class ShopManagement extends React.Component {
     };
 
     async setConfBankStatus(newBankStatus) {
+        //Ändert den Status der Bankverbindung in der Schnellübersicht, wenn diese in den PaymentOptions verändert wird
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -775,6 +778,7 @@ class ShopManagement extends React.Component {
 
 
     async setConfPayPalStatus(newPayPalStatus) {
+        //Ändert den Status der PayPal-Verbindung in der Schnellübersicht, wenn diese in den PaymentOptions verändert wird
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -829,14 +833,17 @@ class ShopManagement extends React.Component {
     }
 
     setBankStatus(status) {
+        //Setzt den lokalen Status der Bankverbindung
         this.setState({ bankStatus: status });
     }
 
     setPayPalStatus(status) {
+        //Setzt den lokalen Status der PayPal-Verbindung
         this.setState({ payPalStatus: status });
     }
 
     async getBankStatus() {
+        //Ruft den aktuellen Bankverbindungsstatus aus der Backend-Config ab
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -865,6 +872,7 @@ class ShopManagement extends React.Component {
 
 
     async getPayPalStatus() {
+        //Ruft den aktuellen PayPal-Verbindungsstatus aus der Backend-Config ab
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
