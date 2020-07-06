@@ -24,7 +24,7 @@ class App extends React.Component {
     this.redirectUserToHome = this.redirectUserToHome.bind(this);
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     // Check system status once mounted
     this.detectSystemState();
 

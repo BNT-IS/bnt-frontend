@@ -21,11 +21,11 @@ class Ticketshop extends React.Component {
 
     // FOR LOGIN
 
-    componentWillMount(){
+    UNSAFE_componentWillMount() {
         this.context.requireLogin(1);
     }
 
-    componentWillUpdate(){
+    UNSAFE_componentWillUpdate() {
         this.context.requireLogin(1);
     }
 
@@ -36,11 +36,7 @@ class Ticketshop extends React.Component {
             <Box className="Guest">
                 <Header background="brand" justify="between" pad="10px">
                     <Link to="/guest">Home</Link>
-                    {
-                        <UserContext.Consumer>
-                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }]} />}
-                        </UserContext.Consumer>
-                    }
+                    <Menu label="Account" items={[{ label: 'Logout', onClick: this.context.logout }]} />
                 </Header>
                 <Switch>
                     <Route path="/guest/buy">
