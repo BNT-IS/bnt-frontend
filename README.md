@@ -191,17 +191,13 @@ aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mai
 
 ## Login und Benutzer-Erstellung
 
-Zum Anmelden des Benutzers existiert die Komponente Login. Hiermit kann ein neuer Account mithilfe eines Einmal-Passworts (OTP) erstellt werden. Das entsprechende OTP muss zuvor vom Admin angelegt werden und zeigt auf eine vordefinierte Rolle und eine unveränderliche E-Mailadresse.
+<img src="./assets/login1.png" width="150px" alt="Screenshot zur Anmeldung"><img src="./assets/login2.png" width="150px" alt="Screenshot zur Anmeldung"><img src="./assets/login3.png" width="150px" alt="Screenshot zur Anmeldung"><img src="./assets/login4.png" width="150px" alt="Screenshot zur Anmeldung">
 
-<img src="./assets/login1.png" alt="Screenshot zur Anmeldung">
+Zum Anmelden des Benutzers existiert die Komponente Login. Hiermit kann ein neuer Account mithilfe eines Einmal-Passworts (OTP) erstellt werden. Das entsprechende OTP muss zuvor vom Admin angelegt werden und zeigt auf eine vordefinierte Rolle und eine unveränderliche E-Mailadresse.
 
 Beim Erstellprozess eines neuen Benutzers wird diesem vom Backend aus ein Access-Token, eine eindeutige Benutzer-ID, die vorgegebene E-Mail-Adresse und eine Rolle zugewiesen. Diese Werte werden sowohl in der Datenbank als auch hier im Frontend im LocalStorage des Browsers zwischengespeichert. Das Passwort ist jeweils nur als gesalzener Hashwert im Speicher. Der Access-Token wird bei zukünftigen Anfragen an das Backend benötigt.
 
-<img src="./assets/login2.png" alt="Screenshot zur Anmeldung"> <img src="./assets/login3.png" alt="Screenshot zur Anmeldung">
-
 Nach einer normalen Anmeldung mit E-Mail-Adresse und Passwort erhält das Frontend vom Backend die Benutzer-Daten und einen API-Token. Beides wird im LocalStorage des Browsers gespeichert.
-
-<img src="./assets/login4.png" alt="Screenshot zur Anmeldung">
 
 In beiden Situationen ist der Benutzer anschließend angemeldet. Der entsprechende UserContext (siehe nächster Abschnitt) hält zur Laufzeit benötigte Funktionen zur verfügung.
 
