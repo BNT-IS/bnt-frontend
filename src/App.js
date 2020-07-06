@@ -73,8 +73,6 @@ class App extends React.Component {
       if (response.status === 401) {
         this.clearUserContext();
         this.setState({ userContext: null });
-      } else {
-        this.setState({ userContext: userData });
       }
     } catch (error) {
       console.log(error);
@@ -86,6 +84,7 @@ class App extends React.Component {
    */
   initUserContext() {
     let userData = JSON.parse(localStorage.getItem('userContext'));
+    this.setState({ userContext: userData });
     this.detectAuthState(userData);
   }
 
