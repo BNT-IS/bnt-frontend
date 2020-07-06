@@ -11,21 +11,32 @@ import TicketBestellung from './Components/TicketBestellung';
 
 class Ticketshop extends React.Component {
 
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.state = {};
     }
+
+
+    // FOR LOGIN
+
+    UNSAFE_componentWillMount() {
+        this.context.requireLogin(1);
+    }
+
+    UNSAFE_componentWillUpdate() {
+        this.context.requireLogin(1);
+    }
+
+    // END: FOR LOGIN
 
     render() {
         return (
             <Box className="Guest">
                 <Header background="brand" justify="between" pad="10px">
                     <Link to="/guest">Home</Link>
-                    {
-                        <UserContext.Consumer>
-                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }]} />}
-                        </UserContext.Consumer>
-                    }
+                    <Menu label="Account" items={[{ label: 'Logout', onClick: this.context.logout }]} />
                 </Header>
                 <Switch>
                     <Route path="/guest/buy">

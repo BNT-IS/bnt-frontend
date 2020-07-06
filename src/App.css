@@ -78,3 +78,9 @@ header {
     height: 400px; 
     overflow: auto;
 }
+
+@media print {
+    header {
+        display: none;
+    }
+}

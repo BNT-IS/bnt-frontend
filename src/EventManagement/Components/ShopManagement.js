@@ -8,7 +8,7 @@ import ShopManagementViewBookings from './ShopManagementViewBookings';
 import ShopManagementManageSalesStatus from './ShopManagementManageSalesStatus';
 import ShopManagamentAbsolventenListe from './ShopManagamentAbsolventenListe';
 import ShopManagementPaymentOptions from './ShopManagementPaymentOptions';
-import { Switch, Route} from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import UserContext from '../../AppContexts/UserContext';
 import ShopManagementManageOTPS from './ShopManagementManageOTPS'
 import ShopManagementViewOTPs from './ShopManagementViewOTPs'
@@ -27,30 +27,30 @@ class DataQuickViewMaxTickets extends React.Component {
     }
 
     render() {
-        var Ansicht = [];
-        Ansicht[1] = <Box name="purchaseableTicketsPerPerson" className="quickViewOuterBox" >
-            <Text>Ticketanzahl die ein Absolvent erwerben kann:</Text>
-            <Box className="platzhalter" ></Box>
-            <DataTable className="quickViewDatatables"
-                columns={[
-                    {
-                        property: 'Tickettype',
-                        header: <Text weight="bold">Tickettyp</Text>,
-                        primary: true,
-                    },
-                    {
-                        property: 'Anzahl',
-                        header: <Text weight="bold">freigebene Anzahl</Text>,
-                    },
-                ]}
-                data={this.props.maxTicketmenge}
-            />
-            <Box className="platzhalter" ></Box>
-            <Box className="ButtonBox">
-                <Button className="buttonInDash" label="Ticketanzahl konfigurieren" onClick={this.callShopManagamentConfTickets}></Button>
+        return (
+            <Box name="purchaseableTicketsPerPerson" className="quickViewOuterBox" >
+                <Text>Ticketanzahl die ein Absolvent erwerben kann:</Text>
+                <Box className="platzhalter" ></Box>
+                <DataTable className="quickViewDatatables"
+                    columns={[
+                        {
+                            property: 'Tickettype',
+                            header: <Text weight="bold">Tickettyp</Text>,
+                            primary: true,
+                        },
+                        {
+                            property: 'Anzahl',
+                            header: <Text weight="bold">freigebene Anzahl</Text>,
+                        },
+                    ]}
+                    data={this.props.maxTicketmenge}
+                />
+                <Box className="platzhalter" ></Box>
+                <Box className="ButtonBox">
+                    <Button className="buttonInDash" label="Ticketanzahl konfigurieren" onClick={this.callShopManagamentConfTickets}></Button>
+                </Box>
             </Box>
-        </Box>
-        return Ansicht;
+        )
     }
 }
 
@@ -59,47 +59,49 @@ class DataQuickViewPayment extends React.Component {
         super(props);
         this.state = {};
     }
+
     //Switch to Component PaymentOptions
     callConfiguratePaymentMethods() {
         window.location.assign("#/eventmgmt/shop/paymentOptions")
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.props.getBankStatus();
         this.props.getPayPalStatus();
     }
 
 
-    render() { 
+    render() {
         var bezahl = [];
         if (this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Aktiv" }) };
         if (!this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
         if (this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Aktiv" }) };
         if (!this.props.payPalStatus) { bezahl.push({ BezahlOption: "PayPal", Status: "Deaktiviert" }) };
-        var Ansicht = [];
-        Ansicht[0] = <Box name="paymentOptions" className="quickViewOuterBox">
-            <Text>Übersicht der konfigurierten Bezahloptionen:</Text>
-            <Box className="platzhalter" ></Box>
-            <DataTable className="quickViewDatatables"
-                columns={[
-                    {
-                        property: 'BezahlOption',
-                        header: <Text weight="bold">Bezahloption</Text>,
-                        primary: true,
-                    },
-                    {
-                        property: 'Status',
-                        header: <Text weight="bold">Status?</Text>,
-                    },
-                ]}
-                data={bezahl}
-            />
-            <Box className="platzhalter" ></Box>
-            <Box className="ButtonBox">
-                <Button className="buttonInDash" label="Bezahloptionen konfigurieren" onClick={this.callConfiguratePaymentMethods}></Button>
+
+        return (
+            <Box name="paymentOptions" className="quickViewOuterBox">
+                <Text>Übersicht der konfigurierten Bezahloptionen:</Text>
+                <Box className="platzhalter" ></Box>
+                <DataTable className="quickViewDatatables"
+                    columns={[
+                        {
+                            property: 'BezahlOption',
+                            header: <Text weight="bold">Bezahloption</Text>,
+                            primary: true,
+                        },
+                        {
+                            property: 'Status',
+                            header: <Text weight="bold">Status?</Text>,
+                        },
+                    ]}
+                    data={bezahl}
+                />
+                <Box className="platzhalter" ></Box>
+                <Box className="ButtonBox">
+                    <Button className="buttonInDash" label="Bezahloptionen konfigurieren" onClick={this.callConfiguratePaymentMethods}></Button>
+                </Box>
             </Box>
-        </Box>
-        return Ansicht;
+        )
     }
 }
 class DataQuickViewBookings extends React.Component {
@@ -115,30 +117,30 @@ class DataQuickViewBookings extends React.Component {
     }
 
     render() {
-        var Ansicht = [];
-        Ansicht[1] = <Box name="statusBookings" className="quickViewOuterBox">
-            <Text>Anzahl und Status der Buchungen im System:</Text>
-            <Box className="platzhalter" ></Box>
-            <DataTable className="quickViewDatatables"
-                columns={[
-                    {
-                        property: 'status',
-                        header: <Text weight="bold">Status</Text>,
-                        primary: true,
-                    },
-                    {
-                        property: 'Anzahl',
-                        header: <Text weight="bold">Anzahl</Text>,
-                    },
-                ]}
-                data={this.props.statusBookings}
-            />
-            <Box className="platzhalter" ></Box>
-            <Box className="ButtonBox">
-                <Button className="buttonInDash" label="Buchungen " onClick={this.callShopManagementViewBookings}></Button>
+        return (
+            <Box name="statusBookings" className="quickViewOuterBox">
+                <Text>Anzahl und Status der Buchungen im System:</Text>
+                <Box className="platzhalter" ></Box>
+                <DataTable className="quickViewDatatables"
+                    columns={[
+                        {
+                            property: 'status',
+                            header: <Text weight="bold">Status</Text>,
+                            primary: true,
+                        },
+                        {
+                            property: 'Anzahl',
+                            header: <Text weight="bold">Anzahl</Text>,
+                        },
+                    ]}
+                    data={this.props.statusBookings}
+                />
+                <Box className="platzhalter" ></Box>
+                <Box className="ButtonBox">
+                    <Button className="buttonInDash" label="Buchungen " onClick={this.callShopManagementViewBookings}></Button>
+                </Box>
             </Box>
-        </Box>
-        return Ansicht;
+        )
     }
 }
 
@@ -157,30 +159,30 @@ class DataQuickViewSalesStatistics extends React.Component {
 
 
     render() {
-        var Ansicht = [];
-        Ansicht[1] = <Box name="statusSales" className="quickViewOuterBox">
-            <Text>Anzahl und Status der Ticketbuchungen im System:</Text>
-            <Box pad="small"></Box>
-            <DataTable className="quickViewDatatables"
-                columns={[
-                    {
-                        property: 'status',
-                        header: <Text weight="bold">Status</Text>,
-                        primary: true,
-                    },
-                    {
-                        property: 'Anzahl',
-                        header: <Text weight="bold">Anzahl</Text>,
-                    },
-                ]}
-                data={this.props.statusSales}
-            />
-            <Box className="platzhalter" ></Box>
-            <Box Class-Name="ButtonBox">
-                <Button className="buttonInDash" label="Tickets verwalten" onClick={this.callShopManagementSalesStatistics}></Button>
+        return (
+            <Box name="statusSales" className="quickViewOuterBox">
+                <Text>Anzahl und Status der Ticketbuchungen im System:</Text>
+                <Box pad="small"></Box>
+                <DataTable className="quickViewDatatables"
+                    columns={[
+                        {
+                            property: 'status',
+                            header: <Text weight="bold">Status</Text>,
+                            primary: true,
+                        },
+                        {
+                            property: 'Anzahl',
+                            header: <Text weight="bold">Anzahl</Text>,
+                        },
+                    ]}
+                    data={this.props.statusSales}
+                />
+                <Box className="platzhalter" ></Box>
+                <Box Class-Name="ButtonBox">
+                    <Button className="buttonInDash" label="Tickets verwalten" onClick={this.callShopManagementSalesStatistics}></Button>
+                </Box>
             </Box>
-        </Box>
-        return Ansicht;
+        )
     }
 }
 
@@ -200,34 +202,34 @@ class DataQuickViewManageSales extends React.Component {
 
     render() {
         var salesStatus;
-        if (this.props.salesStatus) { salesStatus = { Beschreibung: "Ticketverkauf", Status: "Aktiv" }; };
-        if (!this.props.salesStatus) { salesStatus = { Beschreibung: "Ticketverkauf", Status: "Deaktiviert" }; };
+        if (this.props.salesStatus) { salesStatus = [{ Beschreibung: "Ticketverkauf", Status: "Aktiv" }]; };
+        if (!this.props.salesStatus) { salesStatus = [{ Beschreibung: "Ticketverkauf", Status: "Deaktiviert" }]; };
 
-        var Ansicht = [];
-        Ansicht[1] = <Box name="boxManageSales" className="quickViewOuterBox">
-            <Text>Anzeige für den Status und das aktivieren und
+        return (
+            <Box name="boxManageSales" className="quickViewOuterBox">
+                <Text>Anzeige für den Status und das aktivieren und
                 deaktivieren des Ticketverkaufs</Text>
-            <Box pad="small"></Box>
-            <DataTable className="quickViewDatatables"
-                columns={[
-                    {
-                        property: 'Beschreibung',
-                        header: <Text weight="bold">Status</Text>,
-                        primary: true,
-                    },
-                    {
-                        property: 'Status',
-                        header: <Text weight="bold">Anzahl</Text>,
-                    },
-                ]}
-                data={salesStatus}
-            />
-            <Box className="platzhalter" ></Box>
-            <Box Class-Name="ButtonBox">
-                <Button className="buttonInDash" label="Status ändern" onClick={this.callShopManagementManageSales}></Button>
+                <Box pad="small"></Box>
+                <DataTable className="quickViewDatatables"
+                    columns={[
+                        {
+                            property: 'Beschreibung',
+                            header: <Text weight="bold">Status</Text>,
+                            primary: true,
+                        },
+                        {
+                            property: 'Status',
+                            header: <Text weight="bold">Anzahl</Text>,
+                        },
+                    ]}
+                    data={salesStatus}
+                />
+                <Box className="platzhalter" ></Box>
+                <Box Class-Name="ButtonBox">
+                    <Button className="buttonInDash" label="Status ändern" onClick={this.callShopManagementManageSales}></Button>
+                </Box>
             </Box>
-        </Box>
-        return Ansicht;
+        )
     }
 }
 
@@ -255,8 +257,7 @@ class DataQuickViewCreateOTPS extends React.Component {
     }
 
     render() {
-        var Ansicht = [];
-        Ansicht[1] =
+        return (
             <Box name="CreateOTPS" className="quickViewOuterBox">
                 <Text>Einlesen einer E-Mail Liste zum Erstellen von One Time Passwörtern:</Text>
                 <Box pad="small"></Box>
@@ -267,7 +268,7 @@ class DataQuickViewCreateOTPS extends React.Component {
                     <Button className="buttonInDash" label="Liste einlesen" onClick={this.callShopManagementCreateOTPS}></Button>
                 </Box>
             </Box>
-        return Ansicht;
+        )
     }
 }
 class DataQuickViewManageOTPS extends React.Component {
@@ -284,8 +285,7 @@ class DataQuickViewManageOTPS extends React.Component {
     }
 
     render() {
-        var Ansicht = [];
-        Ansicht[1] =
+        return (
             <Box name="CreateOTPS" className="quickViewOuterBox">
                 <Text weight="bold" size="large">Erstellen neuer One Time Passwörter</Text>
                 <Box pad="small" align="center">
@@ -295,7 +295,7 @@ class DataQuickViewManageOTPS extends React.Component {
                 </Box>
                 <Button className="buttonInDash" label="One Time Passwort verwalten" onClick={this.callShopManagementCreateOTPS}></Button>
             </Box>
-        return Ansicht;
+        )
     }
 }
 
@@ -313,16 +313,15 @@ class DataQuickViewViewOTPs extends React.Component {
     }
 
     render() {
-        var Ansicht = [];
-        Ansicht[1] =
+        return (
             <Box name="CreateOTPS" className="quickViewOuterBox">
                 <Text weight="bold" size="large">Vorhandene One Time Passwörter</Text>
                 <Box pad="small" align="center">
-                <Text>Liste mit den existierenden One Time Passwörtern und die Möglichkeit einzelne zu löschen.</Text>
+                    <Text>Liste mit den existierenden One Time Passwörtern und die Möglichkeit einzelne zu löschen.</Text>
                 </Box>
                 <Button className="buttonInDash" label="One Time Passwort verwalten" onClick={this.callShopManagementViewOTPS}></Button>
             </Box>
-        return Ansicht;
+        )
     }
 }
 
@@ -410,7 +409,6 @@ class ShopManagement extends React.Component {
         } else {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
-                console.log(rückgabe.length);
                 var bezahlt = 0;
                 var unbezahlt = 0;
                 var storniert = 0;
@@ -430,7 +428,7 @@ class ShopManagement extends React.Component {
         }
     }
 
-    async getTickets(){
+    async getTickets() {
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/ticketsBooked', {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -441,40 +439,59 @@ class ShopManagement extends React.Component {
             }
         }).catch(console.log)
 
-        if(!response) {
+        if (!response) {
             console.log("Keine Antwort beim Abruf der Tickets erhalten");
             return;
         }
-        if(!response.ok){
+        if (!response.ok) {
             console.log("Fehler beim Abruf der Tickets: " + response.message);
             return;
         }
-        if(response.ok){
+        if (response.ok) {
             const rückgabe = await response.json().catch(console.log);
-            if(rückgabe){
-                console.log(rückgabe.length);
-                var verfügbar = this.state.maxTicketsProEvent;
+            if (rückgabe) {
+                var verfügbar;
                 var verkauft = 0;
                 var storniert = 0;
                 var rollstuhlFahrer = 0;
-                for(var lauf=0; lauf<rückgabe.length; lauf++){
-                    if(rückgabe[lauf].createdAt && rückgabe[lauf].canceled !== true){
-                        verkauft = verkauft + 1;
+                const response2 = await fetch(Config.BACKEND_BASE_URI + '/api/v2/shopConfig', {
+                    method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                    mode: 'cors', // no-cors, *cors, same-origin
+                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + this.context.token,
                     }
-                    if(rückgabe[lauf].createdAt && rückgabe[lauf].canceled === true){
-                        storniert = storniert + 1;
-                    }
-                    if(rückgabe[lauf].isWheelchairUser === true){
-                        rollstuhlFahrer = rollstuhlFahrer + 1;
+                }).catch(console.log)
+
+                if (!response2) {
+                    console.log("Keine Antwort beim Abruf der verfügbaren Ticketzahl");
+                    return;
+                }
+                if (!response2.ok) {
+                    console.log("Fehler beim Abruf der verfügbaren Ticketanzahl: " + response2.message);
+                }
+                if (response2.ok) {
+                    verfügbar = await response2.json().catch(console.log);
+                    if (verfügbar) {
+                        for (var lauf = 0; lauf < rückgabe.length; lauf++) {
+                            if (rückgabe[lauf].createdAt && rückgabe[lauf].canceled !== true) {
+                                verkauft = verkauft + 1;
+                            }
+                            if (rückgabe[lauf].createdAt && rückgabe[lauf].canceled === true) {
+                                storniert = storniert + 1;
+                            }
+                            if (rückgabe[lauf].isWheelchairUser === true) {
+                                rollstuhlFahrer = rollstuhlFahrer + 1;
+                            }
+                        }
+                        verfügbar = verfügbar - verkauft;
+                        this.setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer);
                     }
                 }
-                verfügbar = verfügbar - verkauft;
-                this.setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer);
             }
-            
         }
-        }
-    
+    }
 
     //Get Max Tickets Configured form Configuration
     async getValuesFromConfig() {
@@ -552,23 +569,23 @@ class ShopManagement extends React.Component {
 
     //Write max Tickets into Component State 
     setMaxTicketMenge(Absolvententickets, Begleitertickets) {
-        var data = [{ Tickettype: "Absolvententickets", Anzahl: Absolvententickets },
-        { Tickettype: "Begleitertickets", Anzahl: Begleitertickets }]
+        var data = [{ Tickettype: "Absolvententickets", Anzahl: typeof Absolvententickets === Number ? Absolvententickets : 0 },
+        { Tickettype: "Begleitertickets", Anzahl: typeof Begleitertickets === Number ? Begleitertickets : 0 }]
         this.setState({ maxTicketmenge: data })
     }
 
     setBookings(bezahlt, unbezahlt, storniert) {
-        var data = [{ status: "Gebucht", Anzahl: bezahlt },
-        { status: "Offen", Anzahl: unbezahlt },
-        { status: "Storniert", Anzahl: storniert }];
+        var data = [{ status: "Gebucht", Anzahl: typeof bezahlt === Number ? bezahlt : 0 },
+        { status: "Offen", Anzahl: typeof unbezahlt === Number ? unbezahlt : 0 },
+        { status: "Storniert", Anzahl: typeof storniert === Number ? storniert : 0 }];
         this.setState({ statusBookings: data });
     }
 
-    setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer){
-        var data = [{ status: "Verfügbar", Anzahl: verfügbar },
-        { status: "Verkauft", Anzahl: verkauft },
-        { status: "Storniert", Anzahl: storniert },
-        { status: "Rollstuhlfahrer", Anzahl: rollstuhlFahrer }];
+    setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer) {
+        var data = [{ status: "Verfügbar", Anzahl: typeof verfügbar === Number ? verfügbar : 0 },
+        { status: "Verkauft", Anzahl: typeof verkauft === Number ? verkauft : 0 },
+        { status: "Storniert", Anzahl: typeof storniert === Number ? storniert : 0 },
+        { status: "Rollstuhlfahrer", Anzahl: typeof rollstuhlFahrer === Number ? rollstuhlFahrer : 0 }];
         this.setState({ statusSales: data });
     }
 
@@ -819,7 +836,7 @@ class ShopManagement extends React.Component {
         this.setState({ payPalStatus: status });
     }
 
-    async getBankStatus(){
+    async getBankStatus() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -847,7 +864,7 @@ class ShopManagement extends React.Component {
     }
 
 
-    async getPayPalStatus(){
+    async getPayPalStatus() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -907,7 +924,7 @@ class ShopManagement extends React.Component {
                     <ShopManagementManageOTPS createOTPwithEmailAndRole={this.createOTPwithEmailAndRole}></ShopManagementManageOTPS>
                 </Route>
                 <Route path="/eventmgmt/shop/ViewOTPs">
-               <ShopManagementViewOTPs></ShopManagementViewOTPs>
+                    <ShopManagementViewOTPs></ShopManagementViewOTPs>
                 </Route>
 
 
@@ -920,18 +937,18 @@ class ShopManagement extends React.Component {
                         </Box>
                         <Box ClassName="twoGroupedBoards" direction="row" wrap={true} justify="center">
                             <DataQuickViewMaxTickets maxTicketmenge={this.state.maxTicketmenge}></DataQuickViewMaxTickets>
-                            <DataQuickViewPayment bankStatus={this.state.bankStatus} getBankStatus={this.getBankStatus} payPalStatus={this.state.payPalStatus} 
-                            getPayPalStatus={this.getPayPalStatus}></DataQuickViewPayment>
+                            <DataQuickViewPayment bankStatus={this.state.bankStatus} getBankStatus={this.getBankStatus} payPalStatus={this.state.payPalStatus}
+                                getPayPalStatus={this.getPayPalStatus}></DataQuickViewPayment>
                         </Box>
-                        <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
+                        <Box ClassName="twoGroupedBoards" direction="row" wrap={true}>
                             <DataQuickViewBookings statusBookings={this.state.statusBookings}></DataQuickViewBookings>
                             <DataQuickViewSalesStatistics statusSales={this.state.statusSales}></DataQuickViewSalesStatistics>
                         </Box>
-                        <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
+                        <Box ClassName="twoGroupedBoards" direction="row" wrap={true}>
                             <DataQuickViewManageSales salesStatus={this.state.salesStatus} setSalesStatus={this.setSalesStatus}></DataQuickViewManageSales>
                             <DataQuickViewCreateOTPS initialList={this.state.initialList}></DataQuickViewCreateOTPS>
                         </Box>
-                        <Box ClassName="twoGroupedBoards" direction="row" wrap="true">
+                        <Box ClassName="twoGroupedBoards" direction="row" wrap={true}>
                             <DataQuickViewManageOTPS ></DataQuickViewManageOTPS>
                             <DataQuickViewViewOTPs></DataQuickViewViewOTPs>
                         </Box>

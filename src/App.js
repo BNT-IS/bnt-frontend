@@ -20,9 +20,11 @@ class App extends React.Component {
     this.logout = this.logout.bind(this);
     this.initUserContext = this.initUserContext.bind(this);
     this.setUserContext = this.setUserContext.bind(this);
+    this.checkUserContext = this.checkUserContext.bind(this);
+    this.redirectUserToHome = this.redirectUserToHome.bind(this);
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     // Check system status once mounted
     this.detectSystemState();
 
@@ -34,11 +36,6 @@ class App extends React.Component {
 
     // Initialize userContext
     this.initUserContext();
-  }
-
-  componentDidUpdate() {
-    // Check if login is needed on every update
-    this.checkLoginNeeded();
   }
 
   async detectSystemState() {
@@ -76,8 +73,6 @@ class App extends React.Component {
       if (response.status === 401) {
         this.clearUserContext();
         this.setState({ userContext: null });
-      } else {
-        this.setState({ userContext: userData });
       }
     } catch (error) {
       console.log(error);
@@ -89,6 +84,7 @@ class App extends React.Component {
    */
   initUserContext() {
     let userData = JSON.parse(localStorage.getItem('userContext'));
+    this.setState({ userContext: userData });
     this.detectAuthState(userData);
   }
 
@@ -114,7 +110,7 @@ class App extends React.Component {
    * finally redirects to login
    */
   logout() {
-    if (this.state.userContext.user.role === 0) {
+    if (this.state.userContext && this.state.userContext.user.role === 0) {
       let ok = window.confirm('Sollen auch eventuell lokal gespeicherten Daten für den Einlass unwiederruflich gelöscht werden?', "Nein");
       if (ok) {
         window.indexedDB.deleteDatabase(config.IDB_NAME);
@@ -125,26 +121,29 @@ class App extends React.Component {
   }
 
   /**
-   * Evaluates if login is required or not
+   * Method that checks if the user is logged in. For use in subcomponents
+   * @param {Number} requiredRole - The role that is required
    */
-  checkLoginNeeded() {
-    if (window.location.hash === "#/" || window.location.hash.includes('login') || window.location.hash.includes('eventmgmt') || window.location.hash.includes('guest')) {
-      if (!this.state.userContext) {
-        window.location.assign('#/login/');
-      } else {
-        if (this.state.userContext.user.role === 0) {
-          window.location.assign('#/eventmgmt/');
-        }
-        if (this.state.userContext.user.role === 1 && !window.location.hash.includes('guest')) {
-          window.location.assign('#/guest/');
-        }
-      }
+  checkUserContext(requiredRole){
+    if (!this.state.userContext || this.state.userContext.user.role > requiredRole) {
+      window.location.assign('#/login/');
+    }
+  }
+
+  redirectUserToHome(){
+    if (this.state.userContext && this.state.userContext.user.role === 0) {
+      window.location.assign('#/eventmgmt/');
+      return;
+    }
+    if(this.state.userContext && this.state.userContext.user.role === 1) {
+      window.location.assign('#/guest/');
+      return;
     }
   }
 
   render() {
     return (
-      <UserContext.Provider value={Object.assign(this.state.userContext ? this.state.userContext : {}, { logout: this.logout, setUserContext: this.setUserContext })}>
+      <UserContext.Provider value={Object.assign(this.state.userContext ? this.state.userContext : {}, { logout: this.logout, setUserContext: this.setUserContext, requireLogin: this.checkUserContext , redirectUserToHome: this.redirectUserToHome })}>
         <Grommet theme={grommet}>
           {!this.state.setupMode &&
             <Box>

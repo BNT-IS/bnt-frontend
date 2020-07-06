@@ -13,6 +13,8 @@ import RemoteTicketReader from './Classes/RemoteTicketReader';
 
 class EventManagement extends React.Component {
 
+    static contextType = UserContext;
+
     constructor(props) {
         super(props);
         this.rTRHandler = this.rTRHandler.bind(this);
@@ -23,6 +25,18 @@ class EventManagement extends React.Component {
         // RTRList should be an array of remoteTicketReaders
         this.state = { RTRList: [] };
     }
+
+    // FOR LOGIN
+
+    UNSAFE_componentWillMount(){
+        this.context.requireLogin(0);
+    }
+
+    UNSAFE_componentWillUpdate(){
+        this.context.requireLogin(0);
+    }
+
+    // END: FOR LOGIN
 
     /**
      * Handler for new connected remote ticket readers
@@ -90,11 +104,7 @@ class EventManagement extends React.Component {
             <Box className="EventManagement">
                 <Header background="brand" justify="between" pad="10px">
                     <Link to="/eventmgmt">Home</Link>
-                    {
-                        <UserContext.Consumer>
-                            {userContext => <Menu label="Account" items={[{ label: 'Logout', onClick: userContext.logout }]} />}
-                        </UserContext.Consumer>
-                    }
+                    <Menu label="Account" items={[{ label: 'Logout', onClick: this.context.logout }]} />
                 </Header>
                 <Box className="left-right-grid" direction="row" justify="start" wrap={true}>
                     <Box className="sidebar">
@@ -104,7 +114,7 @@ class EventManagement extends React.Component {
                             <li><Link to="/eventmgmt/shop">Shop Management</Link></li>
                         </ul>
                     </Box>
-                    <Box className="main-content">
+                    <Box className="main-content" pad="medium">
                         <Switch>
                             <Route path="/eventmgmt/rtrm">
                                 <TicketReaderManager RTRList={this.state.RTRList} onRTR={this.rTRHandler}></TicketReaderManager>

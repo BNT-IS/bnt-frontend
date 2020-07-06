@@ -3,7 +3,8 @@
 }
 
 .UserMainMenu .MenuLink {
-    width: 300px;
+    width: 70vw;
+    max-width: 300px;
     background-color: rgb(164, 216, 20);
     justify-content: center;
     text-align: center;
