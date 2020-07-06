@@ -28,11 +28,11 @@ class EventManagement extends React.Component {
 
     // FOR LOGIN
 
-    componentWillMount(){
+    UNSAFE_componentWillMount(){
         this.context.requireLogin(0);
     }
 
-    componentWillUpdate(){
+    UNSAFE_componentWillUpdate(){
         this.context.requireLogin(0);
     }
 
