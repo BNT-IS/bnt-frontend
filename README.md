@@ -236,7 +236,8 @@ Die Kommunikation per RTCPeerConnection erfolgt über einen sogenannten Datachan
 { 
     type: "Answer", 
     reqId: !Unique! String, 
-    result: Any
+    result: Any,
+    error: String
 }
 ```
 
