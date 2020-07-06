@@ -6,8 +6,10 @@ class Hauptansicht extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+        };
         this.getConfigured = this.getConfigured.bind(this);
+
     }
 
     //Function to Switch Boolean Values from statusMap into Text
@@ -22,7 +24,7 @@ class Hauptansicht extends React.Component {
     render() {
         var Ansicht = [];
         //Start Text
-        if (this.props.initializeStep === 0) {
+        if (this.props.initializeStep === 0 && this.props.doneOnce === false) {
             Ansicht[0] = <Box pad="medium" key="start">
                 <Text textAlign="center" weight="bold" size="xxlarge">
                     Herzlich Wilkommen zum Bachelors-Night Ticketsystem.
@@ -38,15 +40,17 @@ class Hauptansicht extends React.Component {
             </Box>
         }
         // Text if Steps are Finished
-        if (this.props.initializeStep === 6) {
+        if (this.props.initializeStep === 7 || this.props.doneOnce) {
             Ansicht[0] = <Box pad="medium" key="end">
+                <Text weight="bold" size="xxlarge" textAlign="center">Konfiguration abgeschlossen</Text>
+                <Box pad="medium"></Box>
                 <Text textAlign="center">
                     Herzlich Glückwunsch Sie haben das Ticketsystem erfolgreich konfiguriert!
                     Mit "Zurück" gelangen Sie wieder zur ersten Ansicht und können erneut durch die Konfiguration navigieren.
+                    Mit "Initalisierung abschließen" können Sie zur Login-Seite zurück.
                 </Text>
             </Box>
         }
-
         Ansicht[1] =
             <Box>
                 <List
@@ -55,7 +59,7 @@ class Hauptansicht extends React.Component {
                     data={[
                         { initializeStep: <Text size="large" weight="bold" key="header">Vorbereitsungsschritt</Text>, doneSteps: <Text size="large" weight="bold" key="headerZustand">Zustand</Text> },
                         { initializeStep: <Text weight="normal" key="StatusDB"> Initalisieren der Datenbank</Text>, doneSteps: this.getConfigured("DB") },
-                        { initializeStep: <Text weight="normal" key="StatusAdminAccount">Hinzufügen eines Administratorbenutzers</Text>, doneSteps: this.getConfigured("AA") },
+                        { initializeStep: <Text weight="normal" key="StatusAdminAccount" >Hinzufügen eines Administratorbenutzers</Text>, doneSteps: this.getConfigured("AA") },
                         { initializeStep: <Text weight="normal" key="StatusMS">Initialisieren des Mailservers</Text>, doneSteps: this.getConfigured("MS") },
                         { initializeStep: <Text weight="normal" key="StatusAdminWallet">Einrichten des Master-Wallets</Text>, doneSteps: this.getConfigured("AW") },
                         { initializeStep: <Text weight="normal" key="StatusSmartContract">Veröffentlichen des Smart Contracts</Text>, doneSteps: this.getConfigured("DC") },
@@ -116,9 +120,9 @@ class AddWallet extends React.Component {
         //View if the Admin Wallet isnt created yet.
         if (!this.state.created) {
             Ansicht = <Box>
-                <Box pad="medium">
-                    <Text size="large" weight="bold">Hinzufügen des Wallets für den Master-User:</Text>
-                </Box>
+                <Box pad="medium"></Box>
+                <Text weight="bold" size="xxlarge" align="center">Hinzufügen des Wallets für den Master-User</Text>
+                <Box pad="medium"></Box>
                 <Box pad="medium">
                     <TextInput
                         placeholder="HTTP-Provider DNS:Port"
@@ -163,25 +167,25 @@ class DeploySmartContract extends React.Component {
     }
     // Get Balance From Adrress and calculate Wei -> Ether from Response this.props.walletAddress
     async getBalanceFromWallet() {
-        if (this.props.httpProvider !== "" || this.props.walletAddress !== ""){
-        var Web3 = require('web3');
-        var web3 = new Web3(new Web3.providers.HttpProvider(this.props.httpProvider));
-        web3.eth.getBalance(this.props.walletAddress, (error, response) => {
-            if (error) {
-                console.log(error);
-            }
-            if (!response) {
-                console.log("Fehler beim Abruf der Balance des Wallets");
-                alert(response.message);
-            }
+        if (this.props.httpProvider !== "" || this.props.walletAddress !== "") {
+            var Web3 = require('web3');
+            var web3 = new Web3(new Web3.providers.HttpProvider(this.props.httpProvider));
+            web3.eth.getBalance(this.props.walletAddress, (error, response) => {
+                if (error) {
+                    console.log(error);
+                }
+                if (!response) {
+                    console.log("Fehler beim Abruf der Balance des Wallets");
+                    alert(response.message);
+                }
 
-            if (response) {
-                var balance = web3.utils.fromWei(response, "ether")
-                this.setState({ walletBalance: balance });
-            }
-        });
-    }else{
-    }
+                if (response) {
+                    var balance = web3.utils.fromWei(response, "ether")
+                    this.setState({ walletBalance: balance });
+                }
+            });
+        } else {
+        }
     }
 
     //Function to Compare the Amount of Ether from the Wallet and the needed Ether to deploy the Contract -> If Enough Call the Deployment Function
@@ -234,6 +238,8 @@ class DeploySmartContract extends React.Component {
         this.getBalanceFromWallet();
         if (!this.state.deployed) {
             Ansicht = <Box>
+                <Box pad="medium"></Box>
+                <Text weight="bold" size="xxlarge" align="center">Veröffentlichen des Smart Contracts</Text>
                 <Box pad="medium"></Box>
                 <Text weight="bold" size="large">Wallet-Daten</Text>
                 <Text>Die Wallet-Adresse ist: {this.props.walletAddress}</Text>
@@ -298,9 +304,9 @@ class ConfigureAdminAccount extends React.Component {
     render() {
         var Ansicht = [];
         Ansicht = <Box>
-            <Box pad="medium">
-                <Text size="large" weight="bold">Hinzufügen des Administratorbenutzers:</Text>
-            </Box>
+            <Box pad="medium"></Box>
+            <Text weight="bold" size="xxlarge" align="center">Hinzufügen des Administratorbenutzers</Text>
+            <Box pad="medium"></Box>
             <Box pad="medium">
                 <Text weight="bold">E-Mail-Adresse</Text>
                 <TextInput
@@ -361,9 +367,9 @@ class ConfigureDatabase extends React.Component {
     render() {
         var Ansicht = [];
         Ansicht = <Box>
-            <Box pad="medium">
-                <Text size="large" weight="bold">Konfigurieren der Datenbank:</Text>
-            </Box>
+            <Box pad="medium"></Box>
+            <Text weight="bold" size="xxlarge" align="center">Konfigurieren der Datenbank</Text>
+            <Box pad="medium"></Box>
             <Box pad="medium">
                 <Text weight="bold">Datenbank-Host:</Text>
                 <TextInput
@@ -415,7 +421,7 @@ class ConfigureDatabase extends React.Component {
 class ConfigureMailserver extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { host: "", port: null, conncetion: true, user: "", password: "", standardMail: "", standardPrefix: "" };
+        this.state = { host: "", port: "", conncetion: 'true', user: "", password: "", standardMail: "", standardPrefix: "" };
         this.configureTheMailserver = this.configureTheMailserver.bind(this);
     }
 
@@ -456,7 +462,9 @@ class ConfigureMailserver extends React.Component {
     render() {
         var Ansicht = [];
         Ansicht = <Box>
-            <Text size="large" weight="bold">Konfigurieren des Mailservers:</Text>
+            <Box pad="medium"></Box>
+            <Text weight="bold" size="xxlarge" align="center">Konfigurieren des Mailservers</Text>
+            <Box pad="medium"></Box>
             <Box pad="small">
                 <Text weight="bold">Mailserver-Host:</Text>
                 <TextInput
@@ -470,8 +478,7 @@ class ConfigureMailserver extends React.Component {
                 <TextInput
                     placeholder="Hier bitte den Port eingeben"
                     value={this.state.port}
-                    onChange
-                    ={(event) => { this.setState({ port: event.target.value }) }}
+                    onChange={(event) => { this.setState({ port: event.target.value }) }}
                 />
             </Box>
             <Box pad="small">
@@ -526,16 +533,82 @@ class ConfigureMailserver extends React.Component {
 class ConfigureShopConfig extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { host: "", port: null, conncetion: true, user: "", password: "", standardMail: "", standardPrefix: "" };
-        this.configureTheMailserver = this.configureTheMailserver.bind(this);
+        this.state = {
+            maxPersonenProEvent: "",
+            maxTicketProEvent: "",
+            maxVIPPersonen: ""
+        };
+
+        this.configureTheShopConfig = this.configureTheShopConfig.bind(this);
     }
 
-    render(){
+    //Function for HTTP-Request to set Shop Configuration
+    async configureTheShopConfig() {
+        var response = await fetch(Config.BACKEND_BASE_URI + "/setup/shopConfig", {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                max_Person_pro_Event: this.state.maxPersonenProEvent,
+                max_Tickets_pro_Event: this.state.maxTicketProEvent,
+                max_VIP_Person: this.state.maxVIPPersonen
+            })
+        }).catch(console.log)
+
+        if (!response.ok) {
+            const rückgabe = await response.json().catch(console.log);
+            if (!response.ok) {
+                alert(rückgabe.message)
+            }
+        }
+
+        if (response.ok) {
+            this.props.setShopConfiguration(this.state.maxPersonenProEvent, this.state.maxTicketProEvent, this.state.maxVIPPersonen);
+            this.props.changeStep();
+        }
+    }
+
+    render() {
         var Ansicht = []
+        Ansicht[0] = <Box>
+            <Box pad="medium"></Box>
+            <Text weight="bold" size="xxlarge">Konfigurieren der Shop Grundeinstellungen:</Text>
+            <Box pad="medium"></Box>
+            <Box pad="small">
+                <Text weight="bold">Maximale Personen pro Event:</Text>
+                <TextInput
+                    placeholder="Max Personen pro Event"
+                    value={this.state.maxPersonenProEvent}
+                    onChange={(event) => { this.setState({ maxPersonenProEvent: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold">Maximale Anzahl an Tickets pro Event:</Text>
+                <TextInput
+                    placeholder="Max Tickets pro Event"
+                    value={this.state.maxTicketProEvent}
+                    onChange={(event) => { this.setState({ maxTicketProEvent: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Text weight="bold">Maximale Anzahl der VIP-Personen pro Event:</Text>
+                <TextInput
+                    placeholder="Max VIP-Personen pro Event"
+                    value={this.state.maxVIPPersonen}
+                    onChange={(event) => { this.setState({ maxVIPPersonen: event.target.value }) }}
+                />
+            </Box>
+            <Box pad="small">
+                <Button onClick={this.configureTheShopConfig} label="Hinzufügen"></Button>
+            </Box>
+        </Box>
 
 
-        
-        return Ansicht; 
+        return Ansicht;
     }
 
 }
@@ -549,10 +622,14 @@ class SystemSetup extends React.Component {
         this.setWalletAddress = this.setWalletAddress.bind(this);
         this.changeValueOfGasprices = this.changeValueOfGasprices.bind(this);
         this.getValueOfGasPrices = this.getValueOfGasPrices.bind(this);
+        this.setShopConfiguration = this.setShopConfiguration.bind(this);
+        this.goToStep = this.goToStep.bind(this);
         this.state = {
             initializeStep: 0,
+            doneOnce: false,
             statusMap: new Map([["AW", false], ["DB", false], ["MS", false], ["AL", false], ["AA", false], ["DC", false], ["SC", false]]),
             gasPrices: new Map([["deployContract", ""], ["createTicket", ""], ["relinquishPlace", ""]]),
+            shopConfig: new Map([["MaxPersonProEvent", ""], ["MaxTicketProEvent", ""], ["MaxVIPPersonen", ""]]),
             walletAddress: "",
             httpProvider: "",
         };
@@ -583,22 +660,56 @@ class SystemSetup extends React.Component {
         this.setState({ httpProvider: httpProvider });
     }
 
+    //Function to set Shop-Configuration Values into Map
+    setShopConfiguration(maxPersonenProEvent, maxTicketProEvent, maxVIPPersonen) {
+        let values = this.state.shopConfig
+        values = new Map([["MaxPersonProEvent", maxPersonenProEvent], ["MaxTicketProEvent", maxTicketProEvent], ["MaxVIPPersonen", maxVIPPersonen]])
+        this.setState({ shopConfig: values })
+    }
+
     // Function to Change the Value of the state of Configuration
     changeStep() {
         var value;
-        if (this.state.initializeStep > 5) {
+        var doneOnceBooolean;
+
+        // Set Initialize Step to 0 to Start a new Process flow
+        if (this.state.initializeStep > 6) {
             value = 0;
+            this.setState({
+                initializeStep: value,
+            });
         }
-        if (this.state.initializeStep < 6) {
+        // Finished all Configuration once - Set Boolean to true and switch to last View
+        if (this.state.initializeStep === 6) {
             value = 1 + this.state.initializeStep;
+            doneOnceBooolean = true;
+
+            this.setState({
+                initializeStep: value,
+                doneOnce: doneOnceBooolean
+            });
         }
-        this.setState({ initializeStep: value });
+        // Normal Process Flow - Add 1 to Initialize Step 
+        if (this.state.initializeStep < 7) {
+            value = 1 + this.state.initializeStep;
+            this.setState({
+                initializeStep: value,
+            });
+        }
+    }
+
+    finishSystemSetup() {
+        window.location.assign("#/login")
+    }
+
+    goToStep(value) {
+        this.setState({ initializeStep: value })
     }
 
     render() {
         return (
             <Box className="SystemSetup" direction="column" gap="medium" pad="medium" align="center">
-                {this.state.initializeStep === 0 && <Hauptansicht statusMap={this.state.statusMap} initializeStep={this.state.initializeStep}></Hauptansicht>}
+                {this.state.initializeStep === 0 && <Hauptansicht goToStep={this.goToStep.bind(this)} doneOnce={this.state.doneOnce} statusMap={this.state.statusMap} initializeStep={this.state.initializeStep}></Hauptansicht>}
 
                 {this.state.initializeStep === 1 && <ConfigureDatabase changeValueOfStatusMap={this.changeValueOfStatusMap.bind(this)}
                     changeStep={this.changeStep.bind(this)}></ConfigureDatabase>}
@@ -615,14 +726,15 @@ class SystemSetup extends React.Component {
                 {this.state.initializeStep === 5 && <DeploySmartContract httpProvider={this.state.httpProvider} walletAddress={this.state.walletAddress} changeValueOfStatusMap={this.changeValueOfStatusMap.bind(this)}
                     changeStep={this.changeStep.bind(this)} getValueOfGasPrices={this.getValueOfGasPrices.bind(this)} changeValueOfGasprices={this.changeValueOfGasprices.bind(this)}></DeploySmartContract>}
 
-                {this.state.initializeStep === 6 && <Hauptansicht statusMap={this.state.statusMap} initializeStep={this.state.initializeStep}
+                {this.state.initializeStep === 6 && <ConfigureShopConfig setShopConfiguration={this.setShopConfiguration.bind(this)} changeStep={this.changeStep.bind(this)}></ConfigureShopConfig>}
+                {this.state.initializeStep === 7 && <Hauptansicht goToStep={this.goToStep.bind(this)} doneOnce={this.state.doneOnce} statusMap={this.state.statusMap} initializeStep={this.state.initializeStep}
                     changeStep={this.changeStep.bind(this)}></Hauptansicht>}
 
-                 {this.state.initializeStep === 7 && <ConfigureShopConfig></ConfigureShopConfig>}
-
-                {this.state.initializeStep === 0 && <Button onClick={this.changeStep} label="Konfiguration beginnen"></Button>}
-                {this.state.initializeStep !== 0 && this.state.initializeStep < 6 && <Button onClick={this.changeStep} label="Schritt überspringen"></Button>}
-                {this.state.initializeStep === 6 && <Box pad="medium"> <Button label="Zurück" onClick={this.changeStep}></Button></Box>}
+                {this.state.initializeStep === 0 && this.state.doneOnce === false && <Button onClick={this.changeStep} label="Konfiguration beginnen"></Button>}
+                {this.state.initializeStep === 0 && this.state.doneOnce === true && <Button onClick={this.changeStep} label="Erneuter Durchlauf"></Button>}
+                {this.state.initializeStep !== 7 && this.state.initializeStep !== 0 && this.state.initializeStep < 7 && <Button onClick={this.changeStep} label="Schritt überspringen"></Button>}
+                {this.state.initializeStep === 7 && <Box pad="medium"> <Button label="Zurück" onClick={this.changeStep}></Button></Box>}
+                {this.state.doneOnce === true && (this.state.initializeStep === 0 || this.state.initializeStep === 7) && <Button label="Initialisierung abschließen" onClick={this.finishSystemSetup}></Button>}
             </Box>
         );
     }
