@@ -25,6 +25,7 @@ Für die Anwendung des Bachelorsnight Ticketsystems wurden folgende "spezielle" 
 
 Übergeordnete Komponente, die zentrale App-Daten verwaltet.
 Hier wird ebenfalls der System-Status in regelmäßigen Abständen (60 Sek.) überprüft.
+Ein globaler Kontext für den Benutzer wird hier bereitgestellt (UserContext).
 
 ## Gast
 
@@ -110,6 +111,63 @@ ROUTE
 aktiviert oder deaktiviert werden. Die Route ändert den Wert hierfür in der Konfigurationsdatei des Backends.
 
 
+
+### SystemSetup
+Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich.
+Die Komponente besteht aus den Klassen:
+- Hauptansicht
+- AddWallet
+- ConfigureAdminAccount
+- ConfigureDatabase
+- ConfigureMailserver
+- AbsolventenListe
+- SystemSetup
+
+Die Klasse SystemSetup verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
+
+Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 6) des Einrichtungsvorgangs angezeigt.
+
+Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route "setup/generateWallet" an das Backend. Das Backend erstellt ein Wallet für den Admin.
+
+```
+{
+    httpProvider: String
+}
+DNS-Name des http-Providers:Port
+```
+
+Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Mail-Adresse und ein Passwort für den Administratorbenuzter zur Verfügung. Über die Route "/setup/adminUser" im Backend wird der Administratorbenutzer (Rolle 0) erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
+```
+{
+    email: String, 
+    Passwort: String    
+}
+```
+
+Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route "/setup/database" werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
+```
+{ 
+    host: String, 
+    user: String, 
+    password: String, 
+    db: String, 
+    port: String
+}
+```
+
+Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route "/setup/mailserver" werden die Einstellungen in die Konfiguration im Backend gespeichert.
+```
+{
+     host: String, 
+     port: String, 
+     conncetion: Boolean, 
+     user: String, 
+     password: String, 
+     standardMail: String,
+     standardPrefix: String
+}
+```
+
 Die Klasse AbsolventenListe stellt ein CSV-Reader Feld der Komponente "react-papaparse" zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
 ```
 E-Mail;Name
@@ -120,103 +178,39 @@ Beispiel@web.de; Mustermann, Max
 ```
 kann eine Liste mit E-Mail-Adressen eingelesen werden. Die eingelesene Liste wird in der Komponente in einer Liste angezeigt. Durch die Bestätigung der eingelesen Liste mit dem Button Abschließen wird für jeden Datensatz in der Liste die Route
 ```
-    Route: 
+
 ```
 aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet.
-
-
-### SystemSetup
-Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich.
-Die Komponente besteht aus den Klassen:
-- SystemSetup
-- Hauptansicht
-- ConfigureDatabase
-- ConfigureAdminAccount
-- ConfigureMailserver
-- AddWallet
-- DeploySmartContract
-- ConfigureShopConfig
-
-#### SystemSetup
-Die Klasse SystemSetup verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
-
-#### Hauptansicht
-Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 7) des Einrichtungsvorgangs angezeigt.
-
-#### ConfigureDatabase
-Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route 
-```
-{ 
-    Route: */setup/database
-}
-```
-werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
-
-#### ConfigureAdminAccount
-Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Mail-Adresse und ein Passwort für den Administratorbenuzter zur Verfügung. 
-
-```
-{
-    Voraussetzungen: Intitialisierte Datenbank
-}
-```
-
-Über die Route 
-```
-{
-    Route: */setup/adminUser
-}
-```
-im Backend wird der Administratorbenutzer (Rolle 0) erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
-
-#### ConfigureMailserver
-Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route  
-```
-{
-    Route: */setup/mailserver
-}
-```
-werden die Einstellungen in die Konfiguration im Backend gespeichert.
-
-#### AddWallet
-Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route 
-```
-{
-   Route: */setup/generateWallet
-}
-```
-an das Backend. Das Backend erstellt ein Wallet für den Admin. Ist die Einrichtung des Wallets erfolgreich abgeschlossen, zeigt die Ansicht der Komponente den Ethereum-Preis für die Veröffentlichung des Smart Contracts auf der Blockchain an.
-
-#### DeploySmartContract
-Die Klasse DeploySmartContract stellt ein Textfeld zur Eingabe des HTTP-Providers zur Verüfung. Im Admin-Wallet wird eine bestimmte Menge Ethereum benötigt. Dieses ist für die Veröffentlichung des Smart Contracts und die Erstellung eines Tickets.
-```
-{
-    Voraussetzungen:    - Erstelltes Wallet
-                        - Ethereum im Wallet 
-}
-```
-
-Der Smart Contract wird über die Route
-```
-{
-    Route: */setup/deployContract
-}
-```
-im Backend auf der Blockchain veröffentlicht. Nach der erfolgreichen Veröffentlichung des Smart Contracts werden in der Klasse die Preise für die Erstellung und die Übertragung eines Tickets angezeigt.
-
-#### ConfigureShopConfig
-Die Klasse ConfigureShopConfig stellt 3 Textboxen für die Eingabe der maximalen Personen pro Event, die maximale Anzahl von Tickets und die maximale Anzahl an VIP-Personen zur Verfügung. Die Werte werden über die Route
- ```
-{
-    Route: */setup/shopConfig
-}
-```
-in die Konfigurationsdatei im Backend gespeichert. 
 
 # Spezielle Funktionalitäten
 
 ## Login und Benutzer-Erstellung
-Beim Erstellprozess eines neuen Users wird diesem ein Access-Token, eine eindeutige Benutzer-ID, eine E-Mail-Adresse und eine Userrolle zugewiesen. Diese Werte werden sowohl in der Datenbank als auch im LocalStorage des Browsers gespeichert. In der Datenbank wird zusätzlich das gewählte Passwort als Hashwert abgespeichert. Nach einer Anmeldung mit E-Mail-Adresse und Passwort werden die Werte aus der Datenbank geholt und lokal in der Applikation sowie im LocalStorage des Browsers gespeichert. Über den Header der Applikation kann eine Login- oder Logout-Funktion aufgerufen werden. Bei der Login-Funktion werden die bestehenden Werte aus dem LocalStorage des Browsers entnommen, überprüft und lokal in der Applikation verwendet. Somit ist hierbei keine erneute Anmeldung erforderlich. Bei fehlenden Werten wird zur Anmeldefunktion mit E-Mail-Adresse und Passwort übergeleitet. Durch die Logout-Funktion werden die lokal gespeicherten Werte der Applikation zurückgesetzt. Bei jeglicher Form der Anmeldung soll der Benutzer, je nach zugeordneter Rolle, auf eine andere Startseite weitergeleitet werden (Benutzeransichtansicht bzw. Eventmanagement).
+
+Zum Anmelden des Benutzers existiert die Komponente Login. Hiermit kann ein neuer Account mithilfe eines Einmal-Passworts (OTP) erstellt werden. Das entsprechende OTP muss zuvor vom Admin angelegt werden und zeigt auf eine vordefinierte Rolle und eine unveränderliche E-Mailadresse.
+
+Beim Erstellprozess eines neuen Benutzers wird diesem vom Backend aus ein Access-Token, eine eindeutige Benutzer-ID, die vorgegebene E-Mail-Adresse und eine Rolle zugewiesen. Diese Werte werden sowohl in der Datenbank als auch hier im Frontend im LocalStorage des Browsers zwischengespeichert. Das Passwort ist jeweils nur als gesalzener Hashwert im Speicher. Der Access-Token wird bei zukünftigen Anfragen an das Backend benötigt.
+
+Nach einer normalen Anmeldung mit E-Mail-Adresse und Passwort erhält das Frontend vom Backend die Benutzer-Daten und einen API-Token. Beides wird im LocalStorage des Browsers gespeichert.
+
+In beiden Situationen ist der Benutzer anschließend angemeldet. Der entsprechende UserContext (siehe nächster Abschnitt) hält zur Laufzeit benötigte Funktionen zur verfügung.
+
+## Globaler Benutzer Kontext (UserContext)
+
+Um über die App hinweg ein global verfügbares Benutzer-Objekt zu haben und Berechtigungen zu überprüfen, wird von der Hauptkomponente (App.js) ein React-Context erzeugt. Dieser hält den angemeldeten Benutzer mit seinen Eigenschaften, den aktuellen API-Token und einige nützliche Funktionen. Die Eigenschaften und Methoden sind im Detail wie folgt aufgebaut:
+
+```
+{
+    user: User, // Siehe Backend-Route GET: User
+    token: String, // Aktueller API-Token
+    logout: Method, // Löscht den LocalStorage (und die IndexedDB bei Bedarf), leitet anschließend nach #/login/ um
+    setUserContext: Method, // Setzt das Objekt im LocalStorage neu -> Hier bitte immer nur ein JS-Objekt mit { user: User, token: String } übergeben.
+    requireLogin: Method, // Erfordert eine Zahl für die zwingende Rolle als Parameter und prüft daraufhin ob die Bedinungen gegeben sind. Sollte von jeder Komponente aufgerufen werden, die eine Anmeldung erzwingt.
+    redirectUserToHome: Method // Kann verwendet werden, um den aktuellen Benutzer auf Basis seiner Rolle an seine "Hauptseite" zu leiten
+}
+```
+
+## Ticketleser und Ticketmaster
+
 
 # Entwicklung
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
