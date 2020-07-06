@@ -186,9 +186,9 @@ aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mai
 
 <img src="./assets/entranceDashboard1.png" width="150px" alt="Screenshot des EntranceDashboards leer"> <img src="./assets/entranceDashboard2.png" width="150px" alt="Screenshot des EntranceDashboards mit Daten-Dump">
 
-Das Einlass Dashboard ist zur Überwachung des aktuellen Einlass-Prozesses da. Es stellt die absolute Anzahl der eingelassenen Personen (Kategorie 1), sowie die Anzahl der noch nicht eingelösten Tickets dar (Kategorie 2). Grafische Darstellungen in Form von Balken-Diagrammen veranschaulichen den relativen Anteil der beiden Kategorien.
+Das Einlass Dashboard ist zur Überwachung des aktuellen Einlass-Prozesses da. Es stellt die absolute Anzahl der eingelassenen Personen (Kategorie 1) sowie die Anzahl der noch nicht eingelösten Tickets dar (Kategorie 2). Grafische Darstellungen in Form von Balken-Diagrammen veranschaulichen den relativen Anteil der beiden Kategorien.
 
-Diese Komponente macht sich die Offline-Funktionalität und Indexed-DB zur Nutze. Ein Klick auf den Download Button reicht aus, um vom Backend ein Dump der Ticket-Daten aus Blockchain und interner DB anzufordern. Anschließend wird die Schaltfläche zum Schutz vor versehentlichem Überschreiben deaktiviert. Erst durch den darunterliegenden Schalter, welcher eine Warnung ausgibt, kann der Offline-Datensatz komplett nue geladen (überschrieben) werden.
+Diese Komponente macht sich die Offline-Funktionalität und Indexed-DB zur Nutze. Ein Klick auf den Download Button reicht aus, um vom Backend ein Dump der Ticket-Daten aus Blockchain und interner DB anzufordern. Anschließend wird die Schaltfläche zum Schutz vor versehentlichem Überschreiben der Indexed-DB deaktiviert. Erst durch den darunterliegenden Schalter, welcher eine Warnung ausgibt, kann der Offline-Datensatz komplett neu geladen (überschrieben) werden.
 
 Für Details zur Indexed-DB siehe Kapitel "Spezielle Funktionalitäten".
 
@@ -196,7 +196,7 @@ Für Details zur Indexed-DB siehe Kapitel "Spezielle Funktionalitäten".
 
 <img src="./assets/ticketReaderMgr1.png" width="150px" alt="Screentshot Ticket-Leser Manager"> <img src="./assets/ticketReaderMgr2.png" width="150px" alt="Screentshot Ticket-Leser Manager"> <img src="./assets/ticketReaderMgr3.png" width="150px" alt="Screentshot Ticket-Leser Manager">
 
-Diese Komponente wurde zum Hinzufügen und Entfernen von Remote-Ticketlesern für den Einlass entwickelt. Ein Remote-Ticketleser kann mithilfe eines entsprechenden Dialogs, der mithilfe von QR-Codes zwischen Ticketleser und dieser Komponente Kommunikations-Konfigurationen austauscht, angelegt werden. Für eine Detailiierte beschreibung zum Thema Peer-to-Peer Kommunikation der Ticketleser zum Master, siehe "Spezielle Fumktionalitäten".
+Diese Komponente wurde zum Hinzufügen und Entfernen von Remote-Ticketlesern für den Einlass entwickelt. Ein Remote-Ticketleser kann über einen geführten Dialog angelegt werden. Mithilfe von QR-Codes werden dabei Konfigurationen zur Kommunikation zwischen Ticketleser und dieser Komponente (Master) ausgetauscht. Für Details zum Thema Kommunikation der Ticketleser mit dem Master, siehe "Spezielle Fumktionalitäten".
 
 Wurde ein Remote-Ticketleser hinzugefügt (neue Instanz der Klasse RemoteTicketReader), wird der aktuelle Verbindungsstatus in der Liste auf dieser Komponente angezeigt. Wird die Verbindung kurzzeitig unterbrochen, so wird die Statusanzeige aktualisiert. Ist die Verbindung dauerhaft fehlgeschlagen, so wird der Ticketleser aus der Liste entfernt.
 
