@@ -216,7 +216,29 @@ Für den Anwendungsfall "Ticketleser" wird zwischen Master und Client unterschie
 
 <img src="./assets/RTCP2PVerbindungsaufbau.png" alt="Sequenzdiagramm des Verbindungsaufbaus">
 
-Die Kommunikation per RTCPeerConnection erfolgt über einen sogenannten Datachannel. Pro Ende-zu-Ende (Master->Client) Verbindung gibt es einen eigenen Datachannel. Dennoch könnten verschiedene Befehle über diesen Channel geschickt werden. Beispielsweise, um ein Ticket auszulesen oder es zu entwerten. Aber auch andere Anfragen oder Ereignisse könnten zukünftig auch vom Master aus an jeden einzelnen Ticketleser verschickt werden. Damit die Systeme die verschiedenen Nachrichtenarten (Anfragen bzw. Antworten) unterscheiden können und wissen, was sie damit anfangen sollen, wird ein einheitliches Protokoll mit definierten Datenstrukturen der Nachrichten benötigt. 
+Die Kommunikation per RTCPeerConnection erfolgt über einen sogenannten Datachannel. Pro Ende-zu-Ende (Master->Client) Verbindung gibt es einen eigenen Datachannel. Dennoch könnten verschiedene Befehle über diesen Channel geschickt werden. Beispielsweise, um ein Ticket auszulesen oder es zu entwerten. Aber auch andere Anfragen oder Ereignisse könnten zukünftig auch vom Master aus an jeden einzelnen Ticketleser verschickt werden. Damit die Systeme die verschiedenen Nachrichtenarten (Anfragen bzw. Antworten) unterscheiden können und wissen, was sie damit anfangen sollen, wird ein einheitliches Protokoll mit definierten Datenstrukturen der Nachrichten benötigt. Im folgenden sind daher zwie Datenstrukturen definiert die zum Versenden von Anfragen oder Antworten genutzt werden.
+
+**Nachrichten-Aufbau einer Anfrage:**
+
+```
+{ 
+    type: "Request",  
+    reqId: !Unique! String, 
+    context: String, 
+    method: String, 
+    params: [Any]
+}
+```
+
+**Nachrichten-Aufbau einer Antwort:**
+
+```
+{ 
+    type: "Answer", 
+    reqId: !Unique! String, 
+    result: Any
+}
+```
 
 Für das konkrete Konzept werden hauptsächlich Anfragen vom Ticket-Leser gestellt: 
 
