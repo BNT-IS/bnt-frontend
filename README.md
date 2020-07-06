@@ -191,7 +191,7 @@ aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mai
 
 ## Login und Benutzer-Erstellung
 
-<img src="./assets/login1.png" width="150px" alt="Screenshot zur Anmeldung"><img src="./assets/login2.png" width="150px" alt="Screenshot zur Anmeldung"><img src="./assets/login3.png" width="150px" alt="Screenshot zur Anmeldung"><img src="./assets/login4.png" width="150px" alt="Screenshot zur Anmeldung">
+<img src="./assets/login1.png" width="150px" alt="Screenshot zur Anmeldung"> <img src="./assets/login2.png" width="150px" alt="Screenshot zur Anmeldung"> <img src="./assets/login3.png" width="150px" alt="Screenshot zur Anmeldung"> <img src="./assets/login4.png" width="150px" alt="Screenshot zur Anmeldung">
 
 Zum Anmelden des Benutzers existiert die Komponente Login. Hiermit kann ein neuer Account mithilfe eines Einmal-Passworts (OTP) erstellt werden. Das entsprechende OTP muss zuvor vom Admin angelegt werden und zeigt auf eine vordefinierte Rolle und eine unveränderliche E-Mailadresse.
 
