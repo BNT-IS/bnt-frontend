@@ -209,8 +209,24 @@ Um über die App hinweg ein global verfügbares Benutzer-Objekt zu haben und Ber
 }
 ```
 
-## Ticketleser und Ticketmaster
+## Ticketleser und Ticketmaster (Peer-to-Peer)
+Aktuelle, weitverbreitete Webbrowser unterstützen die sogenannte WebRTC API. Mithilfe dieser API kann eine Peer-to-Peer Verbindung zwischen zwei unabhängigen Geräten über den Webbrowser aufgebaut werden. Voraussetzung ist eine bestehende Netzwerkverbindung, die entweder über das Internet eine Kommunikation ermöglicht oder direkt über ein lokales Netzwerk. Für detaillierte Informationen über die einzelnen Komponenten dieser API sollte die Referenz zur Rate gezogen werden.
 
+Für den Anwendungsfall "Ticketleser" wird zwischen Master und Client unterschieden. Die Master-Komponente ist im Event-Management-Bereich der Frontend-Applikation angesiedelt. Die Client-Komponente bestimmt die Nutzbarkeit der Einlass-Komponenten (Ticketleser). Es ist vorgesehen, dass die Kommunikation über ein lokales Netzwerk stattfindet. Somit ist es Voraussetzung, dass die Applikations-Teile von Master und Client bereits auf den entsprechenden Geräten als offline verfügbare Progressive-Web-App zwischengespeichert wurde. Dazu sollte mindestens einmal die entsprechende URL des Ticket-systems online aufgerufen worden sein. Der Master sollte zudem die Ticket-Daten von der Blockchain auf die lokale Indexed DB gespiegelt haben. Anschließend müssen alle Geräte, die miteinander kommunizieren sollen mit demselben Netzwerk verbunden sein. Für diesen "Offline-Betrieb" im lokalen Netzwerk ist jedoch keine Verbindung zum Internet erforderlich. Ein solch drahtloses und lokales Netzwerk könnte per Accesspoint aber auch per Handy-Hotspot errichtet werden.
+
+Die Kommunikation per RTCPeerConnection erfolgt über einen sogenannten Datachannel. Pro Ende-zu-Ende (Master->Client) Verbindung gibt es einen eigenen Datachannel. Dennoch könnten verschiedene Befehle über diesen Channel geschickt werden. Beispielsweise, um ein Ticket auszulesen oder es zu entwerten. Aber auch andere Anfragen oder Ereignisse könnten zukünftig auch vom Master aus an jeden einzelnen Ticketleser verschickt werden. Damit die Systeme die verschiedenen Nachrichtenarten (Anfragen bzw. Antworten) unterscheiden können und wissen, was sie damit anfangen sollen, wird ein einheitliches Protokoll mit definierten Datenstrukturen der Nachrichten benötigt. 
+
+Für das konkrete Konzept werden hauptsächlich Anfragen vom Ticket-Leser gestellt: 
+
+1. Der Ticketleser liest ein Ticket aus und möchte die Informationen anzeigen.
+
+2. Der Ticketleser möchte ein Ticket entwerten.
+
+Grundsätzlich geht daraus hervor, dass die Nachricht vom Ticketleser zum entfernten Methodenaufruf den Nachrichtentyp „Anfrage“ oder „Request“ darstellen muss. Kommt diese Nachricht beim Master an, muss das Master-System wissen, welche Methode mit welchen Parametern ausgeführt werden soll. Aus diesem Grund muss eine Nachricht die Eigenschaften „method“ und „params“ mitliefern. Als zusätzliche Überlegung könnte es sinnvoll sein, dass verschiedene Methoden zu verschiedenen Anwendungskontexten gehören. Falls es beispielsweise nicht um die Ticket-Daten geht, sollten möglicherweise ganz andere System-Komponenten angesprochen werden. Mithilfe der Eigenschaft „context“ soll hierbei eine Unterscheidung auf der Empfängerseite ermöglicht werden. 
+
+Nachdem beispielsweise die Methode readTicket() beim Master ausgeführt wurde, muss das Resultat an den Client (Anfragenden) zurückgeschickt werden. Hierfür bietet sich ein Nachrichtentyp mit dem Bezeichner „Answer“ an. Dieser enthält unter anderem das Ergebnis des Methodenaufrufs. Zusätzlich sollten alle Nachrichten mit dem Typ „Reqest“ eine eindeutige Anfrage-ID („reqId“) besitzen. Damit kann der Initiator der Anfrage eine spätere Antwort der ursprünglichen Anfrage zuzuordnen. Das bedeutet, auch die Nachrichten vom Typ “Answer“ müssen die entsprechende "reqId" ausweisen. 
+
+Somit sind die Basis-Eigenschaften der Nachrichten einsatzbereit für einen entfernen Methoden-Aufruf mit anschließender Auswertung beim Initiator. Der Initiator kann ein Client sein, aber auch der Master könnte Anfragen an spezielle Clients schicken. Für die zwei Beispiel-Methoden gehen die Anfragen jedoch nur vom Client (Ticketleser) aus. 
 
 # Entwicklung
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
