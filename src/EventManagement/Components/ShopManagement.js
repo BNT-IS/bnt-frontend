@@ -639,36 +639,6 @@ class ShopManagement extends React.Component {
         }
     };
 
-    //TODO: DELETE OTPS 
-    async deleteOTPwithEmail(eMail) {
-        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/oneTimePasses", {
-            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.context.token,
-            },
-            body: JSON.stringify({
-                email: eMail
-            })
-        }).catch(console.log)
-
-        if (!response) {
-            alert("Keine Antwort vom Backend bei der Erstellung des One Time Passworts für die E-Mail:" + eMail)
-            return;
-        }
-        if (!response.ok) {
-            alert("Fehler bei der Erstellung eines One Time Passwortes: " + response.message)
-            return;
-        }
-        if (response.ok) {
-            console.log("One Time Passwort mit der E-Mail: " + eMail + " gelöscht")
-            return 1;
-        }
-
-
-    }
     //TODO CHECK
     async setShopConfigInitialList(intialListStatus) {
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/shopConfig", {
@@ -923,7 +893,6 @@ class ShopManagement extends React.Component {
                         <Box>
                             <Text size="xxlarge" weight="bold" alignSelf="center">Willkommen in der Shop-Verwaltung</Text>
                             <Box pad="medium"></Box>
-                            <Button label="QuickView aktualisieren" onClick={this.componentDidMount}></Button>
                         </Box>
                         <Box direction="row" wrap={true} justify="center">
                         <Box ClassName="twoGroupedBoards" direction="row" wrap={true} justify="center">

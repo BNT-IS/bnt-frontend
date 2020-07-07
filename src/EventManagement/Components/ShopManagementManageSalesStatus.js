@@ -13,9 +13,9 @@ class ShopManagementManageSalesStatus extends React.Component {
         this.state = {
             salesStatus: "Aktivieren"
         }
-
         this.setValuesAndChangeStep = this.setValuesAndChangeStep.bind(this);
         this.switchSalesStatus = this.switchSalesStatus.bind(this)
+        this.changeToShopMangement = this.changeToShopMangement.bind(this)
     }
 
     switchSalesStatus() {
@@ -49,6 +49,10 @@ class ShopManagementManageSalesStatus extends React.Component {
         }
     }
 
+    changeToShopMangement() {
+        window.location.assign("#/eventmgmt/shop");
+    }
+
     render() {
         var Ansicht = [];
         return (
@@ -67,7 +71,10 @@ class ShopManagementManageSalesStatus extends React.Component {
                         />
 
                     </Box>
+                    <Box direction="row" pad="medium">
+                    <Button label="Zurück" onClick={this.changeToShopMangement}></Button>
                     <Button label="Bestätigen" onClick={this.setValuesAndChangeStep}></Button>
+                    </Box>
                 </Box >
             </Box>
         );

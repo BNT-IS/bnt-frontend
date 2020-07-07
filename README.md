@@ -72,6 +72,9 @@ Sobald das fünfte Fenster sich öffnet wurden die Buchung ausgeführt und die T
 
 ### ShopManagament
 Die Komponente ShopManagament ist für die Anzeige von Statistiken und Einstellungen während des Verkaufs der Tickets zuständig.
+
+<img src="./assets/ShopManagament.PNG" width="350px" alt="ShopManagament">
+
 Die Komponente besteht aus den Klassen:
 - DataQuickViewMaxTickets
 - DataQuickViewPayment
@@ -87,14 +90,21 @@ und interagiert mit den Komponenten
 - ShopManagamentConfMaxTickets
 - ShopManagamenetSalesStatistics
 - ShopManagamentViewBookings
--
--
+- ShopManagementPaymentOptions
+- ShopManagementManageSalesStatus
+- ShopManagamentAbsolventenListe
+- ShopManagementManageOTPS
+- ShopManagementViewOTPs
 
 #### Klasse - ShopManagament
-Die Klasse ShopManagament ist für die Anzeige der entsprechenden Klassen und Komponenten sowie die Verwaltung der zentralen Daten für die Anzeigen verantwortlich. Die Klasse stellt Setter-Funktionen für die entsprechenden Werte bereit, die die einzelnen (DataQuickView)-Klassen aufrufen um die Werte in der Klasse ShopManagamenet zu ändern.
+Die Klasse ShopManagament ist für die Anzeige der entsprechenden Klassen und Komponenten sowie die Verwaltung der zentralen Daten für die Anzeigen verantwortlich. Die Klasse stellt Setter-Funktionen für die entsprechenden Werte bereit, die die einzelnen (DataQuickView)-Klassen aufrufen um die Werte in der Klasse ShopManagamenet zu ändern. In der Klasse ShopManagement sind die HTTP-Requests an das Backend hinterlegt und werden von den jeweiligen Komponenten aufgerufen.
+
+<img src="./assets/ShopManagament.PNG" width="150px" alt="ShopManagament">
 
 #### Klasse - DataQuickViewMaxTickets
 Die Klasse DataQuickViewMaxTickets zeigt die Anzahl der Tickets an, die ein Absolvent mit der derzeitigen Konfiguration erwerben kann. Mit dem Button der Klasse wird der Administrator zur Komponente ShopManagementConfMaxTickets weitergeleitet.
+
+<img src="./assets/DataQuickViewMaxTickets.PNG" width="150px" alt="DataQuickViewMaxTickets">
 
 #### Komponente - ShopManagamentConfMaxTickets
 Die Komponente ShopManagamentConfMaxTickets stellt Textfelder zur Verüfung mit denen die maximalen Tickets, die ein Absolvent erwerben kann, konfiguriert werden können. Die Werte  werden von der Klasse ShopManagement mit der Route
@@ -104,6 +114,8 @@ Die Komponente ShopManagamentConfMaxTickets stellt Textfelder zur Verüfung mit 
 }
 ```
 im Backend in der Konfigurationsdatei gespeichert.
+
+<img src="./assets/ShopManagamentConfMaxTickets.PNG" width="150px" alt="DataQuickViewMaxTickets">
 
 #### Klasse - DataQuickViewPayment
 Die Klasse DataQuickViewPayment zeigt die Konfigurierten Bezahloptionen an.!!!!!!!!!!!!!!!!!!!!!!!!
@@ -126,8 +138,12 @@ In der Komponente ShopManagementManageSalesStatus kann der Status des Verkaufs �
 ```
 in der Konfigurationsdatei des Backends gespeichert.
 
+<img src="./assets/ShopManagementManageSalesStatus.PNG" width="150px" alt="ShopManagementManageSalesStatus">
+
 #### Klasse - DataQuickViewCreateOTPS
 Die Klasse DataQuickViewCreateOTPS zeigt an, ob bereits eine Liste mit E-Mail-Adressen für die Erstellung der One Time Passwörter und den anschließenden E-Mail-Versand eingelesen wurde. Mit dem Button "Liste einlesen" wird der Administrator zur Komponente ShopManagamentAbsolventenListe weitergeleitet.
+
+<img src="./assets/DataQuickViewCreateOTPS.PNG" width="150px" alt="DataQuickViewCreateOTPS">
 
 #### Komponente - ShopManagamentAbsolventenListe
 Die Komponente ShopManagamentAbsolventenListe stellt ein CSV-Reader Feld der Komponente "react-papaparse" zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
@@ -144,12 +160,37 @@ kann eine Liste mit E-Mail-Adressen eingelesen werden. Die eingelesene Liste wir
 ```
 aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet. Die Komponente kann nur Benutzer / One Time Passwörter mit der Rolle 1 (Absolvent) erstellen.
 
+<img src="./assets/ShopManagamentAbsolventenListe.PNG" width="150px" alt="ShopManagamentAbsolventenListe">
+
+<link src="./assets/ShopManagamentAbsolventenListe.csv" alt="Template ShopManagamentAbsolventenListe">
+
 #### Klasse - DataQuickViewManageOTPS
 Mit dem Button der Klasse DataQuickViewManageOTPS kann zur Komponente ShopManagementManageOTPS gewechselt werden.
+
+<img src="./assets/ShopManagamentAbsolventenListe.PNG" width="150px" alt="ShopManagamentAbsolventenListe">
 
 #### Komponente - ShopManagementManageOTPS
 In der Komponente ShopManagementManageOTPS können neue One Time Passwörter erstellt werden. In das Textfeld muss eine E-Mail-Adresse eingetragen werden und über das Drop-Down-Menü kann die entsprechende Rolle ausgewählt werden. (Rolle 0 = Administrator; Rolle 1 = Benutzer)
 
+<img src="./assets/ShopManagementManageOTPS.PNG" width="150px" alt="ShopManagementManageOTPS">
+
+#### Klasse - DataQuickViewViewOTPs
+Die Klasse DataQuickViewViewOTPs stellt einen Button bereit, mit dem der Administrator zur Komponente ShopManagementViewOTPs wechseln kann.
+
+<img src="./assets/DataQuickViewViewOTPs.PNG" width="150px" alt="DataQuickViewViewOTPs">
+
+#### Komponente - ShopManagementViewOTPs
+Die Komponente ShopManagementViewOTPs ruft über die Route
+```
+Route: */api/v2/oneTimePasses
+```
+die in der Datenbank hinterlegten One Time Passwörter ab und strukturiert diese in einer Liste. Mit dem Button OTP löschen im Listenelement kann ein One Time Passwort aus der Datenbank gelöscht werden. Hierfür wird die Route
+```
+    Route: */api/v2/oneTimePass/{ID}
+```
+im Backend verwendet.
+
+<img src="./assets/ShopManagementViewOTPs.PNG" width="150px" alt="ShopManagementViewOTPs">
 
 ### SystemSetup
 Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich. Ist im Backend keine Konfiguration gesetzt, schaltet der Server in den Wartungsmodus.

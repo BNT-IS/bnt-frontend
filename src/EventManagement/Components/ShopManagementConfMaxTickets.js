@@ -16,10 +16,14 @@ class ShopManagementConfMaxTickets extends React.Component {
         }
 
         this.setValuesAndChangeStep = this.setValuesAndChangeStep.bind(this)
+        this.changeToShopMangement = this.changeToShopMangement.bind(this)
     }
 
     setValuesAndChangeStep (){
         this.props.setConfMaxTicketsFromConf(this.state.Absolvententickets, this.state.Begleitertickets);
+        window.location.assign("#/eventmgmt/shop");
+    }
+    changeToShopMangement() {
         window.location.assign("#/eventmgmt/shop");
     }
 
@@ -49,8 +53,11 @@ class ShopManagementConfMaxTickets extends React.Component {
                         onChange={(event) => { this.setState({ Begleitertickets: parseInt(event.target.value)}) }}
                     />
                 </Box>
+                <Box direction="row" pad="medium">
+                <Button label="Zurück" onClick={this.changeToShopMangement}></Button>
                 <Button label="Bestätigen" onClick={this.setValuesAndChangeStep}></Button>
-            </Box >
+                </Box>
+            </Box>
         );
     }
 }
