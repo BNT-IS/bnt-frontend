@@ -88,7 +88,6 @@ Die Komponente besteht aus den Klassen:
 
 und interagiert mit den Komponenten
 - ShopManagamentConfMaxTickets
-- ShopManagamenetSalesStatistics
 - ShopManagementManageSales
 - ShopManagamentViewBookings
 - ShopManagementPaymentOptions
@@ -150,6 +149,8 @@ Die Klasse DataQuickViewSalesStatistics gibt einen Überblick über die noch vor
 #### Klasse - DataQuickViewManageSales
 Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert sein. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente ShopManagementManageSalesStatus weiter.
 
+<img src="./assets/DataQuickViewManageSales.PNG" width="150px" alt="ShopManagementManageSalesStatus">
+
 #### Komponente - ShopManagementManageSalesStatus
 In der Komponente ShopManagementManageSalesStatus kann der Status des Verkaufs über das Drop-Down Menü aktiviert / deaktiviert werden. Der Status wird von der Klasse ShopManagement mit der Route
 ```
@@ -186,7 +187,7 @@ aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mai
 #### Klasse - DataQuickViewManageOTPS
 Mit dem Button der Klasse DataQuickViewManageOTPS kann zur Komponente ShopManagementManageOTPS gewechselt werden.
 
-<img src="./assets/ShopManagamentAbsolventenListe.PNG" width="150px" alt="ShopManagamentAbsolventenListe">
+<img src="./assets/DataQuickViewManageOTPS.PNG" width="150px" alt="DataQuickViewManageOTPS">
 
 #### Komponente - ShopManagementManageOTPS
 In der Komponente ShopManagementManageOTPS können neue One Time Passwörter erstellt werden. In das Textfeld muss eine E-Mail-Adresse eingetragen werden und über das Drop-Down-Menü kann die entsprechende Rolle ausgewählt werden. (Rolle 0 = Administrator; Rolle 1 = Benutzer)
