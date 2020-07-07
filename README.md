@@ -152,8 +152,19 @@ In der Komponente ShopManagementManageOTPS können neue One Time Passwörter ers
 
 
 ### SystemSetup
-Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich.
-Die Komponente besteht aus den Klassen:
+Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich. Ist im Backend keine Konfiguration gesetzt, schaltet der Server in den Wartungsmodus.
+
+<img src="./assets/Wartungsmodus.PNG" width="150px" alt="Wartungsmodus">
+
+Mit der Route
+```
+{
+    Route: */setup/  
+}
+```
+kann zur Komponente SystemSetup gewechselt werden. 
+
+Die Klassen besteht aus den Klassen:
 - Systemsetup
 - Hauptansicht
 - ConfigureDatabase
