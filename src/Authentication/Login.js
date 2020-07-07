@@ -17,6 +17,7 @@ class Login extends React.Component {
         this.otpInputHandler = this.otpInputHandler.bind(this);
         this.pass1Handler = this.pass1Handler.bind(this);
         this.pass2Handler = this.pass2Handler.bind(this);
+        this.setState0 = this.setState0.bind(this);
         this.setState1 = this.setState1.bind(this);
         this.setState6 = this.setState6.bind(this);
         this.state = { dhbw_mail: "", login_pass: "", new_pass: "", otp: "", pass1: "", pass2: "", step: 0, access_token: "" };
@@ -147,6 +148,11 @@ class Login extends React.Component {
         this.context.redirectUserToHome();
     }
 
+    setState0() {
+        //Springt zur Übersicht des Login-Fensters
+        this.setState({ step: 0 });
+    }
+
     setState1() {
         //Springt zur Eingabe des OTP's im Erstellungsprozess
         this.setState({ step: 1 });
@@ -183,6 +189,7 @@ class Login extends React.Component {
                             <Text>Bitte geben Sie das OneTime-Passwort ein, das wir an Ihre DHBW-Mailadresse versendet haben, und bestätigen Sie die Eingabe</Text>
                             <TextInput placeholder="OTP eingeben" value={this.state.otp} onChange={this.otpInputHandler}></TextInput>
                             <Button label="Eingabe bestätigen" onClick={this.otpBestätigen}></Button>
+                            <Button label="Zurück zur Übersicht" onClick={this.setState0}></Button>
                         </Box>
                     }
                     {this.state.step === 2 &&
@@ -202,6 +209,7 @@ class Login extends React.Component {
                             <TextInput placeholder="DHBW-Mailadresse eingeben" value={this.state.dhbw_mail} onChange={this.mailHandler}></TextInput>
                             <TextInput placeholder="Account-Passwort eingeben" value={this.state.login_pass} onChange={this.loginPassHandler}></TextInput>
                             <Button label="Anmelden" onClick={this.login}></Button>
+                            <Button label="Zurück zur Übersicht" onClick={this.setState0}></Button>
                         </Box>
                     }
                 </Box>

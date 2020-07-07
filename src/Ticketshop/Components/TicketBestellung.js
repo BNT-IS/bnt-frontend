@@ -365,7 +365,7 @@ class TicketBestellung extends React.Component {
                             Nach Rechnungseingang erhalten Sie Ihre Tickets an ihr Wallet gesendet.<br />
                         </Text>
                         <Text>Sie haben folgende Tickets bestellt: <br />
-                            Absolventent: 1 <br />
+                            Absolvent: 1 <br />
                             Begleitpersonen: {this.state.guestcount} <br />
                             Parkticket: {this.state.parkcount}
                         </Text>

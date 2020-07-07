@@ -25,6 +25,7 @@ class ShopManagementViewBookings extends React.Component {
         this.approve = this.approve.bind(this);
         this.searchOpenHandler = this.searchOpenHandler.bind(this);
         this.searchPaidHandler = this.searchPaidHandler.bind(this);
+        this.postTicket = this.postTicket.bind(this);
     }
 
     componentDidMount() {
@@ -127,9 +128,60 @@ class ShopManagementViewBookings extends React.Component {
             return
         } else {
             alert("Die Buchung mit der Buchungs-ID " + bookingId + " wurde bestätigt.");
+            const response2 = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/' + bookingId + '/ticketsBooked/', {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + this.context.token,
+            },
+        }).catch(console.log);
+            
+        if (!response2.ok){
+            alert("Das Abrufen der Tickets ist fehlgeschlagen!");
+            return;
+        } else {
+            const rückgabe = await response2.json().catch(console.log);
+            for(var lauf=0; lauf < rückgabe.length; lauf++){
+                this.postTicket(rückgabe[lauf].identifier, rückgabe[lauf].ticketType, rückgabe[lauf].forename, rückgabe[lauf].surname, rückgabe[lauf].isWheelchairUser);
+            }
+        }
             this.componentDidMount();
         }
     }
+
+    async postTicket(identifier, ticketType, forename, surname, isWheelchairUser){
+        const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/tickets/', {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+            body: JSON.stringify({ 
+                identifier: identifier, 
+                ticketType: ticketType, 
+                forename: forename, 
+                surname: surname, 
+                isWheelchairUser: isWheelchairUser 
+            })
+        }).catch(console.log);
+
+        if(!response){
+            console.log("Keine Antwort vom Backend bei der Erstellung eines Tickets!");
+            return;
+        }
+        if (!response.ok) {
+            console.log("Fehler bei der Erstellung eines Tickets!");
+            return;
+        }
+        if (response.ok) {
+            console.log("Ticket wurde erstellt!")
+            return ;
+        }
+    } 
 
     changeStep() {
         //Leitet den Besucher auf die allgemeine Übersichtsseite des Eventmanagements weiter
