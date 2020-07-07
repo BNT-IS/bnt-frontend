@@ -100,7 +100,7 @@ und interagiert mit den Komponenten
 #### Klasse - ShopManagament
 Die Klasse ShopManagament ist für die Anzeige der entsprechenden Klassen und Komponenten sowie die Verwaltung der zentralen Daten für die Anzeigen verantwortlich. Die Klasse stellt Setter-Funktionen für die entsprechenden Werte bereit, die die einzelnen (DataQuickView)-Klassen aufrufen um die Werte in der Klasse ShopManagamenet zu ändern. In der Klasse ShopManagement sind die HTTP-Requests an das Backend hinterlegt und werden von den jeweiligen Komponenten aufgerufen.Durch die Funktion componentDidMount werden beim Laden der Klasse initial die Buchungen, Tickets und Config-Werte abgefragt.
 
-<img src="./assets/ShopManagament.PNG" width="150px" alt="ShopManagament">
+<img src="./assets/ShopManagement.PNG" width="150px" alt="ShopManagement">
 
 #### Klasse - DataQuickViewMaxTickets
 Die Klasse DataQuickViewMaxTickets zeigt die Anzahl der Tickets an, die ein Absolvent mit der derzeitigen Konfiguration erwerben kann. Mit dem Button der Klasse wird der Administrator zur Komponente ShopManagementConfMaxTickets weitergeleitet.
