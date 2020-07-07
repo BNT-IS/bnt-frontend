@@ -62,6 +62,7 @@ Im zweiten Fenster werden ggf. die Gäste des Absolvent hinzugefügt. Im ersten 
 Im dritten Fenster gibt es dann die Möglichkeit Parktickets in Abhängigkeit der Besucher + 1 Ticket für den Absolventen zu erwerben.
 Im vierten Fenster ist der Warenkorb dargestellt mit den Tickets die bestellt werden. Anschließend kann man die Bestellung Zahlungspflichtig bestellen.
 Sobald das fünfte Fenster sich öffnet wurden die Buchung ausgeführt und die Tickets in die DB geschrieben.
+
 <img src="./assets/TicketBestellung_Absolvent.PNG" width="150px" alt="Ticketbestellung des Absolvententickets">
 <img src="./assets/TicketBestellung_Besucher.PNG" width="150px" alt="Ticketbestellung der Besuchertickets">
 <img src="./assets/TicketBestellung_Parken.PNG" width="150px" alt="Ticketbestellung der Parktickets">
