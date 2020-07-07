@@ -67,7 +67,8 @@ class TicketReaderManager extends React.Component {
                                     {this.state.RTRQRCode && <img src={this.state.RTRQRCode} width="100%" alt="Ein QR-Code sollte hier angezeigt werden." />}
                                 </div>
                                 <div className="ticket-reader-description">
-                                    <p>Bitte mit dem Zielgerät scannen</p>
+                                    <p>Gehen Sie mit dem Zielgerät auf die Unterseite #/entrance/</p>
+                                    <p>Scannen Sie den angezeigten QR-Code anschließend mit dem Zielgerät</p>
                                 </div>
                                 <div className="ticket-reader-action">
                                     <Button onClick={() => { this.setState({ addRTRStep: 1 }); }} label="Weiter"></Button>

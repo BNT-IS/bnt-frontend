@@ -24,6 +24,12 @@ class Login extends React.Component {
         this.verifyPasswort = this.verifyPasswort.bind(this);
     }
 
+    componentDidUpdate(){
+        if(this.context.user){
+            this.context.redirectUserToHome();
+        }
+    }
+
     otpInputHandler(event) {
         //Liest das eingegebene OTP aus dem Input-Feld aus und speichert es zwischen
         this.setState({ otp: event.target.value });

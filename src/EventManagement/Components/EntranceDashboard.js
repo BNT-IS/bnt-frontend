@@ -17,7 +17,6 @@ class EntranceDashboard extends React.Component {
         this.handleDumpMirror = this.handleDumpMirror.bind(this);
         this.showTickets = this.showTickets.bind(this);
         this.lockHandler = this.lockHandler.bind(this);
-        this.validTicketsCount = this.validTicketsCount.bind(this);
         this.usedTicketsCount = this.usedTicketsCount.bind(this);
         if (!this.props.localTicketMirror) throw new Error("Missing LocalTicketMirror");
 
@@ -78,7 +77,7 @@ class EntranceDashboard extends React.Component {
         let tickets = await ltm.getTicketList().catch(console.error);
         if (!tickets) return;
 
-        this.setState({ tickets, lockDataset: (tickets.length > 0 ? true : false) });
+        this.setState({ tickets: tickets.filter(ticket => ticket.isValid && ticket.ticketType < 2), lockDataset: (tickets.length > 0 ? true : false) });
     }
 
     lockHandler(event) {
@@ -92,16 +91,10 @@ class EntranceDashboard extends React.Component {
         }
     }
 
-    validTicketsCount() {
-        let validTickets = this.state.tickets.filter(ticket => ticket.isValid);
-        return validTickets.length;
-    }
-
     usedTicketsCount() {
         let usedTicketsCount = this.state.tickets.filter(ticket => ticket.isUsed);
         return usedTicketsCount.length;
     }
-
 
     render() {
 
@@ -119,13 +112,13 @@ class EntranceDashboard extends React.Component {
                         <CheckBox label="Datensatz schützen" toggle={true} onChange={this.lockHandler} checked={this.state.lockDataset}></CheckBox>
                     </Box>
                     <Box className="StatisticalSummary" direction="column" wrap={false}>
-                        <p>Anzahl unbenutzte Tickets</p>
+                        <p>Anzahl noch gültiger Personen-Tickets</p>
                         <Stack>
                             <Meter
                                 type="bar"
                                 values={[{
                                     value: unusedTicketsCount,
-                                    label: 'Anzahl gültige Tickets'
+                                    label: 'Anzahl noch gültiger Personen-Tickets'
                                 }]}
                                 aria-label="meter"
                                 max={this.state.tickets.length}
@@ -133,13 +126,13 @@ class EntranceDashboard extends React.Component {
                             />
                             <Text size="2em" margin="0.2em" alignSelf="center">{unusedTicketsCount}</Text>
                         </Stack>
-                        <p>Anzahl eingetreten</p>
+                        <p>Anzahl eingetretener Personen</p>
                         <Stack>
                             <Meter
                                 type="bar"
                                 values={[{
                                     value: usedTicketsCount,
-                                    label: 'Anzahl eingetreten'
+                                    label: 'Anzahl eingetretener Personen'
                                 }]}
                                 aria-label="meter"
                                 max={this.state.tickets.length}
@@ -152,7 +145,7 @@ class EntranceDashboard extends React.Component {
                 <Box className="TicketList">
                     <List
                         primaryKey={(ticket) => { return <b key={ticket.identifier + 't'}>{ticket.surname || 'Unkown'}, {ticket.forename || 'Unkown'} - {this.translateTicketType(ticket.ticketType)} {ticket.isWheelchairUser ? '!Rollstuhlfahrer!' : ''}</b> }}
-                        secondaryKey={(ticket) => { return <span key={ticket.identifier + 's'}>{ticket.isValid ? 'gültig' : 'ungültig'} - {ticket.isUsed ? 'benutzt' : 'unbenutzt'}</span> }}
+                        secondaryKey={(ticket) => { return <span key={ticket.identifier + 's'}>{ticket.isUsed ? 'benutzt' : 'unbenutzt'}</span> }}
                         data={this.state.tickets}
                     />
                 </Box>
