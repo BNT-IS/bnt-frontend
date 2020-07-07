@@ -55,23 +55,26 @@ class DataQuickViewMaxTickets extends React.Component {
 }
 
 class DataQuickViewPayment extends React.Component {
+    //Gibt einen Schnellüberblick über die eingestellten Zahlungsmethoden und deren Status
     constructor(props) {
         super(props);
         this.state = {};
     }
 
-    //Switch to Component PaymentOptions
+    //Leitet den User zur Konfiguration der Zahlungmethoden weiter
     callConfiguratePaymentMethods() {
         window.location.assign("#/eventmgmt/shop/paymentOptions")
     }
 
     componentDidMount() {
+        //Ruft beim Laden der Komponente den Aktuellen Status der Bank- und PayPal-Verbindung ab
         this.props.getBankStatus();
         this.props.getPayPalStatus();
     }
 
 
     render() {
+        //Stellt den Schnellüberblick für die Zahlungsmethoden im Browser dar
         var bezahl = [];
         if (this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Aktiv" }) };
         if (!this.props.bankStatus) { bezahl.push({ BezahlOption: "Banküberweisung", Status: "Deaktiviert" }) };
@@ -105,6 +108,7 @@ class DataQuickViewPayment extends React.Component {
     }
 }
 class DataQuickViewBookings extends React.Component {
+    //Gibt einen Schnellüberblick über die im System vorhandenen Buchungen
     constructor(props) {
         super(props);
         this.state = {
@@ -113,10 +117,12 @@ class DataQuickViewBookings extends React.Component {
     }
 
     callShopManagementViewBookings() {
+        //Leitet den User zur detailierten Buchungsübersicht und -freigabe weiter
         window.location.assign('#/eventmgmt/shop/viewBookings')
     }
 
     render() {
+        //Stellt den Schnellüberblick für die Buchungen im Browser dar
         return (
             <Box name="statusBookings" className="quickViewOuterBox">
                 <Text>Anzahl und Status der Buchungen im System:</Text>
@@ -145,20 +151,17 @@ class DataQuickViewBookings extends React.Component {
 }
 
 class DataQuickViewSalesStatistics extends React.Component {
+    //Schnellüberblick über die Anzahl der Tickets, die Vorhanden/Verkauft/Storniert sind, sowie über die Anzahl der Rollstuhlfahrer
     constructor(props) {
         super(props);
         this.state = {
         };
 
-        this.callShopManagementSalesStatistics = this.callShopManagementSalesStatistics.bind(this)
-    }
-
-    callShopManagementSalesStatistics() {
-        window.location.assign('#/eventmgmt/shop/SalesStatistics');
     }
 
 
     render() {
+        //Stellt den Schnellüberblick über die Tickets im Browser dar
         return (
             <Box name="statusSales" className="quickViewOuterBox">
                 <Text>Anzahl und Status der Ticketbuchungen im System:</Text>
@@ -178,9 +181,6 @@ class DataQuickViewSalesStatistics extends React.Component {
                     data={this.props.statusSales}
                 />
                 <Box className="platzhalter" ></Box>
-                <Box Class-Name="ButtonBox">
-                    <Button className="buttonInDash" label="Tickets verwalten" onClick={this.callShopManagementSalesStatistics}></Button>
-                </Box>
             </Box>
         )
     }
@@ -326,7 +326,7 @@ class DataQuickViewViewOTPs extends React.Component {
 }
 
 class ShopManagement extends React.Component {
-
+    //Stellt die Übersichtsseite des Shopmanagements im Browser dar
     static contextType = UserContext;
 
     constructor(props) {
@@ -383,6 +383,7 @@ class ShopManagement extends React.Component {
     }
 
     async getBookings() {
+        //Ruft die Buchungen aus dem Backend ab, um diese in der Schnellübersicht darstellen zu können
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/', {
             method: 'GET',
             mode: 'cors',
@@ -429,6 +430,7 @@ class ShopManagement extends React.Component {
     }
 
     async getTickets() {
+        //Ruft die Tickets aus dem Backend ab, um diese in der Schnellübersicht darstellen zu können
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/ticketsBooked', {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -450,29 +452,11 @@ class ShopManagement extends React.Component {
         if (response.ok) {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
-                var verfügbar;
+                var verfügbar = this.state.maxTicketsProEvent;
                 var verkauft = 0;
                 var storniert = 0;
                 var rollstuhlFahrer = 0;
-                const response2 = await fetch(Config.BACKEND_BASE_URI + '/api/v2/shopConfig', {
-                    method: 'GET', // *GET, POST, PUT, DELETE, etc.
-                    mode: 'cors', // no-cors, *cors, same-origin
-                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + this.context.token,
-                    }
-                }).catch(console.log)
-
-                if (!response2) {
-                    console.log("Keine Antwort beim Abruf der verfügbaren Ticketzahl");
-                    return;
-                }
-                if (!response2.ok) {
-                    console.log("Fehler beim Abruf der verfügbaren Ticketanzahl: " + response2.message);
-                }
-                if (response2.ok) {
-                    verfügbar = await response2.json().catch(console.log);
+                
                     if (verfügbar) {
                         for (var lauf = 0; lauf < rückgabe.length; lauf++) {
                             if (rückgabe[lauf].createdAt && rückgabe[lauf].canceled !== true) {
@@ -488,7 +472,6 @@ class ShopManagement extends React.Component {
                         verfügbar = verfügbar - verkauft;
                         this.setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer);
                     }
-                }
             }
         }
     }
@@ -575,17 +558,17 @@ class ShopManagement extends React.Component {
     }
 
     setBookings(bezahlt, unbezahlt, storniert) {
-        var data = [{ status: "Gebucht", Anzahl: typeof bezahlt === Number ? bezahlt : 0 },
-        { status: "Offen", Anzahl: typeof unbezahlt === Number ? unbezahlt : 0 },
-        { status: "Storniert", Anzahl: typeof storniert === Number ? storniert : 0 }];
+        var data = [{ status: "Gebucht", Anzahl: bezahlt},
+        { status: "Offen", Anzahl: unbezahlt},
+        { status: "Storniert", Anzahl: storniert}];
         this.setState({ statusBookings: data });
     }
 
     setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer) {
-        var data = [{ status: "Verfügbar", Anzahl: typeof verfügbar === Number ? verfügbar : 0 },
-        { status: "Verkauft", Anzahl: typeof verkauft === Number ? verkauft : 0 },
-        { status: "Storniert", Anzahl: typeof storniert === Number ? storniert : 0 },
-        { status: "Rollstuhlfahrer", Anzahl: typeof rollstuhlFahrer === Number ? rollstuhlFahrer : 0 }];
+        var data = [{ status: "Verfügbar", Anzahl: verfügbar},
+        { status: "Verkauft", Anzahl: verkauft},
+        { status: "Storniert", Anzahl: storniert},
+        { status: "Rollstuhlfahrer", Anzahl: rollstuhlFahrer}];
         this.setState({ statusSales: data });
     }
 
@@ -715,6 +698,7 @@ class ShopManagement extends React.Component {
     };
 
     async setConfBankStatus(newBankStatus) {
+        //Ändert den Status der Bankverbindung in der Schnellübersicht, wenn diese in den PaymentOptions verändert wird
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -775,6 +759,7 @@ class ShopManagement extends React.Component {
 
 
     async setConfPayPalStatus(newPayPalStatus) {
+        //Ändert den Status der PayPal-Verbindung in der Schnellübersicht, wenn diese in den PaymentOptions verändert wird
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -829,14 +814,17 @@ class ShopManagement extends React.Component {
     }
 
     setBankStatus(status) {
+        //Setzt den lokalen Status der Bankverbindung
         this.setState({ bankStatus: status });
     }
 
     setPayPalStatus(status) {
+        //Setzt den lokalen Status der PayPal-Verbindung
         this.setState({ payPalStatus: status });
     }
 
     async getBankStatus() {
+        //Ruft den aktuellen Bankverbindungsstatus aus der Backend-Config ab
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -865,6 +853,7 @@ class ShopManagement extends React.Component {
 
 
     async getPayPalStatus() {
+        //Ruft den aktuellen PayPal-Verbindungsstatus aus der Backend-Config ab
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
             method: 'GET', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin

@@ -28,11 +28,13 @@ class ShopManagementViewBookings extends React.Component {
     }
 
     componentDidMount() {
+        //Ruft beim Laden der Komponente die aktuellen Buchungen ab, indem die Funktion getBookings aufgerufen wird
         this.getBookings();
     }
 
 
     async getBookings() {
+        //Ruft die aktuellen Buchungen aus der Datenbank ab und speichert diese lokal ab
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/', {
             method: 'GET',
             mose: 'cors',
@@ -83,8 +85,8 @@ class ShopManagementViewBookings extends React.Component {
         }
     }
 
-    async cancel(bookingId) {
-
+    async cancel(bookingId) {  
+        //Storniert eine Buchung mit der angegebenen Buchungs-ID
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/' + bookingId, {
             method: 'PUT',
             mode: 'cors',
@@ -106,6 +108,7 @@ class ShopManagementViewBookings extends React.Component {
     }
 
     async approve(bookingId) {
+        //Gibt die Buchung mit der angegebenen Buchungs-ID frei
         var today = new Date();
         today = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + ' ' + (today.getHours() + 2) + ':' + today.getMinutes() + ':' + today.getSeconds();
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/' + bookingId, {
@@ -129,19 +132,23 @@ class ShopManagementViewBookings extends React.Component {
     }
 
     changeStep() {
+        //Leitet den Besucher auf die allgemeine Übersichtsseite des Eventmanagements weiter
         window.location.assign('#/eventmgmt/shop');
     }
 
     searchOpenHandler(event) {
+        //Speichert die Suchanfrage des TextInput-Feldes in den offenen Buchungen  
         this.setState({ searchOpen: event.target.value });
     }
 
     searchPaidHandler(event) {
+        //Speichert die Suchanfrage des TextInput-Feldes in den bezahlten Buchungen
         this.setState({ searchPaid: event.target.value });
     }
 
 
     render() {
+        //stellt die Buchungen und Filterfunktionen im Browser dar. Trennung zwischen offenen und bezahlten Buchungen
         var ansicht = [];
         let open;
         var mail = this.state.searchOpen;
