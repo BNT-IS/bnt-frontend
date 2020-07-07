@@ -257,9 +257,7 @@ Mit dem Button "Initialisierung abschließen" wird die Komponente geschlossen un
 ```
 geladen. 
 
-<img src="./assets/SystemSetup.PNG" width="150px" alt="SystemSetup">
-<img src="./assets/ConfigureDatabase.PNG" width="150px" alt="ConfigureDatabase">
-<img src="./assets/SystemSetupEnde.PNG" width="150px" alt="SystemSetup">
+<img src="./assets/SystemSetup.PNG" width="150px" alt="SystemSetup"> <img src="./assets/ConfigureDatabase.PNG" width="150px" alt="ConfigureDatabase"> <img src="./assets/SystemSetupEnde.PNG" width="150px" alt="SystemSetup">
 
 #### Hauptansicht
 Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 7) des Einrichtungsvorgangs angezeigt.
