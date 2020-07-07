@@ -68,8 +68,9 @@ Die Komponente besteht aus den Klassen:
 - DataQuickViewSalesStatistics
 - DataQuickViewManageSales
 - ShopManagement
--
--
+- DataQuickViewCreateOTPS
+- DataQuickViewManageOTPS
+- DataQuickViewViewOTPs
 
 und interagiert mit den Komponenten
 - ShopManagamentConfMaxTickets
@@ -78,41 +79,47 @@ und interagiert mit den Komponenten
 -
 -
 
+#### Klasse - ShopManagament
 Die Klasse ShopManagament ist für die Anzeige der entsprechenden Klassen und Komponenten sowie die Verwaltung der zentralen Daten für die Anzeigen verantwortlich. Die Klasse stellt Setter-Funktionen für die entsprechenden Werte bereit, die die einzelnen (DataQuickView)-Klassen aufrufen um die Werte in der Klasse ShopManagamenet zu ändern.
 
+#### Klasse - DataQuickViewMaxTickets
 Die Klasse DataQuickViewMaxTickets zeigt die Anzahl der Tickets an, die ein Absolvent mit der derzeitigen Konfiguration erwerben kann. Mit dem Button der Klasse wird der Administrator zur Komponente ShopManagementConfMaxTickets weitergeleitet.
 
-Die Komponente ShopManagamentConfMaxTickets stellt Textfelder zur Verüfung mit denen die maximalen Tickets, die ein Absolvent erwerben kann, konfiguriert werden können. Die Konfigurationen werden im Backend in der Konfigurationsdatei gespeichert. Hierfür verwendet die Komponente die Route
+#### Komponente - ShopManagamentConfMaxTickets
+Die Komponente ShopManagamentConfMaxTickets stellt Textfelder zur Verüfung mit denen die maximalen Tickets, die ein Absolvent erwerben kann, konfiguriert werden können. Die Werte  werden von der Klasse ShopManagement mit der Route
 ```
-ROUTE
+    Route: */api/v2/shopConfig
 ```
-```
-{
-    Absolvententickets: String,
-    Begleitertickets: String,
-    Parktickets: String,   
-}
-```
+im Backend in der Konfigurationsdatei gespeichert.
 
+#### Klasse - DataQuickViewPayment
 Die Klasse DataQuickViewPayment zeigt die Konfigurierten Bezahloptionen an.!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!
 !!!!
 
+#### Klasse - DataQuickViewBookings
 Die Klasse DataQuickViewBookings zeigt die aktuelle Anzahl offener, gebuchter und stornierter Buchungen im System an. Mit dem Button der Klasse wird ein Administrator zur Komponente ShopManagementViewBookings weitergeleitet.
 
+#### Komponente - ShopManagementViewBookings
 Die Komponente ShopManagementViewBookings gibt einen ausführlichen Überblick in Form einer Liste über alle Buchungen im System, welche noch als offen gekennzeichnet sind sowie über alle Buchungen im System, welche bereits als bezahlt markiert wurden. Die Komponente bietet für jede Liste die Möglichkeit, über ein Textfeld nach Buchungen mit einer spezifischen E-Mail-Adresse zu suchen. Die noch als offen markierten Buchungen können durch die Komponente freigegeben oder storniert werden, indem der zugehörige Button in der Listenzeile verwendet wird. Die als bezahlt markierten Buchungen können durch die Komponente auf die selbe Art und Weise storniert werden.
 
-Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert werden. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente **** weiter.
-In der Komponente **** kann der Status des Verkaufs mit der Route
-```
-ROUTE
-```
-aktiviert oder deaktiviert werden. Die Route ändert den Wert hierfür in der Konfigurationsdatei des Backends.
+#### Klasse - DataQuickViewManageSales
+Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert sein. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente ShopManagementManageSalesStatus weiter.
 
-
-Die Klasse AbsolventenListe stellt ein CSV-Reader Feld der Komponente "react-papaparse" zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
+#### Komponente - ShopManagementManageSalesStatus
+In der Komponente ShopManagementManageSalesStatus kann der Status des Verkaufs über das Drop-Down Menü aktiviert / deaktiviert werden. Der Status wird von der Klasse ShopManagement mit der Route
 ```
-E-Mail;Name
+    Route: */api/v2/shopConfig
+```
+in der Konfigurationsdatei des Backends gespeichert.
+
+#### Klasse - DataQuickViewCreateOTPS
+Die Klasse DataQuickViewCreateOTPS zeigt an, ob bereits eine Liste mit E-Mail-Adressen für die Erstellung der One Time Passwörter und den anschließenden E-Mail-Versand eingelesen wurde. Mit dem Button "Liste einlesen" wird der Administrator zur Komponente ShopManagamentAbsolventenListe weitergeleitet.
+
+#### Komponente - ShopManagamentAbsolventenListe
+Die Komponente ShopManagamentAbsolventenListe stellt ein CSV-Reader Feld der Komponente "react-papaparse" zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
+```
+eMail;Name
 Beispiel@web.de; Mustermann, Max
                 .
                 .
@@ -120,9 +127,15 @@ Beispiel@web.de; Mustermann, Max
 ```
 kann eine Liste mit E-Mail-Adressen eingelesen werden. Die eingelesene Liste wird in der Komponente in einer Liste angezeigt. Durch die Bestätigung der eingelesen Liste mit dem Button Abschließen wird für jeden Datensatz in der Liste die Route
 ```
-    Route: 
+    Route: */api/v2/oneTimePasses
 ```
-aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet.
+aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet. Die Komponente kann nur Benutzer / One Time Passwörter mit der Rolle 1 (Absolvent) erstellen.
+
+#### Klasse - DataQuickViewManageOTPS
+Mit dem Button der Klasse DataQuickViewManageOTPS kann zur Komponente ShopManagementManageOTPS gewechselt werden.
+
+#### Komponente - ShopManagementManageOTPS
+In der Komponente ShopManagementManageOTPS können neue One Time Passwörter erstellt werden. In das Textfeld muss eine E-Mail-Adresse eingetragen werden und über das Drop-Down-Menü kann die entsprechende Rolle ausgewählt werden. (Rolle 0 = Administrator; Rolle 1 = Benutzer)
 
 
 ### SystemSetup
