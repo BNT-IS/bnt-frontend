@@ -122,6 +122,7 @@ class DataQuickViewBookings extends React.Component {
     }
 
     render() {
+        console.log(this.props.statusBookings);
         //Stellt den Schnellüberblick für die Buchungen im Browser dar
         return (
             <Box name="statusBookings" className="quickViewOuterBox">
@@ -452,29 +453,11 @@ class ShopManagement extends React.Component {
         if (response.ok) {
             const rückgabe = await response.json().catch(console.log);
             if (rückgabe) {
-                var verfügbar;
+                var verfügbar = this.state.maxTicketsProEvent;
                 var verkauft = 0;
                 var storniert = 0;
                 var rollstuhlFahrer = 0;
-                const response2 = await fetch(Config.BACKEND_BASE_URI + '/api/v2/shopConfig', {
-                    method: 'GET', // *GET, POST, PUT, DELETE, etc.
-                    mode: 'cors', // no-cors, *cors, same-origin
-                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + this.context.token,
-                    }
-                }).catch(console.log)
-
-                if (!response2) {
-                    console.log("Keine Antwort beim Abruf der verfügbaren Ticketzahl");
-                    return;
-                }
-                if (!response2.ok) {
-                    console.log("Fehler beim Abruf der verfügbaren Ticketanzahl: " + response2.message);
-                }
-                if (response2.ok) {
-                    verfügbar = await response2.json().catch(console.log);
+                
                     if (verfügbar) {
                         for (var lauf = 0; lauf < rückgabe.length; lauf++) {
                             if (rückgabe[lauf].createdAt && rückgabe[lauf].canceled !== true) {
@@ -490,7 +473,6 @@ class ShopManagement extends React.Component {
                         verfügbar = verfügbar - verkauft;
                         this.setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer);
                     }
-                }
             }
         }
     }
@@ -577,17 +559,18 @@ class ShopManagement extends React.Component {
     }
 
     setBookings(bezahlt, unbezahlt, storniert) {
-        var data = [{ status: "Gebucht", Anzahl: typeof bezahlt === Number ? bezahlt : 0 },
-        { status: "Offen", Anzahl: typeof unbezahlt === Number ? unbezahlt : 0 },
-        { status: "Storniert", Anzahl: typeof storniert === Number ? storniert : 0 }];
+        var data = [{ status: "Gebucht", Anzahl: bezahlt},
+        { status: "Offen", Anzahl: unbezahlt},
+        { status: "Storniert", Anzahl: storniert}];
+        console.log(data);
         this.setState({ statusBookings: data });
     }
 
     setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer) {
-        var data = [{ status: "Verfügbar", Anzahl: typeof verfügbar === Number ? verfügbar : 0 },
-        { status: "Verkauft", Anzahl: typeof verkauft === Number ? verkauft : 0 },
-        { status: "Storniert", Anzahl: typeof storniert === Number ? storniert : 0 },
-        { status: "Rollstuhlfahrer", Anzahl: typeof rollstuhlFahrer === Number ? rollstuhlFahrer : 0 }];
+        var data = [{ status: "Verfügbar", Anzahl: verfügbar},
+        { status: "Verkauft", Anzahl: verkauft},
+        { status: "Storniert", Anzahl: storniert},
+        { status: "Rollstuhlfahrer", Anzahl: rollstuhlFahrer}];
         this.setState({ statusSales: data });
     }
 
