@@ -88,7 +88,6 @@ Die Komponente besteht aus den Klassen:
 
 und interagiert mit den Komponenten
 - ShopManagamentConfMaxTickets
-- ShopManagamenetSalesStatistics
 - ShopManagementManageSales
 - ShopManagamentViewBookings
 - ShopManagementPaymentOptions
@@ -150,6 +149,8 @@ Die Klasse DataQuickViewSalesStatistics gibt einen Überblick über die noch vor
 #### Klasse - DataQuickViewManageSales
 Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert sein. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente ShopManagementManageSalesStatus weiter.
 
+<img src="./assets/DataQuickViewManageSales.PNG" width="150px" alt="ShopManagementManageSalesStatus">
+
 #### Komponente - ShopManagementManageSalesStatus
 In der Komponente ShopManagementManageSalesStatus kann der Status des Verkaufs über das Drop-Down Menü aktiviert / deaktiviert werden. Der Status wird von der Klasse ShopManagement mit der Route
 ```
@@ -181,12 +182,12 @@ aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mai
 
 <img src="./assets/ShopManagamentAbsolventenListe.PNG" width="150px" alt="ShopManagamentAbsolventenListe">
 
-<link src="./assets/ShopManagamentAbsolventenListe.csv" alt="Template ShopManagamentAbsolventenListe">
+<a href="./assets/ShopManagamentAbsolventenListe.csv">Template ShopManagamentAbsolventenListe</a>
 
 #### Klasse - DataQuickViewManageOTPS
 Mit dem Button der Klasse DataQuickViewManageOTPS kann zur Komponente ShopManagementManageOTPS gewechselt werden.
 
-<img src="./assets/ShopManagamentAbsolventenListe.PNG" width="150px" alt="ShopManagamentAbsolventenListe">
+<img src="./assets/DataQuickViewManageOTPS.PNG" width="150px" alt="DataQuickViewManageOTPS">
 
 #### Komponente - ShopManagementManageOTPS
 In der Komponente ShopManagementManageOTPS können neue One Time Passwörter erstellt werden. In das Textfeld muss eine E-Mail-Adresse eingetragen werden und über das Drop-Down-Menü kann die entsprechende Rolle ausgewählt werden. (Rolle 0 = Administrator; Rolle 1 = Benutzer)
@@ -256,9 +257,7 @@ Mit dem Button "Initialisierung abschließen" wird die Komponente geschlossen un
 ```
 geladen. 
 
-<img src="./assets/SystemSetup.PNG" width="150px" alt="SystemSetup">
-<img src="./assets/ConfigureDatabase.PNG" width="150px" alt="ConfigureDatabase">
-<img src="./assets/SystemSetupEnde.PNG" width="150px" alt="SystemSetup">
+<img src="./assets/SystemSetup.PNG" width="150px" alt="SystemSetup"> <img src="./assets/ConfigureDatabase.PNG" width="150px" alt="ConfigureDatabase"> <img src="./assets/SystemSetupEnde.PNG" width="150px" alt="SystemSetup">
 
 #### Hauptansicht
 Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 7) des Einrichtungsvorgangs angezeigt.
@@ -293,6 +292,8 @@ Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Ma
 ```
 wird der Administratorbenutzer (Rolle 0) im Backend erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
 
+<img src="./assets/ConfigureAdminAccount.PNG" width="150px" alt="ConfigureAdminAccount">
+
 #### ConfigureMailserver
 Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route 
 ```
@@ -302,6 +303,8 @@ Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Ei
 ```
 werden die Einstellungen in die Konfiguration im Backend gespeichert.
 
+<img src="./assets/ConfigureMailserver.PNG" width="150px" alt="ConfigureMailserver">
+
 #### AddWallet
 Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route 
 ```
@@ -310,6 +313,8 @@ Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit u
 }
 ```
 an das Backend. Das Backend erstellt ein Wallet für den Admin. Ist die Einrichtung des Wallets erfolgreich abgeschlossen, zeigt die Ansicht der Komponente den Ethereum-Preis für die Veröffentlichung des Smart Contracts auf der Blockchain an.
+
+<img src="./assets/AddWallet.PNG" width="150px" alt="AddWallet">
 
 #### DeploySmartContract
 Die Klasse DeploySmartContract stellt ein Textfeld zur Eingabe des HTTP-Providers zur Verüfung. Im Admin-Wallet wird eine bestimmte Menge Ethereum benötigt. Dieses ist für die Veröffentlichung des Smart Contracts und die Erstellung eines Tickets.
@@ -327,6 +332,8 @@ Der Smart Contract wird über die Route
 ```
 im Backend auf der Blockchain veröffentlicht. Nach der erfolgreichen Veröffentlichung des Smart Contracts werden in der Klasse die Preise für die Erstellung und die Übertragung eines Tickets angezeigt.
 
+<img src="./assets/DeploySmartContract.PNG" width="150px" alt="DeploySmartContract">
+
 #### ConfigureShopConfig
 Die Klasse ConfigureShopConfig stellt 3 Textboxen für die Eingabe der maximalen Personen pro Event, die maximale Anzahl von Tickets und die maximale Anzahl an VIP-Personen zur Verfügung. Die Werte werden über die Route
  ```
@@ -335,6 +342,8 @@ Die Klasse ConfigureShopConfig stellt 3 Textboxen für die Eingabe der maximalen
 }
 ```
 in die Konfigurationsdatei im Backend gespeichert.
+
+<img src="./assets/ConfigureShopConfig.PNG" width="150px" alt="ConfigureShopConfig">
 
 ### Entrance Dashboard (Event Management)
 

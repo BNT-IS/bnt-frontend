@@ -3,7 +3,6 @@ import { Box, Button, Text, DataTable } from 'grommet';
 import Config from '../../config';
 import './ShopManagement.css';
 import ShopManagementConfMaxTickets from './ShopManagementConfMaxTickets';
-import ShopManagementSalesStatistics from './ShopManagementSalesStatistics';
 import ShopManagementViewBookings from './ShopManagementViewBookings';
 import ShopManagementManageSalesStatus from './ShopManagementManageSalesStatus';
 import ShopManagamentAbsolventenListe from './ShopManagamentAbsolventenListe';
@@ -874,11 +873,6 @@ class ShopManagement extends React.Component {
                     <ShopManagementPaymentOptions bankStatus={this.state.bankStatus} setConfBankStatus={this.setConfBankStatus} payPalStatus={this.state.payPalStatus}
                         setConfPayPalStatus={this.setConfPayPalStatus}></ShopManagementPaymentOptions>
                 </Route>
-
-                <Route path="/eventmgmt/shop/SalesStatistics">
-                    <ShopManagementSalesStatistics></ShopManagementSalesStatistics>
-                </Route>
-
                 <Route path="/eventmgmt/shop/ManageSalesStatus">
                     <ShopManagementManageSalesStatus salesStatus={this.state.salesStatus} setConfSalesStatus={this.setConfSalesStatus}></ShopManagementManageSalesStatus>
                 </Route>
