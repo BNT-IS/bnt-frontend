@@ -294,6 +294,8 @@ Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Ma
 ```
 wird der Administratorbenutzer (Rolle 0) im Backend erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
 
+<img src="./assets/ConfigureAdminAccount.PNG" width="150px" alt="ConfigureAdminAccount">
+
 #### ConfigureMailserver
 Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route 
 ```
@@ -303,6 +305,8 @@ Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Ei
 ```
 werden die Einstellungen in die Konfiguration im Backend gespeichert.
 
+<img src="./assets/ConfigureMailserver.PNG" width="150px" alt="ConfigureMailserver">
+
 #### AddWallet
 Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route 
 ```
@@ -311,6 +315,8 @@ Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit u
 }
 ```
 an das Backend. Das Backend erstellt ein Wallet für den Admin. Ist die Einrichtung des Wallets erfolgreich abgeschlossen, zeigt die Ansicht der Komponente den Ethereum-Preis für die Veröffentlichung des Smart Contracts auf der Blockchain an.
+
+<img src="./assets/AddWallet.PNG" width="150px" alt="AddWallet">
 
 #### DeploySmartContract
 Die Klasse DeploySmartContract stellt ein Textfeld zur Eingabe des HTTP-Providers zur Verüfung. Im Admin-Wallet wird eine bestimmte Menge Ethereum benötigt. Dieses ist für die Veröffentlichung des Smart Contracts und die Erstellung eines Tickets.
@@ -328,6 +334,8 @@ Der Smart Contract wird über die Route
 ```
 im Backend auf der Blockchain veröffentlicht. Nach der erfolgreichen Veröffentlichung des Smart Contracts werden in der Klasse die Preise für die Erstellung und die Übertragung eines Tickets angezeigt.
 
+<img src="./assets/DeploySmartContract.PNG" width="150px" alt="DeploySmartContract">
+
 #### ConfigureShopConfig
 Die Klasse ConfigureShopConfig stellt 3 Textboxen für die Eingabe der maximalen Personen pro Event, die maximale Anzahl von Tickets und die maximale Anzahl an VIP-Personen zur Verfügung. Die Werte werden über die Route
  ```
@@ -336,6 +344,8 @@ Die Klasse ConfigureShopConfig stellt 3 Textboxen für die Eingabe der maximalen
 }
 ```
 in die Konfigurationsdatei im Backend gespeichert.
+
+<img src="./assets/ConfigureShopConfig.PNG" width="150px" alt="ConfigureShopConfig">
 
 ### Entrance Dashboard (Event Management)
 
