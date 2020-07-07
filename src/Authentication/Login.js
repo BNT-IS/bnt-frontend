@@ -169,7 +169,7 @@ class Login extends React.Component {
 
             <Box className="AccountManagement" gap="small">
                 <Header background="brand" justify="between" pad="10px">
-                    <Text>BNT Ticketsystem</Text>
+                    <Text><a style={{textDecoration: "none", color: "white"}} href="./">BNT Ticketsystem</a></Text>
                 </Header>
                 <Box pad="small">
                     {this.state.step === 0 &&
