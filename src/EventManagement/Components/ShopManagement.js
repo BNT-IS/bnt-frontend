@@ -348,10 +348,11 @@ class ShopManagement extends React.Component {
                 { status: "Offen", Anzahl: 0 },
                 { status: "Storniert", Anzahl: 0 }],
             statusSales:
-                [{ status: "Verfügbar", Anzahl: 0 },
-                { status: "Verkauft", Anzahl: 0 },
-                { status: "Storniert", Anzahl: 0 },
-                { status: "Rollstuhlfahrer", Anzahl: 0 }],
+                [{ status: "Verfügbare Plätze", Anzahl: 0 },
+                { status: "Verkaufte Plätze", Anzahl: 0 },
+                { status: "Stornierte Tickets", Anzahl: 0 },
+                { status: "Rollstuhlfahrer", Anzahl: 0 },
+                { status: "Parktickets", Anzahl: 0  }],
         }
         this.changeInitializeStep = this.changeInitializeStep.bind(this);
         this.getValuesFromConfig = this.getValuesFromConfig.bind(this);
@@ -457,10 +458,11 @@ class ShopManagement extends React.Component {
                 var verkauft = 0;
                 var storniert = 0;
                 var rollstuhlFahrer = 0;
+                var parkTickets = 0;
                 
                     if (verfügbar) {
                         for (var lauf = 0; lauf < rückgabe.length; lauf++) {
-                            if (rückgabe[lauf].createdAt && rückgabe[lauf].canceled !== true) {
+                            if (rückgabe[lauf].createdAt && rückgabe[lauf].canceled !== true && rückgabe[lauf].ticketType !== 2) {
                                 verkauft = verkauft + 1;
                             }
                             if (rückgabe[lauf].createdAt && rückgabe[lauf].canceled === true) {
@@ -469,9 +471,12 @@ class ShopManagement extends React.Component {
                             if (rückgabe[lauf].isWheelchairUser === true) {
                                 rollstuhlFahrer = rollstuhlFahrer + 1;
                             }
+                            if(rückgabe[lauf].createdAt && rückgabe[lauf].canceled !== true && rückgabe[lauf].ticketType === 2){
+                                parkTickets = parkTickets + 1;
+                            }
                         }
                         verfügbar = verfügbar - verkauft;
-                        this.setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer);
+                        this.setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer, parkTickets);
                     }
             }
         }
@@ -564,11 +569,12 @@ class ShopManagement extends React.Component {
         this.setState({ statusBookings: data });
     }
 
-    setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer) {
-        var data = [{ status: "Verfügbar", Anzahl: verfügbar},
-        { status: "Verkauft", Anzahl: verkauft},
-        { status: "Storniert", Anzahl: storniert},
-        { status: "Rollstuhlfahrer", Anzahl: rollstuhlFahrer}];
+    setTickets(verfügbar, verkauft, storniert, rollstuhlFahrer, parkTickets) {
+        var data = [{ status: "Verfügbare Plätze", Anzahl: verfügbar},
+        { status: "Verkaufte Plätze", Anzahl: verkauft},
+        { status: "Stornierte Tickets", Anzahl: storniert},
+        { status: "Rollstuhlfahrer", Anzahl: rollstuhlFahrer},
+        { status: "Parktickets" , Anzahl: parkTickets }];
         this.setState({ statusSales: data });
     }
 
