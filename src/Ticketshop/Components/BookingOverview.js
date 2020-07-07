@@ -46,6 +46,7 @@ class BookingOverview extends React.Component {
         super(props);
         this.loadListHandler = this.loadListHandler.bind(this);
         this.loadTicketsHandler = this.loadTicketsHandler.bind(this);
+        this.translateTicketType = this.translateTicketType.bind(this);
         this.state = { buchungen: [], tickets: [] };
     }
 
@@ -108,7 +109,20 @@ class BookingOverview extends React.Component {
         var kopieTickets = this.state.tickets;
         kopieTickets = kopieTickets.concat(data);
 
+        kopieTickets.forEach((ticket) => {
+            ticket.ticketType = this.translateTicketType(ticket.ticketType);  
+        })
+
         this.setState({ tickets: kopieTickets });
+    }
+
+    translateTicketType(ticketType){
+        switch (ticketType) {
+            case 0: return "Absolvent";
+            case 1 : return "Begleitperson";
+            case 2 : return "Parkticket";
+            default: return "Kein gültiger Tickettyp"
+        }
     }
 
     render() {
