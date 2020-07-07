@@ -207,8 +207,8 @@ class DataQuickViewManageSales extends React.Component {
 
         return (
             <Box name="boxManageSales" className="quickViewOuterBox">
-                <Text>Anzeige für den Status und das aktivieren und
-                deaktivieren des Ticketverkaufs</Text>
+                <Text>Anzeige für den Status und das aktivieren</Text>
+                <Text>und deaktivieren des Ticketverkaufs</Text>
                 <Box pad="small"></Box>
                 <DataTable className="quickViewDatatables"
                     columns={[
@@ -259,7 +259,8 @@ class DataQuickViewCreateOTPS extends React.Component {
     render() {
         return (
             <Box name="CreateOTPS" className="quickViewOuterBox">
-                <Text>Einlesen einer E-Mail Liste zum Erstellen von One Time Passwörtern:</Text>
+                <Text>Einlesen einer E-Mail Liste zum Erstellen</Text>
+                <Text>von One Time Passwörtern:</Text>                
                 <Box pad="small"></Box>
 
                 <Text>Initiale Erstellung durchgeführt: </Text><Text weight="bold">{this.switchInitialList()}</Text>
@@ -317,7 +318,8 @@ class DataQuickViewViewOTPs extends React.Component {
             <Box name="CreateOTPS" className="quickViewOuterBox">
                 <Text weight="bold" size="large">Vorhandene One Time Passwörter</Text>
                 <Box pad="small" align="center">
-                    <Text>Liste mit den existierenden One Time Passwörtern und die Möglichkeit einzelne zu löschen.</Text>
+                    <Text>Liste mit den existierenden One Time Passwörtern</Text>
+                    <Text>und die Möglichkeit einzelne zu löschen.</Text>                    
                 </Box>
                 <Button className="buttonInDash" label="One Time Passwort verwalten" onClick={this.callShopManagementViewOTPS}></Button>
             </Box>
@@ -546,7 +548,6 @@ class ShopManagement extends React.Component {
 
         if (response.ok) {
             this.setMaxTicketMenge(absolvententickets, begleitertickets)
-            console.log("Die Anzahl der Maximalen Tickets pro Absolvent wurde erfolgreich geändert!")
         }
     };
 
@@ -641,7 +642,7 @@ class ShopManagement extends React.Component {
     //TODO: DELETE OTPS 
     async deleteOTPwithEmail(eMail) {
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/oneTimePasses", {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
             headers: {
@@ -654,11 +655,11 @@ class ShopManagement extends React.Component {
         }).catch(console.log)
 
         if (!response) {
-            console.log("Keine Antwort vom Backend bei der Erstellung des One Time Passworts für die E-Mail:" + eMail)
+            alert("Keine Antwort vom Backend bei der Erstellung des One Time Passworts für die E-Mail:" + eMail)
             return;
         }
         if (!response.ok) {
-            console.log("Fehler bei der Erstellung eines One Time Passwortes: " + response.message)
+            alert("Fehler bei der Erstellung eines One Time Passwortes: " + response.message)
             return;
         }
         if (response.ok) {
@@ -924,22 +925,24 @@ class ShopManagement extends React.Component {
                             <Box pad="medium"></Box>
                             <Button label="QuickView aktualisieren" onClick={this.componentDidMount}></Button>
                         </Box>
+                        <Box direction="row" wrap={true} justify="center">
                         <Box ClassName="twoGroupedBoards" direction="row" wrap={true} justify="center">
                             <DataQuickViewMaxTickets maxTicketmenge={this.state.maxTicketmenge}></DataQuickViewMaxTickets>
                             <DataQuickViewPayment bankStatus={this.state.bankStatus} getBankStatus={this.getBankStatus} payPalStatus={this.state.payPalStatus}
                                 getPayPalStatus={this.getPayPalStatus}></DataQuickViewPayment>
                         </Box>
-                        <Box ClassName="twoGroupedBoards" direction="row" wrap={true}>
+                        <Box ClassName="twoGroupedBoards" direction="row" wrap={true} justify="center">
                             <DataQuickViewBookings statusBookings={this.state.statusBookings}></DataQuickViewBookings>
                             <DataQuickViewSalesStatistics statusSales={this.state.statusSales}></DataQuickViewSalesStatistics>
                         </Box>
-                        <Box ClassName="twoGroupedBoards" direction="row" wrap={true}>
+                        <Box ClassName="twoGroupedBoards" direction="row" wrap={true} justify="center">
                             <DataQuickViewManageSales salesStatus={this.state.salesStatus} setSalesStatus={this.setSalesStatus}></DataQuickViewManageSales>
                             <DataQuickViewCreateOTPS initialList={this.state.initialList}></DataQuickViewCreateOTPS>
                         </Box>
-                        <Box ClassName="twoGroupedBoards" direction="row" wrap={true}>
+                        <Box ClassName="twoGroupedBoards" direction="row" wrap={true} justify="center">
                             <DataQuickViewManageOTPS ></DataQuickViewManageOTPS>
                             <DataQuickViewViewOTPs></DataQuickViewViewOTPs>
+                        </Box>
                         </Box>
                     </Box>
                 </Route>
