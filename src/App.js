@@ -25,6 +25,11 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    // Redirect if plain url was requested
+    if(window.location.hash === "#/" || window.location.hash === "#" || window.location.hash === ""){
+      window.location.assign('#/login/');
+    }
+
     // Check system status once mounted
     this.detectSystemState();
 
