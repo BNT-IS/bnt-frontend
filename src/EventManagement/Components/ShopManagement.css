@@ -8,7 +8,9 @@
     padding: 25px 25px 25px 25px;
     border: solid 2px;
     align-items: center;
-    justify-content: space-between;    
+    justify-content: space-between;
+    width: 600px;
+    height: 400px   
 }
 
 .platzhalter {
