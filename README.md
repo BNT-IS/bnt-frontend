@@ -182,7 +182,7 @@ aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mai
 
 <img src="./assets/ShopManagamentAbsolventenListe.PNG" width="150px" alt="ShopManagamentAbsolventenListe">
 
-<link src="./assets/ShopManagamentAbsolventenListe.csv" alt="Template ShopManagamentAbsolventenListe">
+<a href="./assets/ShopManagamentAbsolventenListe.csv">Template ShopManagamentAbsolventenListe"</a>
 
 #### Klasse - DataQuickViewManageOTPS
 Mit dem Button der Klasse DataQuickViewManageOTPS kann zur Komponente ShopManagementManageOTPS gewechselt werden.
