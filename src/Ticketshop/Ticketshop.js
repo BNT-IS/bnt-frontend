@@ -21,11 +21,11 @@ class Ticketshop extends React.Component {
 
     // FOR LOGIN
 
-    UNSAFE_componentWillMount() {
+    componentDidMount() {
         this.context.requireLogin(1);
     }
 
-    UNSAFE_componentWillUpdate() {
+    componentDidUpdate() {
         this.context.requireLogin(1);
     }
 
