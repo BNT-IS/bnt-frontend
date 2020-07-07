@@ -58,18 +58,14 @@ Die Klasse PersonInput ist eine Hilfsklasse für die TicketBestellung die zur Ei
 
 In dem Ticketbestellprozess springt der Absolvent von Window zu Window und wird einfach durch den Prozess des Ticketverkaufs gelotst.
 Im ersten Window muss der Absolvent seinen Namen und seinen Nachnamen ausfüllen, da beim Einlass das elektronische Ticket mit dem Personalausweis abgeglichen wird.
-<img src="./assets/TicketBestellung_Absolvent.PNG" width="150px" alt="Ticketbestellung des Absolvententickets">
-
 Im zweiten Fenster werden ggf. die Gäste des Absolvent hinzugefügt. Im ersten Verkaufsdurchlauf haben die Absolventen die Möglichkeit maximal zwei Personen mitzunehmen.
-<img src="./assets/TicketBestellung_Besucher.PNG" width="150px" alt="Ticketbestellung der Besuchertickets">
-
 Im dritten Fenster gibt es dann die Möglichkeit Parktickets in Abhängigkeit der Besucher + 1 Ticket für den Absolventen zu erwerben.
-<img src="./assets/TicketBestellung_Parken.PNG" width="150px" alt="Ticketbestellung der Parktickets">
-
 Im vierten Fenster ist der Warenkorb dargestellt mit den Tickets die bestellt werden. Anschließend kann man die Bestellung Zahlungspflichtig bestellen.
-<img src="./assets/TicketBestellung_Warenkorb.PNG" width="150px" alt="Warenkorb der Ticketbestellung">
-
 Sobald das fünfte Fenster sich öffnet wurden die Buchung ausgeführt und die Tickets in die DB geschrieben.
+<img src="./assets/TicketBestellung_Absolvent.PNG" width="150px" alt="Ticketbestellung des Absolvententickets">
+<img src="./assets/TicketBestellung_Besucher.PNG" width="150px" alt="Ticketbestellung der Besuchertickets">
+<img src="./assets/TicketBestellung_Parken.PNG" width="150px" alt="Ticketbestellung der Parktickets">
+<img src="./assets/TicketBestellung_Warenkorb.PNG" width="150px" alt="Warenkorb der Ticketbestellung">
 <img src="./assets/TicketBestellung_Bestellbestätigung.PNG" width="150px" alt="Bestellbestätigung der Tickets">
 
 
