@@ -79,8 +79,9 @@ Die Komponente besteht aus den Klassen:
 - DataQuickViewSalesStatistics
 - DataQuickViewManageSales
 - ShopManagement
--
--
+- DataQuickViewCreateOTPS
+- DataQuickViewManageOTPS
+- DataQuickViewViewOTPs
 
 und interagiert mit den Komponenten
 - ShopManagamentConfMaxTickets
@@ -89,98 +90,49 @@ und interagiert mit den Komponenten
 -
 -
 
+#### Klasse - ShopManagament
 Die Klasse ShopManagament ist für die Anzeige der entsprechenden Klassen und Komponenten sowie die Verwaltung der zentralen Daten für die Anzeigen verantwortlich. Die Klasse stellt Setter-Funktionen für die entsprechenden Werte bereit, die die einzelnen (DataQuickView)-Klassen aufrufen um die Werte in der Klasse ShopManagamenet zu ändern.
 
+#### Klasse - DataQuickViewMaxTickets
 Die Klasse DataQuickViewMaxTickets zeigt die Anzahl der Tickets an, die ein Absolvent mit der derzeitigen Konfiguration erwerben kann. Mit dem Button der Klasse wird der Administrator zur Komponente ShopManagementConfMaxTickets weitergeleitet.
 
-Die Komponente ShopManagamentConfMaxTickets stellt Textfelder zur Verüfung mit denen die maximalen Tickets, die ein Absolvent erwerben kann, konfiguriert werden können. Die Konfigurationen werden im Backend in der Konfigurationsdatei gespeichert. Hierfür verwendet die Komponente die Route
-```
-ROUTE
-```
+#### Komponente - ShopManagamentConfMaxTickets
+Die Komponente ShopManagamentConfMaxTickets stellt Textfelder zur Verüfung mit denen die maximalen Tickets, die ein Absolvent erwerben kann, konfiguriert werden können. Die Werte  werden von der Klasse ShopManagement mit der Route
 ```
 {
-    Absolvententickets: String,
-    Begleitertickets: String,
-    Parktickets: String,   
+    Route: */api/v2/shopConfig
 }
 ```
+im Backend in der Konfigurationsdatei gespeichert.
 
+#### Klasse - DataQuickViewPayment
 Die Klasse DataQuickViewPayment zeigt die Konfigurierten Bezahloptionen an.!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!
 !!!!
 
+#### Klasse - DataQuickViewBookings
 Die Klasse DataQuickViewBookings zeigt die aktuelle Anzahl offener, gebuchter und stornierter Buchungen im System an. Mit dem Button der Klasse wird ein Administrator zur Komponente ShopManagementViewBookings weitergeleitet.
 
+#### Komponente - ShopManagementViewBookings
 Die Komponente ShopManagementViewBookings gibt einen ausführlichen Überblick in Form einer Liste über alle Buchungen im System, welche noch als offen gekennzeichnet sind sowie über alle Buchungen im System, welche bereits als bezahlt markiert wurden. Die Komponente bietet für jede Liste die Möglichkeit, über ein Textfeld nach Buchungen mit einer spezifischen E-Mail-Adresse zu suchen. Die noch als offen markierten Buchungen können durch die Komponente freigegeben oder storniert werden, indem der zugehörige Button in der Listenzeile verwendet wird. Die als bezahlt markierten Buchungen können durch die Komponente auf die selbe Art und Weise storniert werden.
 
-Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert werden. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente **** weiter.
-In der Komponente **** kann der Status des Verkaufs mit der Route
-```
-ROUTE
-```
-aktiviert oder deaktiviert werden. Die Route ändert den Wert hierfür in der Konfigurationsdatei des Backends.
+#### Klasse - DataQuickViewManageSales
+Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert sein. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente ShopManagementManageSalesStatus weiter.
 
-
-
-### SystemSetup
-Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich.
-Die Komponente besteht aus den Klassen:
-- Hauptansicht
-- AddWallet
-- ConfigureAdminAccount
-- ConfigureDatabase
-- ConfigureMailserver
-- AbsolventenListe
-- SystemSetup
-
-Die Klasse SystemSetup verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
-
-Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 6) des Einrichtungsvorgangs angezeigt.
-
-Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route "setup/generateWallet" an das Backend. Das Backend erstellt ein Wallet für den Admin.
-
+#### Komponente - ShopManagementManageSalesStatus
+In der Komponente ShopManagementManageSalesStatus kann der Status des Verkaufs über das Drop-Down Menü aktiviert / deaktiviert werden. Der Status wird von der Klasse ShopManagement mit der Route
 ```
-{
-    httpProvider: String
-}
-DNS-Name des http-Providers:Port
+    Route: */api/v2/shopConfig
 ```
+in der Konfigurationsdatei des Backends gespeichert.
 
-Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Mail-Adresse und ein Passwort für den Administratorbenuzter zur Verfügung. Über die Route "/setup/adminUser" im Backend wird der Administratorbenutzer (Rolle 0) erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
-```
-{
-    email: String, 
-    Passwort: String    
-}
-```
+#### Klasse - DataQuickViewCreateOTPS
+Die Klasse DataQuickViewCreateOTPS zeigt an, ob bereits eine Liste mit E-Mail-Adressen für die Erstellung der One Time Passwörter und den anschließenden E-Mail-Versand eingelesen wurde. Mit dem Button "Liste einlesen" wird der Administrator zur Komponente ShopManagamentAbsolventenListe weitergeleitet.
 
-Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route "/setup/database" werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
+#### Komponente - ShopManagamentAbsolventenListe
+Die Komponente ShopManagamentAbsolventenListe stellt ein CSV-Reader Feld der Komponente "react-papaparse" zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
 ```
-{ 
-    host: String, 
-    user: String, 
-    password: String, 
-    db: String, 
-    port: String
-}
-```
-
-Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route "/setup/mailserver" werden die Einstellungen in die Konfiguration im Backend gespeichert.
-```
-{
-     host: String, 
-     port: String, 
-     conncetion: Boolean, 
-     user: String, 
-     password: String, 
-     standardMail: String,
-     standardPrefix: String
-}
-```
-
-Die Klasse AbsolventenListe stellt ein CSV-Reader Feld der Komponente "react-papaparse" zur Verfügung. Mit der Eingabe einer Liste im CSV-Format in der Darstellung
-```
-E-Mail;Name
+eMail;Name
 Beispiel@web.de; Mustermann, Max
                 .
                 .
@@ -188,9 +140,102 @@ Beispiel@web.de; Mustermann, Max
 ```
 kann eine Liste mit E-Mail-Adressen eingelesen werden. Die eingelesene Liste wird in der Komponente in einer Liste angezeigt. Durch die Bestätigung der eingelesen Liste mit dem Button Abschließen wird für jeden Datensatz in der Liste die Route
 ```
-
+    Route: */api/v2/oneTimePasses
 ```
-aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet.
+aufgerufen und ein One Time Passwort in der Datenbank erstellt, sowie eine E-Mail mit dem erstellten One Time Passwort versendet. Die Komponente kann nur Benutzer / One Time Passwörter mit der Rolle 1 (Absolvent) erstellen.
+
+#### Klasse - DataQuickViewManageOTPS
+Mit dem Button der Klasse DataQuickViewManageOTPS kann zur Komponente ShopManagementManageOTPS gewechselt werden.
+
+#### Komponente - ShopManagementManageOTPS
+In der Komponente ShopManagementManageOTPS können neue One Time Passwörter erstellt werden. In das Textfeld muss eine E-Mail-Adresse eingetragen werden und über das Drop-Down-Menü kann die entsprechende Rolle ausgewählt werden. (Rolle 0 = Administrator; Rolle 1 = Benutzer)
+
+
+### SystemSetup
+Die Komponente SystemSetup ist für die erstmalige Konfiguration im Backend verantwortlich.
+Die Komponente besteht aus den Klassen:
+- Systemsetup
+- Hauptansicht
+- ConfigureDatabase
+- ConfigureAdminAccount
+- ConfigureMailserver
+- AddWallet
+- Deploy Smart Contract
+- Configure ShopConfig
+
+#### SystemSetup
+Die Klasse SystemSetup verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
+
+#### Hauptansicht
+Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 7) des Einrichtungsvorgangs angezeigt.
+
+#### ConfigureAdminAccount
+Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Mail-Adresse und ein Passwort für den Administratorbenuzter zur Verfügung. 
+```
+{
+    Voraussetzungen: Intitialisierte Datenbank   
+}
+```
+
+Über die Route
+```
+{
+    Route: */setup/adminUser  
+}
+```
+wird der Administratorbenutzer (Rolle 0) im Backend erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
+
+#### ConfigureDatabase
+Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route 
+```
+{ 
+    Route: */setup/database
+}
+```
+werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
+
+#### ConfigureMailserver
+Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route 
+```
+{
+    Route: */setup/mailserver
+}
+```
+werden die Einstellungen in die Konfiguration im Backend gespeichert.
+
+#### AddWallet
+Die Klasse AddWallet stellt ein Textfeld zur Eingabe des HTTP-Providers bereit und sendet dieses über die Route 
+```
+{
+   Route: */setup/generateWallet
+}
+```
+an das Backend. Das Backend erstellt ein Wallet für den Admin. Ist die Einrichtung des Wallets erfolgreich abgeschlossen, zeigt die Ansicht der Komponente den Ethereum-Preis für die Veröffentlichung des Smart Contracts auf der Blockchain an.
+
+#### DeploySmartContract
+Die Klasse DeploySmartContract stellt ein Textfeld zur Eingabe des HTTP-Providers zur Verüfung. Im Admin-Wallet wird eine bestimmte Menge Ethereum benötigt. Dieses ist für die Veröffentlichung des Smart Contracts und die Erstellung eines Tickets.
+```
+{
+Voraussetzungen:    - Erstelltes Wallet
+                    - Ethereum im Wallet
+}
+```
+Der Smart Contract wird über die Route
+```
+{
+    Route: */setup/deployContract
+}
+```
+im Backend auf der Blockchain veröffentlicht. Nach der erfolgreichen Veröffentlichung des Smart Contracts werden in der Klasse die Preise für die Erstellung und die Übertragung eines Tickets angezeigt.
+
+#### ConfigureShopConfig
+Die Klasse ConfigureShopConfig stellt 3 Textboxen für die Eingabe der maximalen Personen pro Event, die maximale Anzahl von Tickets und die maximale Anzahl an VIP-Personen zur Verfügung. Die Werte werden über die Route
+ ```
+{
+    Route: */setup/shopConfig
+}
+```
+in die Konfigurationsdatei im Backend gespeichert.
 
 ### Entrance Dashboard (Event Management)
 
