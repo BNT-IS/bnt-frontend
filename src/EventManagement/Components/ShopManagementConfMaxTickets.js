@@ -11,15 +11,19 @@ class ShopManagementConfMaxTickets extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            Absolvententickets: "",
-            Begleitertickets: "",           
+            Absolvententickets: 0,
+            Begleitertickets: 0,           
         }
 
         this.setValuesAndChangeStep = this.setValuesAndChangeStep.bind(this)
+        this.changeToShopMangement = this.changeToShopMangement.bind(this)
     }
 
     setValuesAndChangeStep (){
         this.props.setConfMaxTicketsFromConf(this.state.Absolvententickets, this.state.Begleitertickets);
+        window.location.assign("#/eventmgmt/shop");
+    }
+    changeToShopMangement() {
         window.location.assign("#/eventmgmt/shop");
     }
 
@@ -34,21 +38,26 @@ class ShopManagementConfMaxTickets extends React.Component {
                 <Box pad="medium">
                     <Text weight="bold">Absolvententickets:</Text>
                     <TextInput
+                        type="number"
                         placeholder="Absolvententickets"
                         value={this.state.Absolvententickets}
-                        onChange={(event) => { this.setState({ Absolvententickets: event.target.value }) }}
+                        onChange={(event) => { this.setState({ Absolvententickets: parseInt(event.target.value)}) }}
                     />
                 </Box>
                 <Box pad="medium">
                     <Text weight="bold">Begleitertickets:</Text>
                     <TextInput
+                        type="number"
                         placeholder="Begleitertickets"
                         value={this.state.Begleitertickets}
-                        onChange={(event) => { this.setState({ Begleitertickets: event.target.value }) }}
+                        onChange={(event) => { this.setState({ Begleitertickets: parseInt(event.target.value)}) }}
                     />
                 </Box>
+                <Box direction="row" pad="medium">
+                <Button label="Zurück" onClick={this.changeToShopMangement}></Button>
                 <Button label="Bestätigen" onClick={this.setValuesAndChangeStep}></Button>
-            </Box >
+                </Box>
+            </Box>
         );
     }
 }

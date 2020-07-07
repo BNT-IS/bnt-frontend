@@ -58,11 +58,22 @@ class TicketBestellung extends React.Component {
         this.createBooking = this.createBooking.bind(this);
         this.onInputHandler = this.onInputHandler.bind(this);
         this.ShopConfig = this.ShopConfig.bind(this);
+        this.getPaymentOptions = this.getPaymentOptions.bind(this);
 
 
         this.state = {
             MaxAnzahlAbsolvententickets: 0,
             MaxAnzahBesuchertickets: 0,
+            TicketPrice_Type0: 0,
+            TicketPrice_Type1: 0,
+            TicketPrice_Type2: 0,
+            PaymentBankActive: false,
+            PaymentBankReceiver: "",
+            PaymentBankName: "",
+            PaymentBankIban: "",
+            PaymentPayPalActive: false,
+            PaymentPayPalLink: "",
+            PaymentPayPalMail: "",
             guestcount: 0,
             parkcount: 0,
             step: 0,
@@ -101,6 +112,7 @@ class TicketBestellung extends React.Component {
 
     componentDidMount() {
         this.ShopConfig();
+        this.getPaymentOptions();
     }
     //Wechsel der Ansichtenfenster
     windowAbsolventTicket() {
@@ -133,7 +145,7 @@ class TicketBestellung extends React.Component {
             this.setState({ persons: personsList, personInputFields: this.state.personInputFields, guestcount: this.state.guestcount + 1 });
 
         }
-        else if (property === "park" && this.state.parkcount < 3) {
+        else if (property === "park" && this.state.parkcount < 1 + this.state.guestcount) {
             this.setState({ parkcount: this.state.parkcount + 1 });
         }
     }
@@ -150,9 +162,21 @@ class TicketBestellung extends React.Component {
         }
     }
 
+    //Soll die zur Verfügung stehenden Zahlungsoptionen bereitstellen. Diese werden im BAckend aus der Config "paymentOptions" geholt
+    showPaymentOptions = (PaymentBankActive) =>{
+        if (PaymentBankActive === true){
+                this.PaymentBankName.print();
+                this.PaymentBankReceiver.print();
+                this.PaymentBankIban.print();
+                
+            
+        }
+    }
+
+
     //Abfragen Backend
     async ShopConfig() {
-        const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/shopConfig', {
+        var response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/shopConfig', {
             method: 'GET',
             mose: 'cors',
             cache: 'no-cache',
@@ -160,21 +184,52 @@ class TicketBestellung extends React.Component {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + this.context.token,
             },
-        }).catch(console.log);
+        }).catch(console.log)
         if (!response.ok) {
             alert(response.message);
-            //Error Handling
         }
         if (response.ok) {
             var configData = await response.json();
-            this.state.MaxAnzahlAbsolvententickets = configData.max_TicketType_0_pro_Absolvent;
-            this.state.MaxAnzahBesuchertickets = configData.max_TicketType_1_pro_Absolvent;
+            this.setState({MaxAnzahlAbsolvententickets: configData.max_TicketType_0_pro_Absolvent});
+            this.setState({MaxAnzahBesuchertickets: configData.max_TicketType_1_pro_Absolvent});
+            this.setState({TicketPrice_Type0: configData.price_TicketType_0});
+            this.setState({TicketPrice_Type1: configData.price_TicketType_1});
+            this.setState({TicketPrice_Type2: configData.price_TicketType_2});
             if (!configData.salesStatus) {
                 alert("Der Ticketverkauf ist derzeit nicht aktiv!");
                 this.context.redirectUserToHome();
             }
         }
     }
+
+    async getPaymentOptions() {
+        //Liest die Werte der Zahlungsverbindungen aus
+        var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + this.context.token,
+            },
+        }).catch(console.log)
+
+        if (!response) {
+            var configData = await response.json();
+            this.setState({PaymentBankActive: configData.Bank.Aktiviert});
+            this.setState({PaymentBankReceiver: configData.Bank.Empfänger});
+            this.setState({PaymentBankName: configData.Bank.Name_der_Bank});
+            this.setState({PaymentBankIban: configData.Bank.IBAN});
+            this.setState({PaymentPayPalActive: configData.PayPayl.Aktiviert});
+            this.setState({PaymentPayPalLink: configData.PayPal.PayPayl_Link});
+            this.setState({PaymentPayPalMail: configData.PayPal.PayPal_Verwendung})
+            return;
+        }    
+        //Error Handling noch machen
+    }
+
+
+
 
 
 
@@ -314,6 +369,7 @@ class TicketBestellung extends React.Component {
                     <Box gap="small">
                         <Heading>Angaben zu Ihnen</Heading>
                         <Text>Bitte tragen Sie Ihren vollständigen Namen ein.</Text>
+                        <Text>Ticketpreis in EURO: {this.state.TicketPrice_Type0} €</Text>
                         <TextInput name="forename" placeholder="Vorname des Absolventen" value={this.state.graduate.forename} onChange={(event) => this.onInputHandler(event, "forename")}></TextInput>
                         <TextInput name="surname" placeholder="Nachname des Absolventen" value={this.state.graduate.surname} onChange={(event) => this.onInputHandler(event, "surname")}></TextInput>
                         <CheckBox name="isWheelchairUser" label="Rollstuhlfahrer bitte ankreuzen" value={this.state.graduate.isWheelchairUser} onChange={this.onCheckBox} checked={this.state.isWheelchairUser} />
@@ -325,6 +381,7 @@ class TicketBestellung extends React.Component {
                     <Box gap="small">
                         <Heading>Angaben zu Begleitpersonen</Heading>
                         <Text>Bitte geben Sie an, wie viele Begleitpersonen Sie mitnehmen wollen.</Text>
+                        <Text>Ticketpreis in EURO: {this.state.TicketPrice_Type1} €</Text>
                         <Button onClick={() => this.increment("guest")} className="guestcount" label="+"></Button>
                         <Button onClick={() => this.decrement("guest")} className="guestcount" label="-"></Button>
                         <h2>Anzahl der Begleitpersonen: {this.state.guestcount}</h2>
@@ -338,6 +395,7 @@ class TicketBestellung extends React.Component {
                     <Box gap="small">
                         <Heading>Parktickets</Heading>
                         <Text>Bitte geben Sie an, wie viele Parktickets Sie benötigen.</Text>
+                        <Text>Ticketpreis in EURO: {this.state.TicketPrice_Type2} €</Text>
                         <Button onClick={() => this.increment("park")} className="parkcount" label="+"></Button>
                         <Button onClick={() => this.decrement("park")} className="parkcount" label="-"></Button>
                         <h2>Anzahl der Parktickets: {this.state.parkcount}</h2>
@@ -361,6 +419,7 @@ class TicketBestellung extends React.Component {
                     <Box gap="small">
                         <Text>Sie haben folgende Tickets Zahlungspflichtig bestellt.  <br />
                             Bitte überweisen Sie folgenden Betrag auf das Konto: XXXXYYYYZZZZ.<br />
+                            {this.showPaymentOptions}
                             Geben Sie ihren Namen als Verwendungszweck an.<br />
                             Nach Rechnungseingang erhalten Sie Ihre Tickets an ihr Wallet gesendet.<br />
                         </Text>

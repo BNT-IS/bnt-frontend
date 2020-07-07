@@ -25,6 +25,12 @@ class Login extends React.Component {
         this.verifyPasswort = this.verifyPasswort.bind(this);
     }
 
+    componentDidUpdate(){
+        if(this.context.user){
+            this.context.redirectUserToHome();
+        }
+    }
+
     otpInputHandler(event) {
         //Liest das eingegebene OTP aus dem Input-Feld aus und speichert es zwischen
         this.setState({ otp: event.target.value });
@@ -169,7 +175,7 @@ class Login extends React.Component {
 
             <Box className="AccountManagement" gap="small">
                 <Header background="brand" justify="between" pad="10px">
-                    <Text>BNT Ticketsystem</Text>
+                    <Text><a style={{textDecoration: "none", color: "white"}} href="./">BNT Ticketsystem</a></Text>
                 </Header>
                 <Box pad="small">
                     {this.state.step === 0 &&
