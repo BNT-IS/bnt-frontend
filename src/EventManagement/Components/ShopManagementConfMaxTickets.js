@@ -11,8 +11,8 @@ class ShopManagementConfMaxTickets extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            Absolvententickets: "",
-            Begleitertickets: "",           
+            Absolvententickets: 0,
+            Begleitertickets: 0,           
         }
 
         this.setValuesAndChangeStep = this.setValuesAndChangeStep.bind(this)
@@ -34,17 +34,19 @@ class ShopManagementConfMaxTickets extends React.Component {
                 <Box pad="medium">
                     <Text weight="bold">Absolvententickets:</Text>
                     <TextInput
+                        type="number"
                         placeholder="Absolvententickets"
                         value={this.state.Absolvententickets}
-                        onChange={(event) => { this.setState({ Absolvententickets: event.target.value }) }}
+                        onChange={(event) => { this.setState({ Absolvententickets: parseInt(event.target.value)}) }}
                     />
                 </Box>
                 <Box pad="medium">
                     <Text weight="bold">Begleitertickets:</Text>
                     <TextInput
+                        type="number"
                         placeholder="Begleitertickets"
                         value={this.state.Begleitertickets}
-                        onChange={(event) => { this.setState({ Begleitertickets: event.target.value }) }}
+                        onChange={(event) => { this.setState({ Begleitertickets: parseInt(event.target.value)}) }}
                     />
                 </Box>
                 <Button label="Bestätigen" onClick={this.setValuesAndChangeStep}></Button>

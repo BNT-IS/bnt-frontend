@@ -552,8 +552,8 @@ class ShopManagement extends React.Component {
 
     //Write max Tickets into Component State 
     setMaxTicketMenge(Absolvententickets, Begleitertickets) {
-        var data = [{ Tickettype: "Absolvententickets", Anzahl: typeof Absolvententickets === Number ? Absolvententickets : 0 },
-        { Tickettype: "Begleitertickets", Anzahl: typeof Begleitertickets === Number ? Begleitertickets : 0 }]
+        var data = [{ Tickettype: "Absolvententickets", Anzahl: Absolvententickets },
+        { Tickettype: "Begleitertickets", Anzahl: Begleitertickets }]
         this.setState({ maxTicketmenge: data })
     }
 
