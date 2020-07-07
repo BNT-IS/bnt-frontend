@@ -164,7 +164,9 @@ Mit der Route
 ```
 kann zur Komponente SystemSetup gewechselt werden. 
 
-Die Klassen besteht aus den Klassen:
+<img src="./assets/SystemSetup.PNG" width="150px" alt="SystemSetup">
+
+Die Komponente besteht aus den Klassen:
 - Systemsetup
 - Hauptansicht
 - ConfigureDatabase
@@ -177,8 +179,43 @@ Die Klassen besteht aus den Klassen:
 #### SystemSetup
 Die Klasse SystemSetup verwaltet die MAP mit den Werten welche Einrichtungsschritte bereits abgeschlossen sind und stellt die Funktion changeValueOfmapTest zum ändern der Werte zur Verfügung. Zusätzlich steuert die Klasse, welche anderen Klassen in der Weboberfläche angezeigt werden mit dem Wert InitializeStep und der Funktion changeStep.
 
+Wird die Komponente zum ersten Mal geladen, besteht nur die Option die Konfiguration initial durchzuführen mit dem Button "Konfiguration beginnen.
+
+Die einzelnen Einrichtungsschritte können mit dem Button "Abschließen" / "Hinzufügen" durchgeführt werden. Diese Option besteht nur einmal, da die Daten anschließend im Backend gespeichert sind.
+
+Mit dem Button "Schritt überspringen" können einzelne Einrichtungschritte ohne das Absenden der Daten übersprungen werden, so dass der Administrator die Möglichkeit hat, einzelne Schritte auszulassen, wenn die entsprechenden Daten fehlen oder der Einrichtungsschritt bereits durchgeführt wurde.
+
+Wurden die Einrichtungsschritte des SystemSetups einmal durchgeführt, besteht die Möglichkeit mit dem Button "Zurück" zur ersten Ansicht (Hauptansicht - 0) zu wechseln und das SystemSetup erneut durchzuführen.
+
+Mit dem Button "Initialisierung abschließen" wird die Komponente geschlossen und die Route
+Über die Route
+```
+{
+    Route: */login 
+}
+```
+geladen. 
+
+<img src="./assets/SystemSetup.PNG" width="150px" alt="SystemSetup">
+<img src="./assets/ConfigureDatabase.PNG" width="150px" alt="ConfigureDatabase">
+<img src="./assets/SystemSetupEnde.PNG" width="150px" alt="SystemSetup">
+
 #### Hauptansicht
 Die Hauptansicht ruft die MAP mit den Einrichtungsschritten ab und zeigt diese in einer Tabelle an. Die Boolean- und Key-Werte der Map werden in sprechendere String Werte übersetzt. Die Hauptansicht wird zu Beginn (InitializeStep = 0) und am Ende (InitializeStep = 7) des Einrichtungsvorgangs angezeigt.
+
+<img src="./assets/SystemSetup.PNG" width="150px" alt="SystemSetup">
+
+
+#### ConfigureDatabase
+Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route 
+```
+{ 
+    Route: */setup/database
+}
+```
+werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
+
+<img src="./assets/ConfigureDatabase.PNG" width="150px" alt="ConfigureDatabase">
 
 #### ConfigureAdminAccount
 Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Mail-Adresse und ein Passwort für den Administratorbenuzter zur Verfügung. 
@@ -195,15 +232,6 @@ Die Klasse ConfigureAdminAccount stellt ein Textfeld für die Eingabe einer E-Ma
 }
 ```
 wird der Administratorbenutzer (Rolle 0) im Backend erstellt und in der Konfigurationsdatei des Backends als erstellt gekennzeichnet.
-
-#### ConfigureDatabase
-Die Klasse ConfigureDatabase stellt 5 Textfelder für die Eingabe der Daten zur Datenbank zur Verfügung. Über die Route 
-```
-{ 
-    Route: */setup/database
-}
-```
-werden die Daten in der Konfiguration gesetzt und das Schema der Datenbank wird initial erstellt.
 
 #### ConfigureMailserver
 Die Klasse ConfigureMailserver stellt 6 Textboxen und ein Drop-Down Menü zur Eingabe der Daten für den Mail-Server zur Verfügung. Über die Route 
