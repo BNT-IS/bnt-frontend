@@ -163,7 +163,7 @@ class App extends React.Component {
                 <Route path="/">
                   <ul>
                     <li><Link to="/guest">Ticketshop</Link></li>
-                    <li><Link to="/entrance">Einlass</Link></li>
+                    <li><Link to="/entrance">Ticket-Reader</Link></li>
                     <li><Link to="/eventmgmt">Event-Management</Link></li>
                     <li><Link to="/login">Anmelden</Link></li>
                   </ul>
