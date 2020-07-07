@@ -56,7 +56,7 @@ Die Koponente besteht aus den Klassen:
 Die Klasse Ticketbestellung stellt den Verkaufsprozess der Tickets dar.
 Die Klasse PersonInput ist eine Hilfsklasse für die TicketBestellung die zur Eingabe der Namen der Gäste verwendet wird.
 
-<img src="./assets/TicketBestellung_Absolvent.png" width="150px" alt="Ticketbestellung des Absolvent">
+<img src="./assets/TicketBestellung_Absolvent.PNG" width="150px" alt="Ticketbestellung des Absolvent">
 
 ## Eventmanagament
 
