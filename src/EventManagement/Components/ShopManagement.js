@@ -122,7 +122,6 @@ class DataQuickViewBookings extends React.Component {
     }
 
     render() {
-        console.log(this.props.statusBookings);
         //Stellt den Schnellüberblick für die Buchungen im Browser dar
         return (
             <Box name="statusBookings" className="quickViewOuterBox">
@@ -562,7 +561,6 @@ class ShopManagement extends React.Component {
         var data = [{ status: "Gebucht", Anzahl: bezahlt},
         { status: "Offen", Anzahl: unbezahlt},
         { status: "Storniert", Anzahl: storniert}];
-        console.log(data);
         this.setState({ statusBookings: data });
     }
 
