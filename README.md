@@ -129,7 +129,7 @@ Die Komponente ShopManagementPaymentOptions stellt jeweils Textfelder für die B
     Route: */api/v2/paymentOptions
 }
 ```
-im Backend in der Konfigurationsdatei für die Zahlungsmethoden gespeichert.
+im Backend in der Konfigurationsdatei für die Zahlungsmethoden gespeichert. Für die PayPal-Verbindung wäre insgesamt die Verwendung eines PayPal-Businesskontos sinnvoller, da direkt zu PayPal weitergeleitet werden kann und somit nicht der Umweg über einen PayPal.Me-Link oder die Angabe einer PayPal-Emailadresse gegangen werden muss. Ein Businesskonto stand jedoch nicht für die Entwicklung zur Verfügung.
 
 Zudem können die Zahlungsmethoden in der Komponente aktiviert und deaktiviert werden, indem der gewünschte Zustand in der jeweiligen Dropbar ausgewählt und mit dem Button bestätigt wird. Die Zustände werden ebenfalls durch die Betätigung des jeweiligen Buttons von der Klasse ShopManagementPaymentOptions mit der Route 
 ```
