@@ -120,6 +120,8 @@ im Backend in der Konfigurationsdatei gespeichert.
 #### Klasse - DataQuickViewPayment
 Die Klasse DataQuickViewPayment zeigt den aktuellen Status für die konfigurierbaren Zahlungsmethoden der Banküberweisung und der PayPal-Überweisung an. Mit dem Button der Klasse wird der Administrator zur Komponente ShopManagementPaymentOptions weitergeleitet.
 
+<img src="./assets/DataQuickViewPaymentOptions.png" width="150px" alt="DataQuickViewPaymentOptions">
+
 #### Komponente - ShopManagementPaymentOptions
 Die Komponente ShopManagementPaymentOptions stellt jeweils Textfelder für die Bankverbindung und die PayPal-Verbindung zur Verfügung, anhand welcher diese näher spezifiziert werden können. Für die Bankverbindung kann so ein Empfängername, ein Bankname, eine IBAN, eine BIC sowie ein gewünschter Verwendungszweck zur Überweisung vorgegeben werden. Für die PayPal-Verbindung kann ein PayPal.me-Link, eine PayPal-Mailadresse sowie ein gewünschter Verwendungszweck für die PayPal-Transaktion vorgegeben werden. Die Werte werden nach der Bestätigung durch den jeweiligen Button von der Klasse ShopManagementPaymentOptions mit der Route 
 ```
@@ -137,14 +139,22 @@ Zudem können die Zahlungsmethoden in der Komponente aktiviert und deaktiviert w
 ```
 im Backend in der Konfigurationsdatei für die Zahlungsmethoden hinterlegt.
 
+<img src="./assets/PaymentOptions_BankSettings.png" width="150px" alt="Einstellungen Bankverbindung"> <img src="./assets/PaymentOptions_PayPalSettings.png" width="150px" alt="Einstellungen PayPal-Verbindung">
+
 #### Klasse - DataQuickViewBookings
 Die Klasse DataQuickViewBookings zeigt die aktuelle Anzahl offener, gebuchter und stornierter Buchungen im System an. Mit dem Button der Klasse wird ein Administrator zur Komponente ShopManagementViewBookings weitergeleitet.
+
+<img src="./assets/DataQuickViewBookingOverview.png" width="150px" alt="Buchungsübersicht">
 
 #### Komponente - ShopManagementViewBookings
 Die Komponente ShopManagementViewBookings gibt einen ausführlichen Überblick in Form einer Liste über alle Buchungen im System, welche noch als offen gekennzeichnet sind sowie über alle Buchungen im System, welche bereits als bezahlt markiert wurden. Die Komponente bietet für beide Listen die Möglichkeit, über ein listenspezifisches Suchfeld nach Buchungen mit einer spezifischen E-Mail-Adresse zu suchen. Die noch als offen markierten Buchungen können durch die Komponente freigegeben oder storniert werden, indem der zugehörige Button in der Listenzeile verwendet wird. Die als bezahlt markierten Buchungen können durch die Komponente auf die selbe Art und Weise storniert werden.
 
+<img src="./assets/BookingOverview_OpenBookings.png" width="150px" alt="Offene Buchungen"> <img src="./assets/BookingOverview_ClosedBookings.png" width="150px" alt="Bezahlte Buchungen">
+
 #### Klasse DataQuickViewSalesStatistics
 Die Klasse DataQuickViewSalesStatistics gibt einen Überblick über die noch vorhandene Platzanzahl, über die bereits verkaufte Platzanzahl, über die Anzahl stornierter Tickets, über die Anzahl der Rollstuhlfahrer sowie über die Anzahl der gebuchten Parktickets. Die Werte für die verschiedenen Parameter werden von der Klasse Shopmanagement abgerufen. 
+
+<img src="./assets/DataQuickViewTicketOverview.png" width="150px" alt="Übersicht über die Tickets">
 
 #### Klasse - DataQuickViewManageSales
 Die Klasse DataQuickViewManageSales zeigt den Status des Verkaufs an. Dieser kann Aktiv oder Deaktiviert sein. Der Wert für den Status wird von der ShopManagement abgerufen. Der Button der Klasse leitet den Administrator zur Komponente ShopManagementManageSalesStatus weiter.
