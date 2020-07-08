@@ -165,26 +165,38 @@ class DeploySmartContract extends React.Component {
         this.getBalanceFromWallet = this.getBalanceFromWallet.bind(this);
         this.checkBalancesAndExecute = this.checkBalancesAndExecute.bind(this);
     }
+    
+    componentDidMount(){
+        this.getBalanceFromWallet();
+    }
+
     // Get Balance From Adrress and calculate Wei -> Ether from Response this.props.walletAddress
     async getBalanceFromWallet() {
         if (this.props.httpProvider !== "" || this.props.walletAddress !== "") {
             var Web3 = require('web3');
             var web3 = new Web3(new Web3.providers.HttpProvider(this.props.httpProvider));
+            console.log(Web3)
             web3.eth.getBalance(this.props.walletAddress, (error, response) => {
+                console.log(response)
                 if (error) {
                     console.log(error);
+                    return;
                 }
                 if (!response) {
                     console.log("Fehler beim Abruf der Balance des Wallets");
                     alert(response.message);
+                    return
                 }
 
                 if (response) {
+
                     var balance = web3.utils.fromWei(response, "ether")
+                    console.log(balance);
                     this.setState({ walletBalance: balance });
                 }
             });
         } else {
+            alert("Fehler beim Abruf des Guthabens mit den Daten: ")
         }
     }
 
@@ -235,7 +247,6 @@ class DeploySmartContract extends React.Component {
 
     render() {
         var Ansicht = [];
-        this.getBalanceFromWallet();
         if (!this.state.deployed) {
             Ansicht = <Box>
                 <Box pad="medium"></Box>
