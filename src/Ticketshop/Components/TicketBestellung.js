@@ -173,8 +173,6 @@ class TicketBestellung extends React.Component {
                 this.state.PaymentBankName.print();
                 this.state.PaymentBankReceiver.print();
                 this.state.PaymentBankIban.print();
-                
-            
         }
     }
 
@@ -417,22 +415,22 @@ class TicketBestellung extends React.Component {
                 {this.state.step === 3 &&
                     <Box gap="small">
                         <Text>Sie haben folgende Tickets bestellt: <br />
-                            Absolvent: 1 <br />
-                            Begleitpersonen: {this.state.guestcount} <br />
-                            Parkticket: {this.state.parkcount}
+                            Absolvent: 1 x  {this.state.TicketPrice_Type0} €<br />
+                            Begleitpersonen: {this.state.guestcount} x {this.state.TicketPrice_Type1} €<br />
+                            Parkticket: {this.state.parkcount} x {this.state.TicketPrice_Type2} €
                         </Text>
-                        <Text>Das macht einen Gesamtbetrag von: {this.state.TotalInvoice}</Text>
+                        <Text>Summe: {this.state.TotalInvoice}</Text>
                         <Button onClick={this.windowParkTicket} label="Zurück"></Button>
                         <Button onClick={this.toPayment} label="Zahlungspflichtig bestellen"></Button>
                     </Box>
                 }
                 {this.state.step === 4 &&
                     <Box gap="small">
-                        <Text>Sie haben folgende Tickets Zahlungspflichtig bestellt.  <br />
+                        <Text>Die Buchung wurde erfolgreich übermittelt.<br />
                             Bitte überweisen Sie folgenden Betrag auf das Konto: XXXXYYYYZZZZ.<br />
                             {this.showPaymentOptions}
                             Geben Sie ihren Namen als Verwendungszweck an.<br />
-                            Nach Rechnungseingang erhalten Sie Ihre Tickets an "Tickets Anzeigen" gesendet.<br />
+                            Nach Rechnungseingang können Sie Ihre Tickets unter "Tickets Anzeigen" einsehen.<br />
                         </Text>
                         <Text>Sie haben folgende Tickets bestellt: <br />
                             Absolvent: 1 <br />

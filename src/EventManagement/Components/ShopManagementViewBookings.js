@@ -86,7 +86,7 @@ class ShopManagementViewBookings extends React.Component {
         }
     }
 
-    async cancel(bookingId) {  
+    async cancel(bookingId) {
         //Storniert eine Buchung mit der angegebenen Buchungs-ID
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/' + bookingId, {
             method: 'PUT',
@@ -110,8 +110,7 @@ class ShopManagementViewBookings extends React.Component {
 
     async approve(bookingId) {
         //Gibt die Buchung mit der angegebenen Buchungs-ID frei
-        var today = new Date();
-        today = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + ' ' + (today.getHours() + 2) + ':' + today.getMinutes() + ':' + today.getSeconds();
+        var today = Date.now();
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/bookings/' + bookingId, {
             method: 'PUT',
             mode: 'cors',
@@ -135,23 +134,23 @@ class ShopManagementViewBookings extends React.Component {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.context.token,
-            },
-        }).catch(console.log);
-            
-        if (!response2.ok){
-            alert("Das Abrufen der Tickets ist fehlgeschlagen!");
-            return;
-        } else {
-            const rückgabe = await response2.json().catch(console.log);
-            for(var lauf=0; lauf < rückgabe.length; lauf++){
-                this.postTicket(rückgabe[lauf].identifier, rückgabe[lauf].ticketType, rückgabe[lauf].forename, rückgabe[lauf].surname, rückgabe[lauf].isWheelchairUser);
+                },
+            }).catch(console.log);
+
+            if (!response2.ok) {
+                alert("Das Abrufen der Tickets ist fehlgeschlagen!");
+                return;
+            } else {
+                const rückgabe = await response2.json().catch(console.log);
+                for (var lauf = 0; lauf < rückgabe.length; lauf++) {
+                    this.postTicket(rückgabe[lauf].identifier);
+                }
             }
-        }
             this.componentDidMount();
         }
     }
 
-    async postTicket(identifier, ticketType, forename, surname, isWheelchairUser){
+    async postTicket(identifier) {
         const response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/tickets/', {
             method: 'POST',
             mode: 'cors',
@@ -160,16 +159,12 @@ class ShopManagementViewBookings extends React.Component {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + this.context.token,
             },
-            body: JSON.stringify({ 
-                identifier: identifier, 
-                ticketType: ticketType, 
-                forename: forename, 
-                surname: surname, 
-                isWheelchairUser: isWheelchairUser 
+            body: JSON.stringify({
+                identifier: identifier
             })
         }).catch(console.log);
 
-        if(!response){
+        if (!response) {
             console.log("Keine Antwort vom Backend bei der Erstellung eines Tickets!");
             return;
         }
@@ -179,9 +174,9 @@ class ShopManagementViewBookings extends React.Component {
         }
         if (response.ok) {
             console.log("Ticket wurde erstellt!")
-            return ;
+            return;
         }
-    } 
+    }
 
     changeStep() {
         //Leitet den Besucher auf die allgemeine Übersichtsseite des Eventmanagements weiter
