@@ -4,6 +4,7 @@ import Config from '../../config';
 
 import UserContext from '../../AppContexts/UserContext';
 
+//Klasse um Namen der Besucher zu setzen
 class PersonInput extends React.Component {
 
     constructor(props) {
@@ -42,7 +43,7 @@ class PersonInput extends React.Component {
     }
 
 }
-
+//Klasse des Ticketbestellprozess
 class TicketBestellung extends React.Component {
 
     static contextType = UserContext;
@@ -167,22 +168,24 @@ class TicketBestellung extends React.Component {
 
 
 
-    //Soll die zur Verfügung stehenden Zahlungsoptionen bereitstellen. Diese werden im BAckend aus der Config "paymentOptions" geholt
-    showPaymentOptions (PaymentBankActive){
-        if (PaymentBankActive === true){
-                this.state.PaymentBankName.print();
-                this.state.PaymentBankReceiver.print();
-                this.state.PaymentBankIban.print();
+    //Soll die zur Verfügung stehenden Zahlungsoptionen bereitstellen. Diese werden im Backend aus der Config "paymentOptions" geholt
+    //Kür: gehört nicht zum eigentlichen Funktionsumfang
+    showPaymentOptions(PaymentBankActive) {
+        if (PaymentBankActive === true) {
+            this.state.PaymentBankName.print();
+            this.state.PaymentBankReceiver.print();
+            this.state.PaymentBankIban.print();
         }
     }
-
-    paymentCalculation (){
+    //Funktion zur Berechnung des zu zahlenden Preises
+    paymentCalculation() {
         var gesamtBetrag = this.state.TicketPrice_Type0 + (this.state.guestcount * this.state.TicketPrice_Type1) + (this.state.parkcount * this.state.TicketPrice_Type2);
         this.setState({ TotalInvoice: gesamtBetrag });
-     
+
     }
 
-    //Abfragen Backend
+    //Abfragen Backend:
+    //Shop-Einstellung
     async ShopConfig() {
         var response = await fetch(Config.BACKEND_BASE_URI + '/api/v2/shopConfig', {
             method: 'GET',
@@ -198,18 +201,18 @@ class TicketBestellung extends React.Component {
         }
         if (response.ok) {
             var configData = await response.json();
-            this.setState({MaxAnzahlAbsolvententickets: configData.max_TicketType_0_pro_Absolvent});
-            this.setState({MaxAnzahBesuchertickets: configData.max_TicketType_1_pro_Absolvent});
-            this.setState({TicketPrice_Type0: parseInt(configData.price_TicketType_0)});
-            this.setState({TicketPrice_Type1: parseInt(configData.price_TicketType_1)});
-            this.setState({TicketPrice_Type2: parseInt(configData.price_TicketType_2)});
+            this.setState({ MaxAnzahlAbsolvententickets: configData.max_TicketType_0_pro_Absolvent });
+            this.setState({ MaxAnzahBesuchertickets: configData.max_TicketType_1_pro_Absolvent });
+            this.setState({ TicketPrice_Type0: parseInt(configData.price_TicketType_0) });
+            this.setState({ TicketPrice_Type1: parseInt(configData.price_TicketType_1) });
+            this.setState({ TicketPrice_Type2: parseInt(configData.price_TicketType_2) });
             if (!configData.salesStatus) {
                 alert("Der Ticketverkauf ist derzeit nicht aktiv!");
                 this.context.redirectUserToHome();
             }
         }
     }
-
+    //Auslesen der zur Verfügung stehenden Zahlungsmethode
     async getPaymentOptions() {
         //Liest die Werte der Zahlungsverbindungen aus
         var response = await fetch(Config.BACKEND_BASE_URI + "/api/v2/paymentOptions", {
@@ -224,15 +227,15 @@ class TicketBestellung extends React.Component {
 
         if (response) {
             var configData = await response.json().catch(console.log);
-            this.setState({PaymentBankActive: configData.Bank.Aktiviert});
-            this.setState({PaymentBankReceiver: configData.Bank.Empfänger});
-            this.setState({PaymentBankName: configData.Bank.Name_der_Bank});
-            this.setState({PaymentBankIban: configData.Bank.IBAN});
-            this.setState({PaymentPayPalActive: configData.PayPal.Aktiviert});
-            this.setState({PaymentPayPalLink: configData.PayPal.PayPal_Link});
-            this.setState({PaymentPayPalMail: configData.PayPal.PayPal_Verwendung})
+            this.setState({ PaymentBankActive: configData.Bank.Aktiviert });
+            this.setState({ PaymentBankReceiver: configData.Bank.Empfänger });
+            this.setState({ PaymentBankName: configData.Bank.Name_der_Bank });
+            this.setState({ PaymentBankIban: configData.Bank.IBAN });
+            this.setState({ PaymentPayPalActive: configData.PayPal.Aktiviert });
+            this.setState({ PaymentPayPalLink: configData.PayPal.PayPal_Link });
+            this.setState({ PaymentPayPalMail: configData.PayPal.PayPal_Verwendung })
             return;
-        }    
+        }
         //Error Handling noch machen
     }
 
@@ -253,12 +256,10 @@ class TicketBestellung extends React.Component {
             },
             body: JSON.stringify({ userId: this.context.user.id })
         }).catch(console.log);
-        // Error Handling für Benutzer
         if (!response.ok) {
             this.setState({ step: 100 });
             return;
         }
-
 
         var result = await response.json().catch(console.log);
         this.setState({ bookingResult: result });
@@ -267,10 +268,9 @@ class TicketBestellung extends React.Component {
             this.setState({ step: 100 });
             return;
         }
-
         await this.createTickets();
     }
-
+    //Ticket erstellen
     async createTickets() {
         let bookingResult = this.state.bookingResult.id;
         for (let element of this.state.persons) {
