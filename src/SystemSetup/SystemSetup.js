@@ -143,6 +143,7 @@ class AddWallet extends React.Component {
                     <Text>Die Einrichtung wurde Erfolgreich abgeschlossen. Für die Veröffentlichung des Smart Contracts wird</Text>
                     <Box pad="medium"></Box>
                     <Text weight="bold" size="xxlarge" align="center">Ethereum: {this.state.deploymentPrice}</Text><Text>benötigt.</Text>
+                    <Text weight="bold" size="xxlarge" align="center"> Wallet: {this.props.walletAddress}</Text>
                     <Box pad="medium"></Box>
                     <Text>Im nächsten Schritt wird zusätzlich noch eine geringe Menge Ethereum für die Erstellung eines Testtickets benötigt.</Text>
                     <Text>Laden Sie daher etwas mehr Ethereum in das Wallet!</Text>
@@ -732,7 +733,7 @@ class SystemSetup extends React.Component {
                     changeStep={this.changeStep.bind(this)}></ConfigureMailserver>}
 
                 {this.state.initializeStep === 4 && <AddWallet setWalletAddress={this.setWalletAddress.bind(this)} changeValueOfStatusMap={this.changeValueOfStatusMap.bind(this)}
-                    changeStep={this.changeStep.bind(this)} changeValueOfGasprices={this.changeValueOfGasprices.bind(this)} getValueOfGasPrices={this.getValueOfGasPrices.bind(this)} setHttpProvider={this.setHttpProvider.bind(this)}></AddWallet>}
+                    changeStep={this.changeStep.bind(this)} changeValueOfGasprices={this.changeValueOfGasprices.bind(this)} getValueOfGasPrices={this.getValueOfGasPrices.bind(this)} setHttpProvider={this.setHttpProvider.bind(this)} walletAddress={this.state.walletAddress}></AddWallet>}
 
                 {this.state.initializeStep === 5 && <DeploySmartContract httpProvider={this.state.httpProvider} walletAddress={this.state.walletAddress} changeValueOfStatusMap={this.changeValueOfStatusMap.bind(this)}
                     changeStep={this.changeStep.bind(this)} getValueOfGasPrices={this.getValueOfGasPrices.bind(this)} changeValueOfGasprices={this.changeValueOfGasprices.bind(this)}></DeploySmartContract>}
