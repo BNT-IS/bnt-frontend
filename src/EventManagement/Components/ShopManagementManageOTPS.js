@@ -26,7 +26,7 @@ class ShopManagementManageOTPS extends React.Component {
         if (this.state.role === "Administrator") {
             role = 0;
         }
-        if (this.state.salesStatus === "Absolvent") {
+        if (this.state.role === "Absolvent") {
             role = 1;
         }
         var response = await this.props.createOTPwithEmailAndRole(this.state.OTP, role)
