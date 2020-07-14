@@ -140,10 +140,10 @@ class AddWallet extends React.Component {
                     <Text size="large" weight="bold">Hinzufügen des Wallets für den Master-User:</Text>
                 </Box>
                 <Box pad="medium">
-                    <Text>Die Einrichtung wurde Erfolgreich abgeschlossen. Für die Veröffentlichung des Smart Contracts wird</Text>
+                    <Text>Die Einrichtung wurde Erfolgreich abgeschlossen. Für die Veröffentlichung des Smart Contracts wird die folgende Menge Ehereum in folgendem Wallet benötigt:</Text>
                     <Box pad="medium"></Box>
-                    <Text weight="bold" size="xxlarge" align="center">Ethereum: {this.state.deploymentPrice}</Text><Text>benötigt.</Text>
-                    <Text weight="bold" size="xxlarge" align="center"> Wallet: {this.props.walletAddress}</Text>
+                    <Text weight="bold" size="large" align="center">Ethereum: {this.state.deploymentPrice}</Text>
+                    <Text weight="bold" size="large" align="center"> Wallet: {this.props.walletAddress}</Text>
                     <Box pad="medium"></Box>
                     <Text>Im nächsten Schritt wird zusätzlich noch eine geringe Menge Ethereum für die Erstellung eines Testtickets benötigt.</Text>
                     <Text>Laden Sie daher etwas mehr Ethereum in das Wallet!</Text>
