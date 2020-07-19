@@ -27,28 +27,34 @@ class Hauptansicht extends React.Component {
         if (this.props.initializeStep === 0 && this.props.doneOnce === false) {
             Ansicht[0] = <Box pad="medium" key="start">
                 <Text textAlign="center" weight="bold" size="xxlarge">
-                    Herzlich Wilkommen zum Bachelors-Night Ticketsystem.
+                    Herzlich Willkommen zum Bachelors-Night Ticketsystem.
                 </Text>
-                <Box pad="medium"></Box>
-                <Text>
-                    Die nächsten Schritte dienen zur Initalisierung des Systems.
-                    Sie werden durch die notwendigen Vorbereitungsschritte geführt.
-                </Text>
-                <Text textAlign="center">
-                    Für die Initalisierung sind folgende Schritte notwendig
-                </Text>
+                <Box pad="medium">
+                    <Text textAlign="center">
+                        Die nächsten Schritte dienen zur Initalisierung des Systems.
+                        Sie werden durch die notwendigen Vorbereitungsschritte geführt.
+                    </Text>
+                </Box>
+                <Box pad="medium">
+                    <Text textAlign="center">
+                        Für die Initalisierung sind folgende Schritte notwendig:
+                    </Text>
+                </Box>
             </Box>
         }
         // Text if Steps are Finished
         if (this.props.initializeStep === 7 || this.props.doneOnce) {
             Ansicht[0] = <Box pad="medium" key="end">
-                <Text weight="bold" size="xxlarge" textAlign="center">Konfiguration abgeschlossen</Text>
-                <Box pad="medium"></Box>
-                <Text textAlign="center">
-                    Herzlich Glückwunsch Sie haben das Ticketsystem erfolgreich konfiguriert!
-                    Mit "Zurück" gelangen Sie wieder zur ersten Ansicht und können erneut durch die Konfiguration navigieren.
-                    Mit "Initalisierung abschließen" können Sie zur Login-Seite zurück.
-                </Text>
+                <Box pad="medium">
+                    <Text weight="bold" size="xxlarge" textAlign="center">Konfiguration abgeschlossen</Text>
+                </Box>
+                <Box pad="medium">
+                    <Text textAlign="center">
+                        Herzlich Glückwunsch Sie haben das Ticketsystem erfolgreich konfiguriert!
+                        Mit "Zurück" gelangen Sie wieder zur ersten Ansicht und können erneut durch die Konfiguration navigieren.
+                        Mit "Initialisierung abschließen" können Sie zur Login-Seite zurück.
+                    </Text>
+                </Box>
             </Box>
         }
         Ansicht[1] =
@@ -104,7 +110,6 @@ class AddWallet extends React.Component {
         }
 
         if (response.ok) {
-            console.log(response)
             var data = await response.json().catch(console.log)
             this.props.setWalletAddress(data.wallet_address);
             this.props.changeValueOfStatusMap("AW");
@@ -120,9 +125,9 @@ class AddWallet extends React.Component {
         //View if the Admin Wallet isnt created yet.
         if (!this.state.created) {
             Ansicht = <Box>
-                <Box pad="medium"></Box>
-                <Text weight="bold" size="xxlarge" align="center">Hinzufügen des Wallets für den Master-User</Text>
-                <Box pad="medium"></Box>
+                <Box pad="medium">
+                    <Text weight="bold" size="xxlarge" align="center">Erstellen des Etherem-Wallets für das Backend</Text>
+                </Box>
                 <Box pad="medium">
                     <TextInput
                         placeholder="HTTP-Provider DNS:Port"
@@ -130,7 +135,9 @@ class AddWallet extends React.Component {
                         onChange={(event) => { this.setState({ httpProvider: event.target.value }) }}
                     />
                 </Box>
-                <Button onClick={this.configureTheAdminWallet} label="Hinzufügen"></Button>
+                <Box pad="medium">
+                    <Button onClick={this.configureTheAdminWallet} label="Erstellen"></Button>
+                </Box>
             </Box>
         }
         //View if the Admin Wallet ist created
@@ -140,15 +147,22 @@ class AddWallet extends React.Component {
                     <Text size="large" weight="bold">Hinzufügen des Wallets für den Master-User:</Text>
                 </Box>
                 <Box pad="medium">
-                    <Text>Die Einrichtung wurde Erfolgreich abgeschlossen. Für die Veröffentlichung des Smart Contracts wird die folgende Menge Ehereum in folgendem Wallet benötigt:</Text>
-                    <Box pad="medium"></Box>
-                    <Text weight="bold" size="large" align="center">Ethereum: {this.state.deploymentPrice}</Text>
-                    <Text weight="bold" size="large" align="center"> Wallet: {this.props.walletAddress}</Text>
-                    <Box pad="medium"></Box>
-                    <Text>Im nächsten Schritt wird zusätzlich noch eine geringe Menge Ethereum für die Erstellung eines Testtickets benötigt.</Text>
-                    <Text>Laden Sie daher etwas mehr Ethereum in das Wallet!</Text>
+                    <Text>
+                        Im Backend wurde automatisch ein Wallet mit Public-Key und Private-Key generiert.
+                        Für die Veröffentlichung des Smart Contracts wird die folgende Menge Ehereum in folgendem Wallet benötigt:
+                    </Text>
                 </Box>
-                <Button label="Guthaben aufgeladen" onClick={this.props.changeStep}></Button>
+                <Box pad="medium">
+                    <Text weight="bold" size="large" align="center">Benötigtes Ethereum für das Contract-Deployment: {this.state.deploymentPrice}</Text>
+                    <Text weight="bold" size="large" align="center">Wallet: {this.props.walletAddress}</Text>
+                </Box>
+                <Box pad="medium">
+                    <Text>Im nächsten Schritt und für die Benutzung des Systems wird zusätzlich noch mehr Ethereum benötigt.</Text>
+                    <Text>Laden Sie daher bitte etwas mehr Ethereum in das Wallet!</Text>
+                </Box>
+                <Box pad="medium">
+                    <Button label="Verstanden und aufgeladen, weiter!" onClick={this.props.changeStep}></Button>
+                </Box>
             </Box>
         }
         return Ansicht;
@@ -163,62 +177,10 @@ class DeploySmartContract extends React.Component {
             walletBalance: "",
             deployed: false
         };
-        this.getBalanceFromWallet = this.getBalanceFromWallet.bind(this);
-        this.checkBalancesAndExecute = this.checkBalancesAndExecute.bind(this);
-    }
-    
-    componentDidMount(){
-        this.getBalanceFromWallet();
+        this.deploySmartContract = this.deploySmartContract.bind(this);
     }
 
-    // Get Balance From Adrress and calculate Wei -> Ether from Response this.props.walletAddress
-    async getBalanceFromWallet() {
-        if (this.props.httpProvider !== "" || this.props.walletAddress !== "") {
-            var Web3 = require('web3');
-            var web3 = new Web3(new Web3.providers.HttpProvider(this.props.httpProvider));
-            console.log(Web3)
-            web3.eth.getBalance(this.props.walletAddress, (error, response) => {
-                console.log(response)
-                if (error) {
-                    console.log(error);
-                    return;
-                }
-                if (!response) {
-                    console.log("Fehler beim Abruf der Balance des Wallets");
-                    alert(response.message);
-                    return
-                }
-
-                if (response) {
-
-                    var balance = web3.utils.fromWei(response, "ether")
-                    console.log(balance);
-                    this.setState({ walletBalance: balance });
-                }
-            });
-        } else {
-            alert("Fehler beim Abruf des Guthabens mit den Daten: ")
-        }
-    }
-
-    //Function to Compare the Amount of Ether from the Wallet and the needed Ether to deploy the Contract -> If Enough Call the Deployment Function
-    checkBalancesAndExecute() {
-        this.getBalanceFromWallet();
-        console.log(this.state.walletBalance);
-        console.log(this.props.getValueOfGasPrices("deployContract"))
-        if (this.state.walletBalance > this.props.getValueOfGasPrices("deployContract")) {
-            this.deploySmartContract();
-            console.log("Deployment Done")
-        }
-        else if (this.state.walletBalance < this.props.getValueOfGasPrices("deployContract")) {
-            alert("Bitte zuerst das Wallet aufladen!")
-        }
-        else {
-            alert("Ein unbestimmter Fehler ist aufgetreten! Das Deployment konnte nicht durchgeführt werden!")
-        }
-    }
-
-    //Function to publish Contract on Blockchain and get Prices 
+    // Function to publish Contract on Blockchain and get Prices 
     async deploySmartContract() {
         var response = await fetch(Config.BACKEND_BASE_URI + "/setup/deployContract", {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -229,11 +191,14 @@ class DeploySmartContract extends React.Component {
             }
         }).catch(console.log)
 
+        if (!response) {
+            alert("Setup Server nicht erreichbar.");
+            return;
+        }
+
         if (!response.ok) {
-            console.log("Fehler im Deployment")
             const rückgabe = await response.json().catch(console.log);
             alert(rückgabe.message);
-            console.log(rückgabe.message)
         }
 
         if (response.ok) {
@@ -242,7 +207,6 @@ class DeploySmartContract extends React.Component {
             this.props.changeValueOfGasprices("relinquishPlace", data.relinquish_place_price);
             this.props.changeValueOfStatusMap("DC");
             this.setState({ deployed: true })
-            this.getBalanceFromWallet();
         }
     }
 
@@ -250,27 +214,28 @@ class DeploySmartContract extends React.Component {
         var Ansicht = [];
         if (!this.state.deployed) {
             Ansicht = <Box>
-                <Box pad="medium"></Box>
-                <Text weight="bold" size="xxlarge" align="center">Veröffentlichen des Smart Contracts</Text>
-                <Box pad="medium"></Box>
-                <Text weight="bold" size="large">Wallet-Daten</Text>
-                <Text>Die Wallet-Adresse ist: {this.props.walletAddress}</Text>
-                <Text> Das Guthaben des Wallets beträgt: {this.state.walletBalance}</Text>
-                <Box pad="medium"></Box>
-                <Text size="large" weight="bold">Smart Contract auf der Blockchain veröffentlichen:</Text>
-                <Box pad="medium"></Box>
-                <Button onClick={this.checkBalancesAndExecute} label="Hinzufügen"></Button>
+                <Box pad="medium">
+                    <Text weight="bold" size="xxlarge" align="center">Veröffentlichen des Smart Contracts</Text>
+                </Box>
+                <Box pad="medium">
+                    <Text>Die verwendete Wallet-Adresse ist: {this.props.walletAddress}</Text>
+                </Box>
+                <Button onClick={this.deploySmartContract} label="Smart Contract auf der Blockchain veröffentlichen"></Button>
             </Box>
         }
 
         if (this.state.deployed) {
             Ansicht = <Box>
-                <Text>Der Contract wurde erfolgreich deployed.</Text>
-                <Box pad="medium"></Box>
-                <Text> Das Guthaben des Wallets beträgt: {this.state.walletBalance}</Text>
-                <Text> Der Preis für die Erstellung eines Tickets beträgt: {this.props.getValueOfGasPrices("createTicket")}</Text>
-                <Text> Der Preis für die Übertragung eines Tickets beträgt: {this.props.getValueOfGasPrices("relinquishPlace")}</Text>
-                <Button onClick={this.props.changeStep} label="Weiter"></Button>
+                <Box pad="medium">
+                    <Text>Der Contract wurde erfolgreich deployed.</Text>
+                </Box>
+                <Box pad="medium">
+                    <Text>Der Preis für die Erstellung eines Tickets beträgt: {this.props.getValueOfGasPrices("createTicket")}</Text>
+                    <Text>Der Preis für die Übertragung eines Tickets beträgt: {this.props.getValueOfGasPrices("relinquishPlace")}</Text>
+                </Box>
+                <Box pad="medium">
+                    <Button onClick={this.props.changeStep} label="Weiter"></Button>
+                </Box>
             </Box>
         }
         return Ansicht;
@@ -316,9 +281,9 @@ class ConfigureAdminAccount extends React.Component {
     render() {
         var Ansicht = [];
         Ansicht = <Box>
-            <Box pad="medium"></Box>
-            <Text weight="bold" size="xxlarge" align="center">Hinzufügen des Administratorbenutzers</Text>
-            <Box pad="medium"></Box>
+            <Box pad="medium">
+                <Text weight="bold" size="xxlarge" align="center">Hinzufügen des Administratorbenutzers</Text>
+            </Box>
             <Box pad="medium">
                 <Text weight="bold">E-Mail-Adresse</Text>
                 <TextInput
@@ -335,7 +300,9 @@ class ConfigureAdminAccount extends React.Component {
                     onChange={(event) => { this.setState({ password: event.target.value }) }}
                 />
             </Box>
-            <Button onClick={this.configureTheAdminAcc} label="Hinzufügen"></Button>
+            <Box pad="medium">
+                <Button onClick={this.configureTheAdminAcc} label="Hinzufügen"></Button>
+            </Box>
         </Box>
         return Ansicht;
     }
@@ -379,10 +346,10 @@ class ConfigureDatabase extends React.Component {
     render() {
         var Ansicht = [];
         Ansicht = <Box>
-            <Box pad="medium"></Box>
-            <Text weight="bold" size="xxlarge" align="center">Konfigurieren der Datenbank</Text>
-            <Box pad="medium"></Box>
             <Box pad="medium">
+                <Text weight="bold" size="xxlarge" align="center">Konfigurieren der Datenbank</Text>
+            </Box>
+            <Box pad="small">
                 <Text weight="bold">Datenbank-Host:</Text>
                 <TextInput
                     placeholder="Hier bitte den Datenbank-Host eingeben"
@@ -390,7 +357,7 @@ class ConfigureDatabase extends React.Component {
                     onChange={(event) => { this.setState({ host: event.target.value }) }}
                 />
             </Box>
-            <Box pad="medium">
+            <Box pad="small">
                 <Text weight="bold">Port:</Text>
                 <TextInput
                     placeholder="Hier bitte den Port eingeben"
@@ -587,9 +554,9 @@ class ConfigureShopConfig extends React.Component {
     render() {
         var Ansicht = []
         Ansicht[0] = <Box>
-            <Box pad="medium"></Box>
-            <Text weight="bold" size="xxlarge">Konfigurieren der Shop Grundeinstellungen:</Text>
-            <Box pad="medium"></Box>
+            <Box pad="medium">
+                <Text weight="bold" size="xxlarge">Konfigurieren der Shop Grundeinstellungen:</Text>
+            </Box>
             <Box pad="small">
                 <Text weight="bold">Maximale Personen pro Event:</Text>
                 <TextInput
@@ -614,7 +581,7 @@ class ConfigureShopConfig extends React.Component {
                     onChange={(event) => { this.setState({ maxVIPPersonen: event.target.value }) }}
                 />
             </Box>
-            <Box pad="small">
+            <Box pad="medium">
                 <Button onClick={this.configureTheShopConfig} label="Hinzufügen"></Button>
             </Box>
         </Box>
@@ -711,7 +678,8 @@ class SystemSetup extends React.Component {
     }
 
     finishSystemSetup() {
-        window.location.assign("#/login")
+        window.location.assign("#/login");
+        window.location.reload();
     }
 
     goToStep(value) {

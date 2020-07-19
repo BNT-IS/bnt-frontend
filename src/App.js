@@ -33,9 +33,8 @@ class App extends React.Component {
     // Check system status once mounted
     this.detectSystemState();
 
-    // Check system status frequently (currently every 60 seconds)
+    // Check login status frequently (currently every 60 seconds)
     window.setInterval(() => {
-      this.detectSystemState();
       this.detectAuthState(this.state.userContext);
     }, 60000);
 
