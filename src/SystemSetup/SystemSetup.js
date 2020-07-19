@@ -400,7 +400,7 @@ class ConfigureDatabase extends React.Component {
 class ConfigureMailserver extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { host: "", port: "", conncetion: 'true', user: "", password: "", standardMail: "", standardPrefix: "" };
+        this.state = { host: "", port: "", connection: 'true', user: "", password: "", standardMail: "", standardPrefix: "" };
         this.configureTheMailserver = this.configureTheMailserver.bind(this);
     }
 
@@ -417,7 +417,7 @@ class ConfigureMailserver extends React.Component {
             body: JSON.stringify({
                 host: this.state.host,
                 port: this.state.port,
-                secure: this.state.conncetion,
+                secure: this.state.connection === 'true' ? true : false,
                 user: this.state.user,
                 password: this.state.password,
                 default_from: this.state.standardMail,
