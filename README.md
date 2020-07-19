@@ -19,6 +19,21 @@ Für die Anwendung des Bachelorsnight Ticketsystems wurden folgende "spezielle" 
 
 # Schnellstart
 
+**Wichtig:** Viele Funktionalitäten des Frontends funktionieren nur über einen vertrauenswürdigen Host. 
+Das bedeutet entweder per http://localhost oder aber über eine per SSL gesicherte Domain bspw. github pages!
+
+Ohne HTTP**S** vor der URL, wenn kein localhost, wird die Kamerafunktion und die Offline-Funktionalität / das Caching von allen Browsern aus Sicherheitsgründen abgelehnt.
+
+Also entweder diese Anwendung lokal testen, was etwas schwierig wird mit der Peer-to-Peer Verbindung. Oder aber das Frontend hinter einer SSL gesicherten Adresse hosten.
+
+# Übersicht der Komponenten
+
+Innerhalb der zugrundeliegenden Seminararbeit wurden Anforderungen erhoben, welche anschließend zu Use-Cases umformuliert werden konnten. Die Frontend-Anwendung enthält einige Komponenten, um möglichst alle Use-Cases sinnvoll und kategorisiert nutzbar zu machen.
+
+Im folgenden Schaubild werden alle Komponenten mit ihren jeweiligen Use-Cases dargestellt. Eine detailierte Beschreibung zu den einzelnen Komponenten ist anschließend im nächsten Kapitel vorzufinden.
+
+<img src="./assets/ArchitekturHL-Frontend-Komponenten.png" alt="Darstellung aller App-Komponenten und deren Use-Cases">
+
 # Komponenten im Detail
 
 ## App
