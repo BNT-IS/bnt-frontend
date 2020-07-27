@@ -1,3 +1,64 @@
+# Inhaltsverzeichnis
+
+- [Überblick](#-berblick)
+- [Schnellstart](#schnellstart)
+- [Übersicht der Komponenten](#-bersicht-der-komponenten)
+- [Komponenten im Detail](#komponenten-im-detail)
+  * [App](#app)
+  * [Gast](#gast)
+    + [BookingOverview](#bookingoverview)
+    + [Ticket Bestellung](#ticket-bestellung)
+  * [Eventmanagament](#eventmanagament)
+    + [EventManagement](#eventmanagement)
+    + [ShopManagament](#shopmanagament)
+      - [Klasse - ShopManagament](#klasse---shopmanagament)
+      - [Klasse - DataQuickViewMaxTickets](#klasse---dataquickviewmaxtickets)
+      - [Komponente - ShopManagamentConfMaxTickets](#komponente---shopmanagamentconfmaxtickets)
+      - [Klasse - DataQuickViewPayment](#klasse---dataquickviewpayment)
+      - [Komponente - ShopManagementPaymentOptions](#komponente---shopmanagementpaymentoptions)
+      - [Klasse - DataQuickViewBookings](#klasse---dataquickviewbookings)
+      - [Komponente - ShopManagementViewBookings](#komponente---shopmanagementviewbookings)
+      - [Klasse DataQuickViewSalesStatistics](#klasse-dataquickviewsalesstatistics)
+      - [Klasse - DataQuickViewManageSales](#klasse---dataquickviewmanagesales)
+      - [Komponente - ShopManagementManageSalesStatus](#komponente---shopmanagementmanagesalesstatus)
+      - [Klasse - DataQuickViewCreateOTPS](#klasse---dataquickviewcreateotps)
+      - [Komponente - ShopManagamentAbsolventenListe](#komponente---shopmanagamentabsolventenliste)
+      - [Klasse - DataQuickViewManageOTPS](#klasse---dataquickviewmanageotps)
+      - [Komponente - ShopManagementManageOTPS](#komponente---shopmanagementmanageotps)
+      - [Klasse - DataQuickViewViewOTPs](#klasse---dataquickviewviewotps)
+      - [Komponente - ShopManagementViewOTPs](#komponente---shopmanagementviewotps)
+    + [SystemSetup](#systemsetup)
+      - [SystemSetup](#systemsetup-1)
+      - [Hauptansicht](#hauptansicht)
+      - [ConfigureDatabase](#configuredatabase)
+      - [ConfigureAdminAccount](#configureadminaccount)
+      - [ConfigureMailserver](#configuremailserver)
+      - [AddWallet](#addwallet)
+      - [DeploySmartContract](#deploysmartcontract)
+      - [ConfigureShopConfig](#configureshopconfig)
+    + [Entrance Dashboard (Event Management)](#entrance-dashboard--event-management)
+    + [Ticket Leser Management (Event Management)](#ticket-leser-management--event-management)
+    + [Entrance (Ticketleser)](#entrance--ticketleser-)
+- [Spezielle Funktionalitäten](#spezielle-funktionalit-ten)
+  * [Login und Benutzer-Erstellung](#login-und-benutzer-erstellung)
+  * [Globaler Benutzer-Kontext (UserContext)](#globaler-benutzer-kontext--usercontext)
+  * [Offline-Funktionalität und Indexed DB für den Einlass](#offline-funktionalit-t-und-indexed-db-f-r-den-einlass)
+  * [Verbindung zwischen Ticketleser und Ticketlesermaster (Peer-to-Peer)](#verbindung-zwischen-ticketleser-und-ticketlesermaster--peer-to-peer)
+- [Entwicklung](#entwicklung)
+  * [Available Scripts](#available-scripts)
+    + [`npm run deploy`](#-npm-run-deploy-)
+    + [`npm start`](#-npm-start-)
+    + [`npm test`](#-npm-test-)
+    + [`npm run build`](#-npm-run-build-)
+    + [`npm run eject`](#-npm-run-eject-)
+  * [Learn More](#learn-more)
+    + [Code Splitting](#code-splitting)
+    + [Analyzing the Bundle Size](#analyzing-the-bundle-size)
+    + [Making a Progressive Web App](#making-a-progressive-web-app)
+    + [Advanced Configuration](#advanced-configuration)
+    + [Deployment](#deployment)
+    + [`npm run build` fails to minify](#-npm-run-build--fails-to-minify)
+
 # Überblick
 
 Das Frontend basiert auf dem Javascript-Framework für Frontendentwicklung "React.js". 
@@ -470,7 +531,7 @@ Nachdem beispielsweise die Methode readTicket() beim Master ausgeführt wurde, m
 
 Somit sind die Basis-Eigenschaften der Nachrichten einsatzbereit für einen entfernen Methoden-Aufruf mit anschließender Auswertung beim Initiator. Der Initiator kann ein Client sein, aber auch der Master könnte Anfragen an spezielle Clients schicken. Für die zwei Beispiel-Methoden gehen die Anfragen jedoch nur vom Client (Ticketleser) aus. 
 
-# Entwicklung
+# React Spezifisch
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
